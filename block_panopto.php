@@ -59,7 +59,10 @@ class block_panopto extends block_base {
 
     // Generate HTML for block contents
     function get_content() {
-        global $CFG, $COURSE, $USER;
+        // Kent Change
+        global $CFG, $DB, $COURSE, $USER, $OUTPUT;
+        $context = context_course::instance($COURSE->id, MUST_EXIST);
+        // End Change
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -88,6 +91,45 @@ class block_panopto extends block_base {
                 if($course_info->Access == "Error") {
                     $this->content->text .= "<span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
                 } else {
+                    // Kent Change
+                    $ar = $DB->get_record('role', array('shortname' => 'panopto_academic'));
+                    $nar = $DB->get_record('role', array('shortname' => 'panopto_non_academic'));
+
+                    $role_assign_bool = (user_has_role_assignment($USER->id, $ar->id, get_system_context()->id) || user_has_role_assignment($USER->id, $nar->id, get_system_context()->id));
+
+                    if($role_assign_bool && has_capability('block/panopto:panoptocreator', $context)) {
+                        $perm_str = get_string('access_status_creator', 'block_panopto');
+                    } elseif (has_capability('block/panopto:panoptocreator', $context) && $this->page->user_is_editing()) {
+                        $this->content->text .= '<script type="text/javascript">
+                            window.courseId = ' . $COURSE->id .';
+                            window.role_choice_head = "'.get_string('role_choice_head', 'block_panopto').'";
+                            window.role_choice_ac_btn = "'.get_string('role_choice_ac_btn', 'block_panopto').'";
+                            window.role_choice_nac_btn = "'.get_string('role_choice_nac_btn', 'block_panopto').'";
+                            window.role_choice_cancel = "'.get_string('role_choice_cancel', 'block_panopto').'";
+                            window.terms_head = "'.get_string('terms_head', 'block_panopto').'";
+                            window.terms_back_btn = "'.get_string('terms_back_btn', 'block_panopto').'";
+                            window.terms_agree_btn = "'.get_string('terms_agree_btn', 'block_panopto').'";
+                            window.terms_decline_btn = "'.get_string('terms_decline_btn', 'block_panopto').'";
+                            window.accademic_terms = "'.str_replace(array("\r", "\n"), '', get_string('accademic_terms', 'block_panopto')).'";
+                            window.non_accademic_terms = "'.str_replace(array("\r", "\n"), '', get_string('non_accademic_terms', 'block_panopto')).'";
+                            window.success_roleassign= "'.get_string('success_roleassign', 'block_panopto').'";
+                            window.success_sync_succ= "'.get_string('success_sync_succ', 'block_panopto').'";
+                            window.success_sync_fail= "'.get_string('success_sync_fail', 'block_panopto').'";
+                            window.success_extras= "'.get_string('success_extras', 'block_panopto').'";
+                            window.error= "'.get_string('error', 'block_panopto').'";
+                        </script>';
+                        $this->content->text .= '<script src="'.$CFG->wwwroot.'/blocks/panopto/js/underscore-min.js" type="text/javascript"></script>';
+                        $this->content->text .= '<script src="'.$CFG->wwwroot.'/blocks/panopto/js/panopto_init.js" type="text/javascript"></script>';                        
+                        $perm_str = get_string('access_status_tcs', 'block_panopto') . ' <a id="panopto_ts_button" href="#">'.get_string('access_status_tcs_btn', 'block_panopto').'</a>';
+                    } elseif (has_capability('block/panopto:panoptoviewer', $context)) {
+                        $perm_str = get_string('access_status_viewer', 'block_panopto');
+                    } else {
+                        $perm_str = get_string('access_status_none', 'block_panopto');
+                    }
+
+                    $this->content->text .= "<div id='panopto_perm_state'>$perm_str</div>";
+                    // End Kent Change
+
                     // SSO form passes instance name in POST to keep URLs portable.
                     $this->content->text .= "
 		        		<form name='SSO' method='post'>
@@ -173,8 +215,9 @@ class block_panopto extends block_base {
 		                        				 </div>";
                         }
                     }
-                    $context = context_course::instance($COURSE->id, MUST_EXIST);
-                    if(has_capability('moodle/course:update', $context)) {
+                    // Kent Change
+                    if(has_capability('moodle/course:update', $context) && $role_assign_bool) {
+                    // End Change
                         $this->content->text .= "<div class='sectionHeader'><b>" . get_string('links', 'block_panopto') . "</b></div>
 				        						 <div class='listItem'>
 				        							<a href='$course_info->CourseSettingsURL' onclick='return panopto_startSSO(this)'
@@ -232,7 +275,29 @@ class block_panopto extends block_base {
             $this->content->text .= "<br><br><span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
         }
 
-        $this->content->footer = '';
+        // Kent Change
+        $this->content->text .= "<span class='panoptoextras'>";
+        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        if(has_capability('moodle/course:update', $context)) {
+            $this->content->text .= "<span class='panoptohelp'>" . $OUTPUT->help_icon('help_staff', 'block_panopto') . "</span>";
+        } else {
+            $this->content->text .= "<span class='panoptohelp'>" .$OUTPUT->help_icon('help_student', 'block_panopto') . "</span>";
+        }
+        $this->content->text .= "<span class='panoptoterms'>" . $OUTPUT->help_icon('help_terms', 'block_panopto', get_string('terms_link_title', 'block_panopto')) . "</span>"; 
+        $this->content->text .= "</span>";
+
+        if($this->page->user_is_editing()) {
+            $params = new stdClass;
+            $params->course_id = $COURSE->id;
+            $params->return_url = $_SERVER['REQUEST_URI'];
+            $query_string = http_build_query($params, '', '&');
+            $reprovision = get_string('reprovision', 'block_panopto');
+            $provision_url = "$CFG->wwwroot/blocks/panopto/provision_course.php?" . $query_string;
+            $this->content->footer .= "<a class='reprovision' href='$provision_url'>$reprovision</a>";
+        } else {
+            $this->content->footer = ' ';
+        }
+        // End Change
 
         return $this->content;
     }
