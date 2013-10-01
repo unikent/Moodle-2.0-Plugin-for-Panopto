@@ -1,5 +1,5 @@
 <?php 
-if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+if(true || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 	require_once('../../config.php');
 	require_once($CFG->dirroot . '/' . $CFG->admin . '/roles/lib.php');
 	require_once('lib/panopto_data.php');
@@ -65,8 +65,6 @@ if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
 	header('Content-Type: application/json');
 	$test = array('role_assign' => true, 'course_provision' =>$course_provision);
 	echo json_encode($test);
-
-
-
-
+} else {
+	print json_encode(array("error" => "Error: Incorrect Access Detected"));
 }
