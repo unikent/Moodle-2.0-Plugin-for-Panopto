@@ -99,11 +99,25 @@ class panopto_data {
          
         // moodle/course:update capability will include admins along with teachers, course creators, etc.
         // Could also use moodle/legacy:teacher, moodle/legacy:editingteacher, etc. if those turn out to be more appropriate.
-        $instructors = get_users_by_capability($course_context, 'moodle/course:update');
+        // Kent Change
+        $instructors = get_users_by_capability($course_context, 'block/panopto:panoptocreator');
+        // End Change
 
         if(!empty($instructors)) {
+            // Kent Change
+            $ar = $DB->get_record('role', array('shortname' => 'panopto_academic'));
+            $nar = $DB->get_record('role', array('shortname' => 'panopto_non_academic'));
+            // End Change
+
             $provisioning_info->Instructors = array();
             foreach($instructors as $instructor) {
+                // Kent Change
+                if (!user_has_role_assignment($instructor->id, $ar->id, get_system_context()->id) && 
+                    !user_has_role_assignment($instructor->id, $nar->id, get_system_context()->id)) {
+                    continue;
+                }
+                // End Change
+                
                 $instructor_info = new stdClass;
                 $instructor_info->UserKey = $this->panopto_decorate_username($instructor->username);
                 $instructor_info->FirstName = $instructor->firstname;
@@ -119,7 +133,9 @@ class panopto_data {
 
         // Give all enrolled users at least student-level access. Instructors will be filtered out below.
         // Use get_enrolled_users because, as of Moodle 2.0, capability moodle/course:view no longer corresponds to a participant list.
-        $students = get_enrolled_users($course_context);
+        // Kent Change
+        $students = get_users_by_capability($course_context, 'block/panopto:panoptoviewer');
+        // End Change
 
         if(!empty($students)) {
             $provisioning_info->Students = array();
