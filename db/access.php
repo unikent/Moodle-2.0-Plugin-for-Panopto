@@ -28,6 +28,7 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+
     'block/panopto:provision_multiple' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
@@ -38,23 +39,44 @@ $capabilities = array(
 
     'block/panopto:addinstance' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => array(
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW
         ),
-
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
-   'block/panopto:myaddinstance' => array( 'captype' => 'write',
+
+    'block/panopto:myaddinstance' => array( 'captype' => 'write',
        'contextlevel' => CONTEXT_SYSTEM, 
        'archetypes' => array(
            'user' => CAP_ALLOW
          ), 
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
-   ) 
+    ),
+
+    /* Kent Changes */
+    'block/panopto:panoptocreator' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'block/panopto:panoptoviewer' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    )
 );
 
 /* End of file access.php */
