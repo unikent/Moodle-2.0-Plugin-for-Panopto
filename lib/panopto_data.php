@@ -85,10 +85,32 @@ class panopto_data {
         return $course_info;
     }
 
+    // Kent Change
+    // Provision folders for each of a courses instructors
+    function provision_user_folders($provisioning_info) {
+        $folder_infos = array();
+        
+        foreach ($provisioning_info->Instructors as $instructor) {
+            $instructor_folder = new stdClass;
+            $userkey = explode("\\", $instructor->UserKey);
+            $instructor_folder->ShortName ='';
+            $instructor_folder->LongName = $userkey[1] . "'s unlisted recordings";
+            $instructor_folder->ExternalCourseID = $this->instancename . ":" . $userkey[1];
+
+            $instructor_folder->Instructors = array();
+            $instructor_folder->Instructors[] = $instructor;
+
+            $folder_infos[] = $this->soap_client->ProvisionCourse($instructor_folder);
+        }
+
+        return $folder_infos;
+    }
+    // End Change
+
     // Fetch course name and membership info from DB in preparation for provisioning operation.
     function get_provisioning_info() {
         global $DB;
-        
+
         // Kent Change
         $provisioning_info = new stdClass;
         // End Change
