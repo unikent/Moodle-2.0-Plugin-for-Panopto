@@ -110,6 +110,11 @@ if ($mform->is_cancelled()) {
             $panopto_data->moodle_course_id = $course_id;
             $provisioning_data = $panopto_data->get_provisioning_info();
             $provisioned_data  = $panopto_data->provision_course($provisioning_data);
+            // Kent Change
+            if(!empty($provisioned_data)) {
+                $panopto_data->provision_user_folders($provisioning_data);
+            }
+            // End Change
             include 'views/provisioned_course.html.php';
         }
         echo "<a href='$return_url'>Back to config</a>";
