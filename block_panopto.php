@@ -92,42 +92,47 @@ class block_panopto extends block_base {
                     $this->content->text .= "<span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
                 } else {
                     // Kent Change
-                    $ar = $DB->get_record('role', array('shortname' => 'panopto_academic'));
-                    $nar = $DB->get_record('role', array('shortname' => 'panopto_non_academic'));
+                    // (Override for 2012)
+                    if ($CFG->kent->distribution !== "2012") {
+                        $ar = $DB->get_record('role', array('shortname' => 'panopto_academic'));
+                        $nar = $DB->get_record('role', array('shortname' => 'panopto_non_academic'));
 
-                    $role_assign_bool = (user_has_role_assignment($USER->id, $ar->id, get_system_context()->id) || user_has_role_assignment($USER->id, $nar->id, get_system_context()->id));
+                        $role_assign_bool = (user_has_role_assignment($USER->id, $ar->id, get_system_context()->id) || user_has_role_assignment($USER->id, $nar->id, get_system_context()->id));
 
-                    if($role_assign_bool && has_capability('block/panopto:panoptocreator', $context)) {
-                        $perm_str = get_string('access_status_creator', 'block_panopto');
-                    } elseif (has_capability('block/panopto:panoptocreator', $context) && $this->page->user_is_editing()) {
-                        $this->content->text .= '<script type="text/javascript">
-                            window.courseId = ' . $COURSE->id .';
-                            window.role_choice_head = "'.get_string('role_choice_head', 'block_panopto').'";
-                            window.role_choice_ac_btn = "'.get_string('role_choice_ac_btn', 'block_panopto').'";
-                            window.role_choice_nac_btn = "'.get_string('role_choice_nac_btn', 'block_panopto').'";
-                            window.role_choice_cancel = "'.get_string('role_choice_cancel', 'block_panopto').'";
-                            window.terms_head = "'.get_string('terms_head', 'block_panopto').'";
-                            window.terms_back_btn = "'.get_string('terms_back_btn', 'block_panopto').'";
-                            window.terms_agree_btn = "'.get_string('terms_agree_btn', 'block_panopto').'";
-                            window.terms_decline_btn = "'.get_string('terms_decline_btn', 'block_panopto').'";
-                            window.accademic_terms = "'.str_replace(array("\r", "\n"), '', get_string('accademic_terms', 'block_panopto')).'";
-                            window.non_accademic_terms = "'.str_replace(array("\r", "\n"), '', get_string('non_accademic_terms', 'block_panopto')).'";
-                            window.success_roleassign= "'.get_string('success_roleassign', 'block_panopto').'";
-                            window.success_sync_succ= "'.get_string('success_sync_succ', 'block_panopto').'";
-                            window.success_sync_fail= "'.get_string('success_sync_fail', 'block_panopto').'";
-                            window.success_extras= "'.get_string('success_extras', 'block_panopto').'";
-                            window.error= "'.get_string('error', 'block_panopto').'";
-                        </script>';
-                        $this->content->text .= '<script src="'.$CFG->wwwroot.'/blocks/panopto/js/underscore-min.js" type="text/javascript"></script>';
-                        $this->content->text .= '<script src="'.$CFG->wwwroot.'/blocks/panopto/js/panopto_init.js" type="text/javascript"></script>';                        
-                        $perm_str = get_string('access_status_tcs', 'block_panopto') . ' <a id="panopto_ts_button" href="#">'.get_string('access_status_tcs_btn', 'block_panopto').'</a>';
-                    } elseif (has_capability('block/panopto:panoptoviewer', $context)) {
-                        $perm_str = get_string('access_status_viewer', 'block_panopto');
+                        if($role_assign_bool && has_capability('block/panopto:panoptocreator', $context)) {
+                            $perm_str = get_string('access_status_creator', 'block_panopto');
+                        } elseif (has_capability('block/panopto:panoptocreator', $context) && $this->page->user_is_editing()) {
+                            $this->content->text .= '<script type="text/javascript">
+                                window.courseId = ' . $COURSE->id .';
+                                window.role_choice_head = "'.get_string('role_choice_head', 'block_panopto').'";
+                                window.role_choice_ac_btn = "'.get_string('role_choice_ac_btn', 'block_panopto').'";
+                                window.role_choice_nac_btn = "'.get_string('role_choice_nac_btn', 'block_panopto').'";
+                                window.role_choice_cancel = "'.get_string('role_choice_cancel', 'block_panopto').'";
+                                window.terms_head = "'.get_string('terms_head', 'block_panopto').'";
+                                window.terms_back_btn = "'.get_string('terms_back_btn', 'block_panopto').'";
+                                window.terms_agree_btn = "'.get_string('terms_agree_btn', 'block_panopto').'";
+                                window.terms_decline_btn = "'.get_string('terms_decline_btn', 'block_panopto').'";
+                                window.accademic_terms = "'.str_replace(array("\r", "\n"), '', get_string('accademic_terms', 'block_panopto')).'";
+                                window.non_accademic_terms = "'.str_replace(array("\r", "\n"), '', get_string('non_accademic_terms', 'block_panopto')).'";
+                                window.success_roleassign= "'.get_string('success_roleassign', 'block_panopto').'";
+                                window.success_sync_succ= "'.get_string('success_sync_succ', 'block_panopto').'";
+                                window.success_sync_fail= "'.get_string('success_sync_fail', 'block_panopto').'";
+                                window.success_extras= "'.get_string('success_extras', 'block_panopto').'";
+                                window.error= "'.get_string('error', 'block_panopto').'";
+                            </script>';
+                            $this->content->text .= '<script src="'.$CFG->wwwroot.'/blocks/panopto/js/underscore-min.js" type="text/javascript"></script>';
+                            $this->content->text .= '<script src="'.$CFG->wwwroot.'/blocks/panopto/js/panopto_init.js" type="text/javascript"></script>';                        
+                            $perm_str = get_string('access_status_tcs', 'block_panopto') . ' <a id="panopto_ts_button" href="#">'.get_string('access_status_tcs_btn', 'block_panopto').'</a>';
+                        } elseif (has_capability('block/panopto:panoptoviewer', $context)) {
+                            $perm_str = get_string('access_status_viewer', 'block_panopto');
+                        } else {
+                            $perm_str = get_string('access_status_none', 'block_panopto');
+                        }
+
+                        $this->content->text .= "<div id='panopto_perm_state'>$perm_str</div>";
                     } else {
-                        $perm_str = get_string('access_status_none', 'block_panopto');
+                        $role_assign_bool = true;
                     }
-
-                    $this->content->text .= "<div id='panopto_perm_state'>$perm_str</div>";
                     // End Kent Change
 
                     // SSO form passes instance name in POST to keep URLs portable.
