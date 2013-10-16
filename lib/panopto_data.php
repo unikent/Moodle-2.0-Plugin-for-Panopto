@@ -88,6 +88,13 @@ class panopto_data {
     // Kent Change
     // Provision folders for each of a courses instructors
     function provision_user_folders($provisioning_info) {
+        global $CFG;
+
+        // Dont do this for 2012
+        if ($CFG->kent->distribution === "2012") {
+            return null;
+        }
+
         $folder_infos = array();
         
         foreach ($provisioning_info->Instructors as $instructor) {
@@ -109,7 +116,9 @@ class panopto_data {
 
     // Fetch course name and membership info from DB in preparation for provisioning operation.
     function get_provisioning_info() {
-        global $DB;
+        // Kent Change
+        global $DB, $CFG;
+        // End Change
 
         // Kent Change
         $provisioning_info = new stdClass;
@@ -138,7 +147,8 @@ class panopto_data {
             $provisioning_info->Instructors = array();
             foreach($instructors as $instructor) {
                 // Kent Change
-                if (!user_has_role_assignment($instructor->id, $ar->id, get_system_context()->id) && 
+                if ($CFG->kent->distribution !== "2012" &&
+					!user_has_role_assignment($instructor->id, $ar->id, get_system_context()->id) && 
                     !user_has_role_assignment($instructor->id, $nar->id, get_system_context()->id)) {
                     continue;
                 }
