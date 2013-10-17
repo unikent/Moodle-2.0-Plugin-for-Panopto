@@ -35,6 +35,7 @@ if(true || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTT
 		}
 	}
 
+	$course_provision = false;
 	if(has_capability('block/panopto:provision_course', $crsContext)) {
 		$panopto_data = new panopto_data(null);
 		$panopto_data->moodle_course_id = $courseid;
