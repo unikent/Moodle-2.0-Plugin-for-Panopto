@@ -26,7 +26,7 @@ if(true || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTT
 
 	$role = $DB->get_record('role', array('shortname' => $role));
 	$sysContext = get_system_context();
-	$crsContext = get_context_instance(CONTEXT_COURSE, $courseid);
+	$crsContext = context_course::instance($courseid);
 
 	if(has_capability('block/panopto:panoptocreator', $crsContext)) {
 		$raid = role_assign($role->id, $USER->id, $sysContext);

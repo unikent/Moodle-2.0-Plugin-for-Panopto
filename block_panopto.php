@@ -282,7 +282,7 @@ class block_panopto extends block_base {
 
         // Kent Change
         $this->content->text .= "<span class='panoptoextras'>";
-        $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
+        $context = context_course::instance($COURSE->id);
         if(has_capability('moodle/course:update', $context)) {
             $this->content->text .= "<span class='panoptohelp'>" . $OUTPUT->help_icon('help_staff', 'block_panopto') . "</span>";
         } else {
