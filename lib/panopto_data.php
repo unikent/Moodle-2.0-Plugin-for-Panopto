@@ -148,8 +148,8 @@ class panopto_data {
             foreach($instructors as $instructor) {
                 // Kent Change
                 if ($CFG->kent->distribution !== "2012" &&
-					!user_has_role_assignment($instructor->id, $ar->id, get_system_context()->id) && 
-                    !user_has_role_assignment($instructor->id, $nar->id, get_system_context()->id)) {
+					!user_has_role_assignment($instructor->id, $ar->id, context_system::instance()->id) && 
+                    !user_has_role_assignment($instructor->id, $nar->id, context_system::instance()->id)) {
                     continue;
                 }
                 // End Change

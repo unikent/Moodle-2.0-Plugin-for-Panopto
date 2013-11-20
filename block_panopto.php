@@ -97,7 +97,7 @@ class block_panopto extends block_base {
                         $ar = $DB->get_record('role', array('shortname' => 'panopto_academic'));
                         $nar = $DB->get_record('role', array('shortname' => 'panopto_non_academic'));
 
-                        $role_assign_bool = (user_has_role_assignment($USER->id, $ar->id, get_system_context()->id) || user_has_role_assignment($USER->id, $nar->id, get_system_context()->id));
+                        $role_assign_bool = (user_has_role_assignment($USER->id, $ar->id, context_system::instance()->id) || user_has_role_assignment($USER->id, $nar->id, context_system::instance()->id));
 
                         if($role_assign_bool && has_capability('block/panopto:panoptocreator', $context)) {
                             $perm_str = get_string('access_status_creator', 'block_panopto');

@@ -25,7 +25,7 @@ if(true || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTT
 	if($role === false) { throw new moodle_exception('Incorrect role given'); }
 
 	$role = $DB->get_record('role', array('shortname' => $role));
-	$sysContext = get_system_context();
+	$sysContext = context_system::instance();
 	$crsContext = context_course::instance($courseid);
 
 	if(has_capability('block/panopto:panoptocreator', $crsContext)) {
