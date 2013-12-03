@@ -104,6 +104,8 @@
 
 /* Kent Block styles */
 
+.block_panopto.block #panopto-text,
+.block_panopto.block #panopto-footer,
 .block_panopto.block div.content {
     padding: 0px 0px 0px 0px !important;
 }

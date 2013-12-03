@@ -59,8 +59,8 @@ if ($course_id_param != 0) {
 $PAGE->set_context($context);
 
 $return_url = optional_param('return_url', '/admin/settings.php?section=blocksettingpanopto', PARAM_LOCALURL);
-
 $urlparams['return_url'] = $return_url;
+$return_url = new moodle_url($return_url);
 
 $PAGE->set_url('/blocks/panopto/provision_course.php', $urlparams);
 $PAGE->set_pagelayout('base');
@@ -68,7 +68,7 @@ $PAGE->set_pagelayout('base');
 $mform = new panopto_provision_form($PAGE->url);
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url($return_url));
+    redirect($return_url);
 } else {
     $provision_title = get_string('provision_courses', 'block_panopto');
     $PAGE->set_pagelayout('base');
@@ -80,8 +80,7 @@ if ($mform->is_cancelled()) {
         require_capability('block/panopto:provision_course', $context);
 
         $courses = array($course_id_param);
-        $edit_course_url = new moodle_url($return_url);
-        $PAGE->navbar->add(get_string('pluginname', 'block_panopto'), $edit_course_url);
+        $PAGE->navbar->add(get_string('pluginname', 'block_panopto'), $return_url);
     } else {
         // System context
         require_capability('block/panopto:provision_multiple', $context);
@@ -99,7 +98,7 @@ if ($mform->is_cancelled()) {
     $PAGE->navbar->add($provision_title, new moodle_url($PAGE->url));
     echo $OUTPUT->header();
 
-    if ($courses) {
+    if (!empty($courses)) {
         $provisioned = array();
         $panopto_data = new panopto_data(null);
         foreach ($courses as $course_id) {
@@ -117,7 +116,8 @@ if ($mform->is_cancelled()) {
             // End Change
             include 'views/provisioned_course.html.php';
         }
-        echo "<a href='$return_url'>Back to config</a>";
+
+        echo "<a href='".$return_url."'>Back to config</a>";
     } else {
         $mform->display();
     }
