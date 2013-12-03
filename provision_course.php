@@ -99,7 +99,7 @@ if ($mform->is_cancelled()) {
     $PAGE->navbar->add($provision_title, new moodle_url($PAGE->url));
     echo $OUTPUT->header();
 
-    if ($courses) {
+    if (!empty($courses)) {
         $provisioned = array();
         $panopto_data = new panopto_data(null);
         foreach ($courses as $course_id) {
