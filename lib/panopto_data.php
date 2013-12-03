@@ -95,8 +95,12 @@ class panopto_data {
             return null;
         }
 
+        if (empty($provisioning_info->Instructors)) {
+            return array();
+        }
+
         $folder_infos = array();
-        
+
         foreach ($provisioning_info->Instructors as $instructor) {
             $instructor_folder = new stdClass;
             $userkey = explode("\\", $instructor->UserKey);
