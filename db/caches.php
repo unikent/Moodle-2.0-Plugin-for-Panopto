@@ -4,6 +4,7 @@
  */
 $definitions = array(
     'panopto' => array(
-        'mode' => cache_store::MODE_SESSION
+        'mode' => cache_store::MODE_SESSION,
+        'ttl' => 300
     )
 );
