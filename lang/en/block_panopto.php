@@ -68,6 +68,7 @@ $string['help_terms'] = 'Acceptable Use Policy';
 $string['help_terms_help'] = 'You can only use recordings for your own study as a supplement to live lectures. You must not share these recordings, even with friends studying at other universities. <br>You must not upload copies to any public website (such as YouTube) and to do so will be treated as a serious breach of academic integrity and IT Regulations <a target="_blank" href="http://www.kent.ac.uk/regulations/general.html">http://www.kent.ac.uk/regulations/general.html</a>';
 $string['block_panopto_admin_email'] = 'Panopto admin email';
 $string['block_panopto_admin_email_toggle'] = 'Admin email toggle';
+$string['cachedef_panopto'] = 'Panopto';
 
 //Block permissions status and link to tcs
 $string['access_status_creator'] = 'Access: Creator';
