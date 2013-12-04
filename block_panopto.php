@@ -26,17 +26,89 @@ class block_panopto extends block_base {
     }
 
     /**
+     * Do we have the right grants?
+     */
+    private function has_access() {
+        global $DB, $USER;
+
+        $ar = $DB->get_record('role', array('shortname' => 'panopto_academic'));
+        $ar_check = !empty($ar) ? user_has_role_assignment($USER->id, $ar->id, context_system::instance()->id) : false;
+
+        $nar = $DB->get_record('role', array('shortname' => 'panopto_non_academic'));
+        $nar_check = !empty($nar) ? user_has_role_assignment($USER->id, $nar->id, context_system::instance()->id) : false;
+
+        return $ar_check || $nar_check;
+    }
+
+    /**
      * Required JS
      */
     public function get_required_javascript() {
         parent::get_required_javascript();
 
-        global $COURSE;
-        $this->page->requires->js_init_call('M.local_panopto.init', array($COURSE->id), false, array(
-            'name' => 'local_panopto',
-            'fullpath' => '/blocks/panopto/js/ajax.js',
-            'requires' => array("node", "io", "dump", "json-parse")
-        ));
+        global $COURSE, $CFG;
+
+        $perm_str = '';
+        $role_assign_bool = false;
+
+        if ($CFG->kent->distribution !== "2012") {
+            $role_assign_bool = $this->has_access();
+
+            $context = context_course::instance($COURSE->id, MUST_EXIST);
+            $hasCreator = false;//has_capability('block/panopto:panoptocreator', $context);
+            $hasViewer = false;//has_capability('block/panopto:panoptoviewer', $context);
+
+
+            /*if ($role_assign_bool && $hasCreator) {
+                $perm_str = get_string('access_status_creator', 'block_panopto');
+            } elseif ($hasCreator && $this->page->user_is_editing()) {
+                $perm_str = get_string('access_status_tcs', 'block_panopto') . ' <a id="panopto_ts_button" href="#">'.get_string('access_status_tcs_btn', 'block_panopto').'</a>';
+            } elseif ($hasViewer) {
+                $perm_str = get_string('access_status_viewer', 'block_panopto');
+            } else {*/
+                $perm_str = get_string('access_status_none', 'block_panopto');
+
+                // We need jQuery!
+                $this->page->requires->jquery();
+                $this->page->requires->jquery_plugin('migrate');
+                $this->page->requires->jquery_plugin('ui');
+
+                // Need some langs..
+                $this->page->requires->string_for_js('role_choice_head', 'block_panopto');
+                $this->page->requires->string_for_js('role_choice_ac_btn', 'block_panopto');
+                $this->page->requires->string_for_js('role_choice_nac_btn', 'block_panopto');
+                $this->page->requires->string_for_js('role_choice_cancel', 'block_panopto');
+                $this->page->requires->string_for_js('terms_head', 'block_panopto');
+                $this->page->requires->string_for_js('terms_back_btn', 'block_panopto');
+                $this->page->requires->string_for_js('terms_agree_btn', 'block_panopto');
+                $this->page->requires->string_for_js('terms_decline_btn', 'block_panopto');
+                $this->page->requires->string_for_js('accademic_terms', 'block_panopto');
+                $this->page->requires->string_for_js('non_accademic_terms', 'block_panopto');
+                $this->page->requires->string_for_js('success_roleassign', 'block_panopto');
+                $this->page->requires->string_for_js('success_sync_succ', 'block_panopto');
+                $this->page->requires->string_for_js('success_sync_fail', 'block_panopto');
+                $this->page->requires->string_for_js('success_extras', 'block_panopto');
+                $this->page->requires->string_for_js('error', 'block_panopto');
+
+                // Add in our JS
+                $this->page->requires->js('/blocks/panopto/js/underscore-min.js');
+                $this->page->requires->js('/blocks/panopto/js/panopto_tac.js');
+
+                $this->page->requires->js_init_call('M.local_panopto_tac.init', array($COURSE->id), false, array(
+                    'name' => 'local_panopto_tac',
+                    'fullpath' => '/blocks/panopto/js/panopto_init.js'
+                ));
+            //}
+        }
+
+        // Finally, the init call
+        if (!$this->page->user_is_editing() && ($hasViewer || ($hasCreator && $role_assign_bool))) {
+            $this->page->requires->js_init_call('M.local_panopto.init', array($COURSE->id, $perm_str, $role_assign_bool), false, array(
+                'name' => 'local_panopto',
+                'fullpath' => '/blocks/panopto/js/ajax.js',
+                'requires' => array("node", "io", "dump", "json-parse")
+            ));
+        }
     }
 
     // Block has global config (display "Settings" link on blocks admin page)
@@ -72,9 +144,24 @@ class block_panopto extends block_base {
 
     // Generate HTML for block contents
     function get_content() {
+        global $CFG, $COURSE;
+
         $this->content = new stdClass();
         $this->content->text = '<div id="panopto-text">Please Wait</div>';
         $this->content->footer = '<div id="panopto-footer"></div>';
+
+        if ($CFG->kent->distribution !== "2012") {
+            $role_assign_bool = false;//$this->has_access();
+
+            $context = context_course::instance($COURSE->id, MUST_EXIST);
+            $hasCreator = false;//has_capability('block/panopto:panoptocreator', $context);
+            $hasViewer = false;//has_capability('block/panopto:panoptoviewer', $context);
+
+            if (!($hasCreator && $role_assign_bool) && !$hasViewer) {
+                $this->content->text = '<div id="panopto_ts_button">Click here</div>';
+            }
+        }
+
         return $this->content;
     }
     

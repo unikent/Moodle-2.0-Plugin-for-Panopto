@@ -8,6 +8,8 @@ require_once(dirname(__FILE__) . '/lib/panopto_data.php');
 
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INTEGER);
+$perm_str = required_param('perm_str', PARAM_RAW);
+$role_assign_bool = required_param('role_assign_bool', PARAM_RAW);
 
 global $CFG, $DB, $USER, $OUTPUT;
 $context = context_course::instance($courseid, MUST_EXIST);
@@ -36,43 +38,7 @@ try {
             $content->text .= "<span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
         } else {
             // Kent Change
-            // (Override for 2012)
             if ($CFG->kent->distribution !== "2012") {
-                $ar = $DB->get_record('role', array('shortname' => 'panopto_academic'));
-                $nar = $DB->get_record('role', array('shortname' => 'panopto_non_academic'));
-
-                $role_assign_bool = (user_has_role_assignment($USER->id, $ar->id, context_system::instance()->id) || user_has_role_assignment($USER->id, $nar->id, context_system::instance()->id));
-
-                if($role_assign_bool && has_capability('block/panopto:panoptocreator', $context)) {
-                    $perm_str = get_string('access_status_creator', 'block_panopto');
-                } elseif (has_capability('block/panopto:panoptocreator', $context) && $PAGE->user_is_editing()) {
-                    $content->text .= '<script type="text/javascript">
-                        window.courseId = ' . $courseid .';
-                        window.role_choice_head = "'.get_string('role_choice_head', 'block_panopto').'";
-                        window.role_choice_ac_btn = "'.get_string('role_choice_ac_btn', 'block_panopto').'";
-                        window.role_choice_nac_btn = "'.get_string('role_choice_nac_btn', 'block_panopto').'";
-                        window.role_choice_cancel = "'.get_string('role_choice_cancel', 'block_panopto').'";
-                        window.terms_head = "'.get_string('terms_head', 'block_panopto').'";
-                        window.terms_back_btn = "'.get_string('terms_back_btn', 'block_panopto').'";
-                        window.terms_agree_btn = "'.get_string('terms_agree_btn', 'block_panopto').'";
-                        window.terms_decline_btn = "'.get_string('terms_decline_btn', 'block_panopto').'";
-                        window.accademic_terms = "'.str_replace(array("\r", "\n"), '', get_string('accademic_terms', 'block_panopto')).'";
-                        window.non_accademic_terms = "'.str_replace(array("\r", "\n"), '', get_string('non_accademic_terms', 'block_panopto')).'";
-                        window.success_roleassign= "'.get_string('success_roleassign', 'block_panopto').'";
-                        window.success_sync_succ= "'.get_string('success_sync_succ', 'block_panopto').'";
-                        window.success_sync_fail= "'.get_string('success_sync_fail', 'block_panopto').'";
-                        window.success_extras= "'.get_string('success_extras', 'block_panopto').'";
-                        window.error= "'.get_string('error', 'block_panopto').'";
-                    </script>';
-                    $content->text .= '<script src="'.$CFG->wwwroot.'/blocks/panopto/js/underscore-min.js" type="text/javascript"></script>';
-                    $content->text .= '<script src="'.$CFG->wwwroot.'/blocks/panopto/js/panopto_init.js" type="text/javascript"></script>';                        
-                    $perm_str = get_string('access_status_tcs', 'block_panopto') . ' <a id="panopto_ts_button" href="#">'.get_string('access_status_tcs_btn', 'block_panopto').'</a>';
-                } elseif (has_capability('block/panopto:panoptoviewer', $context)) {
-                    $perm_str = get_string('access_status_viewer', 'block_panopto');
-                } else {
-                    $perm_str = get_string('access_status_none', 'block_panopto');
-                }
-
                 $content->text .= "<div id='panopto_perm_state'>$perm_str</div>";
             } else {
                 $role_assign_bool = true;
@@ -182,7 +148,7 @@ try {
             }
              
             $content->text .= '
-				<script type="text/javascript">
+			<script type="text/javascript">
 	        // Function to pop up Panopto live note taker.
 	        function panopto_launchNotes(url) {
 				// Open empty notes window, then POST SSO form to it.
@@ -212,11 +178,11 @@ try {
 			  		hiddenLecturesDiv.style.display = "none";
 			  		showAllToggle.innerHTML = "' . get_string('show_all', 'block_panopto') . '";
 			  	} else {
-			  	hiddenLecturesDiv.style.display = "block";
-			  	showAllToggle.innerHTML = "' . get_string('show_less', 'block_panopto') . '";
-			}
-		}
-		</script>';
+    			  	hiddenLecturesDiv.style.display = "block";
+    			  	showAllToggle.innerHTML = "' . get_string('show_less', 'block_panopto') . '";
+    			}
+            }
+            </script>';
       }
    }
 }

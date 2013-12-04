@@ -1,32 +1,24 @@
-function panoptoInit($) {
-	getScript(M.cfg.wwwroot + '/blocks/panopto/js/panopto_tac.js', function() {
+M.local_panopto_tac = {
+    Y : null,
+    transaction : [],
+    init : function(Y, courseid) {
+		window.courseId = courseid;
+		window.role_choice_head = M.str.block_panopto.role_choice_head;
+		window.role_choice_ac_btn = M.str.block_panopto.role_choice_ac_btn;
+		window.role_choice_nac_btn = M.str.block_panopto.role_choice_nac_btn;
+		window.role_choice_cancel = M.str.block_panopto.role_choice_cancel;
+		window.terms_head = M.str.block_panopto.terms_head;
+		window.terms_back_btn = M.str.block_panopto.terms_back_btn;
+		window.terms_agree_btn = M.str.block_panopto.terms_agree_btn;
+		window.terms_decline_btn = M.str.block_panopto.terms_decline_btn;
+		window.accademic_terms = M.str.block_panopto.accademic_terms;
+		window.non_accademic_terms = M.str.block_panopto.non_accademic_terms;
+		window.success_roleassign= M.str.block_panopto.success_roleassign;
+		window.success_sync_succ= M.str.block_panopto.success_sync_succ;
+		window.success_sync_fail= M.str.block_panopto.success_sync_fail;
+		window.success_extras= M.str.block_panopto.success_extras;
+		window.error= M.str.block_panopto.error;
+
 		$('#panopto_ts_button').panoptoTac();
-	})
-}
-
-function getScript(url, success) {
-	var script     = document.createElement('script');
-	script.src = url;
-	var head = Y.one('head');
-	var done = false;
-	// Attach handlers for all browsers
-	script.onload = script.onreadystatechange = function() {
-		if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
-		
-			done = true;
-			// callback function provided as param
-			success();
-			script.onload = script.onreadystatechange = null;
-		};
-	};
-	head.append(script);
-}
-
-// Have we already loaded in jQuery? If not load it and pass it as $ to panopto
-if(typeof jQuery == 'undefined') {
-	getScript(M.cfg.wwwroot + '/blocks/panopto/js/jquery-1.9.1.min.js', function() {
-		panoptoInit(jQuery);
-	})
-} else {
-	panoptoInit(jQuery);
-}
+    }
+};
