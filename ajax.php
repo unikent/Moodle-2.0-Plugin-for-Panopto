@@ -8,7 +8,7 @@ require_once(dirname(__FILE__) . '/lib/panopto_data.php');
 
 require_sesskey();
 $courseid = required_param('courseid', PARAM_INTEGER);
-$perm_str = required_param('perm_str', PARAM_RAW);
+$perm_str = required_param('permstr', PARAM_RAW);
 $role_assign_bool = required_param('role_assign_bool', PARAM_RAW);
 
 global $CFG, $DB, $USER, $OUTPUT;
@@ -190,7 +190,6 @@ catch(Exception $e) {
     $content->text .= "<br><br><span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
 }
 
-// Kent Change
 $content->text .= "<span class='panoptoextras'>";
 $context = context_course::instance($courseid);
 if(has_capability('moodle/course:update', $context)) {
@@ -201,7 +200,8 @@ if(has_capability('moodle/course:update', $context)) {
 $content->text .= "<span class='panoptoterms'>" . $OUTPUT->help_icon('help_terms', 'block_panopto', get_string('terms_link_title', 'block_panopto')) . "</span>"; 
 $content->text .= "</span>";
 
-if($PAGE->user_is_editing()) {
+$content->footer = ' ';
+if ($PAGE->user_is_editing()) {
     $params = new stdClass;
     $params->course_id = $courseid;
     $params->return_url = $_SERVER['REQUEST_URI'];
@@ -209,10 +209,7 @@ if($PAGE->user_is_editing()) {
     $reprovision = get_string('reprovision', 'block_panopto');
     $provision_url = "$CFG->wwwroot/blocks/panopto/provision_course.php?" . $query_string;
     $content->footer .= "<a class='reprovision' href='$provision_url'>$reprovision</a>";
-} else {
-    $content->footer = ' ';
 }
-// End Change
 
 
 echo json_encode(array(

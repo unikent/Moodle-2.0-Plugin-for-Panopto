@@ -56,7 +56,6 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
 
-    /* Kent Changes */
     'block/panopto:panoptocreator' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,

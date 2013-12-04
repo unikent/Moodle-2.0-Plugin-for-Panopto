@@ -1,7 +1,7 @@
 M.local_panopto = {
     Y : null,
     transaction : [],
-    init : function(Y, courseid, permstr, role_assign_bool) {
+    init : function(Y, courseid, permstr, role_assign_bool, editing) {
         var panopto = Y.one("#panopto-text");
         var panoptofooter = Y.one("#panopto-footer");
         panopto.setHTML("Requesting surveys...");
@@ -14,7 +14,8 @@ M.local_panopto = {
                 sesskey: M.cfg.sesskey,
                 courseid: courseid,
                 permstr: permstr,
-                role_assign_bool: role_assign_bool
+                role_assign_bool: role_assign_bool,
+                editing: editing
             },
             on: {
                 success : function (x,o) {

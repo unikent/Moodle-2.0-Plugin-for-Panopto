@@ -55,18 +55,14 @@ class block_panopto extends block_base {
             $role_assign_bool = $this->has_access();
 
             $context = context_course::instance($COURSE->id, MUST_EXIST);
-            $hasCreator = false;//has_capability('block/panopto:panoptocreator', $context);
-            $hasViewer = false;//has_capability('block/panopto:panoptoviewer', $context);
+            $hasCreator = has_capability('block/panopto:panoptocreator', $context);
+            $hasViewer = has_capability('block/panopto:panoptoviewer', $context);
 
 
-            /*if ($role_assign_bool && $hasCreator) {
+            if ($role_assign_bool && $hasCreator) {
                 $perm_str = get_string('access_status_creator', 'block_panopto');
             } elseif ($hasCreator && $this->page->user_is_editing()) {
                 $perm_str = get_string('access_status_tcs', 'block_panopto') . ' <a id="panopto_ts_button" href="#">'.get_string('access_status_tcs_btn', 'block_panopto').'</a>';
-            } elseif ($hasViewer) {
-                $perm_str = get_string('access_status_viewer', 'block_panopto');
-            } else {*/
-                $perm_str = get_string('access_status_none', 'block_panopto');
 
                 // We need jQuery!
                 $this->page->requires->jquery();
@@ -98,11 +94,15 @@ class block_panopto extends block_base {
                     'name' => 'local_panopto_tac',
                     'fullpath' => '/blocks/panopto/js/panopto_init.js'
                 ));
-            //}
+            } elseif ($hasViewer) {
+                $perm_str = get_string('access_status_viewer', 'block_panopto');
+            } else {
+                $perm_str = get_string('access_status_none', 'block_panopto');
+            }
         }
 
         // Finally, the init call
-        if (!$this->page->user_is_editing() && ($hasViewer || ($hasCreator && $role_assign_bool))) {
+        if (($role_assign_bool && $hasCreator) || !$this->page->user_is_editing()) {
             $this->page->requires->js_init_call('M.local_panopto.init', array($COURSE->id, $perm_str, $role_assign_bool), false, array(
                 'name' => 'local_panopto',
                 'fullpath' => '/blocks/panopto/js/ajax.js',
@@ -151,11 +151,11 @@ class block_panopto extends block_base {
         $this->content->footer = '<div id="panopto-footer"></div>';
 
         if ($CFG->kent->distribution !== "2012") {
-            $role_assign_bool = false;//$this->has_access();
+            $role_assign_bool = $this->has_access();
 
             $context = context_course::instance($COURSE->id, MUST_EXIST);
-            $hasCreator = false;//has_capability('block/panopto:panoptocreator', $context);
-            $hasViewer = false;//has_capability('block/panopto:panoptoviewer', $context);
+            $hasCreator = has_capability('block/panopto:panoptocreator', $context);
+            $hasViewer = has_capability('block/panopto:panoptoviewer', $context);
 
             if (!($hasCreator && $role_assign_bool) && !$hasViewer) {
                 $this->content->text = '<div id="panopto_ts_button">Click here</div>';

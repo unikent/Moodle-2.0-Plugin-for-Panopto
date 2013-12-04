@@ -18,13 +18,15 @@ if(true || !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTT
 			$role = 'panopto_non_academic';
 			break;
 		default:
-			$role = false;
+			throw new moodle_exception('Incorrect role given');
 			break;
 	}
 
-	if($role === false) { throw new moodle_exception('Incorrect role given'); }
-
 	$role = $DB->get_record('role', array('shortname' => $role));
+	if ($role === false) {
+		throw new moodle_exception('Incorrect role given');
+	}
+
 	$sysContext = context_system::instance();
 	$crsContext = context_course::instance($courseid);
 
