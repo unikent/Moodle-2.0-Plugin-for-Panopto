@@ -204,13 +204,12 @@ $content->footer = ' ';
 if ($PAGE->user_is_editing()) {
     $params = new stdClass;
     $params->course_id = $courseid;
-    $params->return_url = $_SERVER['REQUEST_URI'];
+    $params->return_url = "/course/view.php?id=" . $courseid;
     $query_string = http_build_query($params, '', '&');
     $reprovision = get_string('reprovision', 'block_panopto');
     $provision_url = "$CFG->wwwroot/blocks/panopto/provision_course.php?" . $query_string;
     $content->footer .= "<a class='reprovision' href='$provision_url'>$reprovision</a>";
 }
-
 
 echo json_encode(array(
     "footer" => $content->footer,
