@@ -191,6 +191,9 @@
         color: white;
         background-color: #2752a0;
     }
+    .content > #panopto_ts_button {
+        margin: 10px;
+    }
 
         #page-content #panopto_ts_button:hover {
             text-decoration: none;

@@ -102,13 +102,11 @@ class block_panopto extends block_base {
         }
 
         // Finally, the init call
-        if (($role_assign_bool && $hasCreator) || !$this->page->user_is_editing()) {
-            $this->page->requires->js_init_call('M.local_panopto.init', array($COURSE->id, $perm_str, $role_assign_bool), false, array(
-                'name' => 'local_panopto',
-                'fullpath' => '/blocks/panopto/js/ajax.js',
-                'requires' => array("node", "io", "dump", "json-parse")
-            ));
-        }
+        $this->page->requires->js_init_call('M.local_panopto.init', array($COURSE->id, $perm_str, $role_assign_bool), false, array(
+            'name' => 'local_panopto',
+            'fullpath' => '/blocks/panopto/js/ajax.js',
+            'requires' => array("node", "io", "dump", "json-parse")
+        ));
     }
 
     // Block has global config (display "Settings" link on blocks admin page)
@@ -157,8 +155,8 @@ class block_panopto extends block_base {
             $hasCreator = has_capability('block/panopto:panoptocreator', $context);
             $hasViewer = has_capability('block/panopto:panoptoviewer', $context);
 
-            if (!($hasCreator && $role_assign_bool) && !$hasViewer) {
-                $this->content->text = '<div id="panopto_ts_button">Click here</div>';
+            if ($hasCreator && $this->page->user_is_editing()) {
+                $this->content->text .= '<div id="panopto_ts_button">User agreement</div>';
             }
         }
 
