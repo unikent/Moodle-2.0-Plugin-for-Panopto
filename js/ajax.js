@@ -4,7 +4,7 @@ M.local_panopto = {
     init : function(Y, courseid, permstr, role_assign_bool, editing) {
         var panopto = Y.one("#panopto-text");
         var panoptofooter = Y.one("#panopto-footer");
-        panopto.setHTML("Requesting surveys...");
+        panopto.setHTML("Requesting data...");
         
         Y.io(M.cfg.wwwroot + "/blocks/panopto/ajax.php", {
 
