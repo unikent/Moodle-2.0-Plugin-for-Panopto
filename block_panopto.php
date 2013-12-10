@@ -155,7 +155,7 @@ class block_panopto extends block_base {
             $hasCreator = has_capability('block/panopto:panoptocreator', $context);
             $hasViewer = has_capability('block/panopto:panoptoviewer', $context);
 
-            if ($hasCreator && $this->page->user_is_editing()) {
+            if ($hasCreator && $this->page->user_is_editing() && !$this->has_access()) {
                 $this->content->text .= '<div id="panopto_ts_button">User agreement</div>';
             }
         }
