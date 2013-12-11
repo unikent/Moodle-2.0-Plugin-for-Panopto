@@ -11,7 +11,7 @@ $courseid = required_param('courseid', PARAM_INTEGER);
 $perm_str = required_param('permstr', PARAM_RAW);
 $role_assign_bool = required_param('role_assign_bool', PARAM_RAW);
 
-global $CFG, $DB, $USER, $OUTPUT, $PAGE;
+global $CFG, $DB, $USER, $OUTPUT,$PAGE;
 $context = context_course::instance($courseid, MUST_EXIST);
 
 $content = new stdClass;
