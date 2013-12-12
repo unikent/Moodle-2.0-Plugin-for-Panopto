@@ -80,19 +80,19 @@ class PanoptoSoapClient extends SoapClient {
 			$soap_vars = $merged_vars;
 		}
 
-		$cache_key = $method_name . md5(serialize($soap_vars));
+		/*$cache_key = $method_name . md5(serialize($soap_vars));
         $cache = cache::make('block_panopto', 'panopto');
         $result = $cache->get($cache_key);
         if ($result !== false) {
         	return $result;
-        }
+        }*/
 
 		// Store action for use in overridden __doRequest.
 		$this->current_action = "http://services.panopto.com/IClientDataService/$method_name";
 		
 		// Make the SOAP call via SoapClient::__soapCall.
 		$result = parent::__soapCall($method_name, $soap_vars);
-		$cache->set($cache_key, $result);
+		//$cache->set($cache_key, $result);
 
 		return $result;
 	}
