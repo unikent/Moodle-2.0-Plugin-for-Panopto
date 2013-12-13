@@ -148,18 +148,6 @@ class block_panopto extends block_base {
         $this->content->text = '<div id="panopto-text">Please Wait</div>';
         $this->content->footer = '<div id="panopto-footer"></div>';
 
-        if ($CFG->kent->distribution !== "2012") {
-            $role_assign_bool = $this->has_access();
-
-            $context = context_course::instance($COURSE->id, MUST_EXIST);
-            $hasCreator = has_capability('block/panopto:panoptocreator', $context);
-            $hasViewer = has_capability('block/panopto:panoptoviewer', $context);
-
-            if ($hasCreator && $this->page->user_is_editing() && !$this->has_access()) {
-                $this->content->text .= '<div id="panopto_ts_button">User agreement</div>';
-            }
-        }
-
         return $this->content;
     }
     
