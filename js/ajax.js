@@ -33,6 +33,8 @@ M.local_panopto = {
                     } else {
                         panopto.setHTML(data.text);
                         panoptofooter.setHTML(data.footer);
+                        // call local tac js
+                        Y.use('local_panopto_tac', function(Y) { M.local_panopto_tac.init(Y, courseid); });
                     }
                 },
 
