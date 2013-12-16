@@ -12,7 +12,6 @@
       };
 
       function PanoptoTac(el, options) {
-        console.log(options);
         this.acceptTerms = __bind(this.acceptTerms, this);
         this.loadTermsPage = __bind(this.loadTermsPage, this);
         this.loadChoicePage = __bind(this.loadChoicePage, this);
