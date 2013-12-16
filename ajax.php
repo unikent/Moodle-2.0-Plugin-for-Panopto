@@ -63,10 +63,10 @@ try {
                     $content->text .= "<div class='listItem $altClass'>
                     $live_session_display_name
 												 <span class='nowrap'>
-												 	[<a href='javascript:panopto_launchNotes(\"$live_session->LiveNotesURL\")'
+												 	[<a href='javascript:M.local_panopto.launchNotes(\"$live_session->LiveNotesURL\")'
 												 		>" . get_string('take_notes', 'block_panopto') . '</a>]';
                     if($live_session->BroadcastViewerURL) {
-                        $content->text .= "[<a href='$live_session->BroadcastViewerURL' onclick='return panopto_startSSO(this)'>" . get_string('watch_live', 'block_panopto') . '</a>]';
+                        $content->text .= "[<a href='$live_session->BroadcastViewerURL' onclick='return M.local_panopto.startSSO(this)'>" . get_string('watch_live', 'block_panopto') . '</a>]';
                     }
                     $content->text .= "
 										 	  	 </span>
@@ -79,7 +79,7 @@ try {
              
             $content->text .= "<div class='sectionHeader'><b>" . get_string('completed_recordings', 'block_panopto') . '</b></div>';
             $completed_deliveries = $panopto_data->get_completed_deliveries();
-            if(!empty($completed_deliveries)) {
+            if (!empty($completed_deliveries)) {
                 $i = 0;
                 foreach($completed_deliveries as $completed_delivery) {
                     // Collapse to 3 lectures by default
@@ -92,18 +92,18 @@ try {
                      
                     $completed_delivery_display_name = s($completed_delivery->DisplayName);
                     $content->text .= "<div class='listItem $altClass'>
-			        							<a href='$completed_delivery->ViewerURL' onclick='return panopto_startSSO(this)'>
+			        							<a href='$completed_delivery->ViewerURL' onclick='return M.local_panopto.startSSO(this)'>
 			        							$completed_delivery_display_name
 			        							</a>
 		        							</div>";
-			        							$i++;
+			        $i++;
                 }
 
                 // If some lectures are hidden, display "Show all" link.
                 if($i > 3) {
                     $content->text .= "</div>";
                     $content->text .= "<div id='showAllDiv'>";
-                    $content->text .= "[<a id='showAllToggle' href='javascript:panopto_toggleHiddenLectures()'>" . get_string('show_all', 'block_panopto') . '</a>]';
+                    $content->text .= "[<a id='showAllToggle' href='javascript:M.local_panopto.toggleHiddenLectures()'>" . get_string('show_all', 'block_panopto') . '</a>]';
                     $content->text .= "</div>";
                 }
             } else {
@@ -135,7 +135,7 @@ try {
             // End Change
                 $content->text .= "<div class='sectionHeader'><b>" . get_string('links', 'block_panopto') . "</b></div>
 		        						 <div class='listItem'>
-		        							<a href='$course_info->CourseSettingsURL' onclick='return panopto_startSSO(this)'
+		        							<a href='$course_info->CourseSettingsURL' onclick='return M.local_panopto.startSSO(this)'
 		        								>" . get_string('course_settings', 'block_panopto') . "</a>
 	        							 </div>\n";
                 $system_info = $panopto_data->get_system_info();
@@ -146,43 +146,6 @@ try {
 						   							| <a href='$system_info->MacRecorderDownloadUrl'>Mac</a>)</span>
 	        							</div>";
             }
-             
-            $content->text .= '
-			<script type="text/javascript">
-	        // Function to pop up Panopto live note taker.
-	        function panopto_launchNotes(url) {
-				// Open empty notes window, then POST SSO form to it.
-				var notesWindow = window.open("", "PanoptoNotes", "width=500,height=800,resizable=1,scrollbars=0,status=0,location=0");
-				document.SSO.action = url;
-				document.SSO.target = "PanoptoNotes";
-				document.SSO.submit();
-	
-				// Ensure the new window is brought to the front of the z-order.
-				notesWindow.focus();
-			}
-					
-			function panopto_startSSO(linkElem) {
-				document.SSO.action = linkElem.href;
-				document.SSO.target = "_blank";
-				document.SSO.submit();
-						
-				// Cancel default link navigation.
-			  	return false;
-			}
-			  		
-			function panopto_toggleHiddenLectures() {
-			  	var showAllToggle = document.getElementById("showAllToggle");
-			  	var hiddenLecturesDiv = document.getElementById("hiddenLecturesDiv");
-			  			
-			  	if(hiddenLecturesDiv.style.display == "block") {
-			  		hiddenLecturesDiv.style.display = "none";
-			  		showAllToggle.innerHTML = "' . get_string('show_all', 'block_panopto') . '";
-			  	} else {
-    			  	hiddenLecturesDiv.style.display = "block";
-    			  	showAllToggle.innerHTML = "' . get_string('show_less', 'block_panopto') . '";
-    			}
-            }
-            </script>';
       }
    }
 }

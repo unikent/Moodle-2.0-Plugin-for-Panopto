@@ -58,6 +58,8 @@ class block_panopto extends block_base {
             $hasCreator = has_capability('block/panopto:panoptocreator', $context);
             $hasViewer = has_capability('block/panopto:panoptoviewer', $context);
 
+            $this->page->requires->string_for_js('show_all', 'block_panopto');
+            $this->page->requires->string_for_js('show_less', 'block_panopto');
 
             if ($role_assign_bool && $hasCreator) {
                 $perm_str = get_string('access_status_creator', 'block_panopto');
@@ -88,8 +90,8 @@ class block_panopto extends block_base {
 
                 // Add in our JS
                 $this->page->requires->js('/blocks/panopto/js/underscore-min.js');
-                $this->page->requires->js('/blocks/panopto/js/panopto_init.js');
                 $this->page->requires->js('/blocks/panopto/js/panopto_tac.js');
+                $this->page->requires->js('/blocks/panopto/js/panopto_init.js');
             } elseif ($hasViewer) {
                 $perm_str = get_string('access_status_viewer', 'block_panopto');
             } else {
@@ -98,7 +100,7 @@ class block_panopto extends block_base {
         }
 
         // Finally, the init call
-        $this->page->requires->js_init_call('M.local_panopto.init', array($COURSE->id, $perm_str, $role_assign_bool), false, array(
+        $this->page->requires->js_init_call('M.local_panopto.init', array($COURSE->id, $perm_str, $role_assign_bool, $this->page->user_is_editing()), false, array(
             'name' => 'local_panopto',
             'fullpath' => '/blocks/panopto/js/ajax.js',
             'requires' => array("node", "io", "dump", "json-parse")

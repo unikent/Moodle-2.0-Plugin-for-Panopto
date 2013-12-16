@@ -33,8 +33,10 @@ M.local_panopto = {
                     } else {
                         panopto.setHTML(data.text);
                         panoptofooter.setHTML(data.footer);
-                        // call local tac js
-                        Y.use('local_panopto_tac', function(Y) { M.local_panopto_tac.init(Y, courseid); });
+                        if (editing) {
+                            // call local tac js
+                            Y.use('local_panopto_tac', function(Y) { M.local_panopto_tac.init(Y, courseid); });
+                        }
                     }
                 },
 
@@ -47,5 +49,35 @@ M.local_panopto = {
                 }
             }
         });
+    },
+    toggleHiddenLectures : function () {
+        var showAllToggle = document.getElementById("showAllToggle");
+        var hiddenLecturesDiv = document.getElementById("hiddenLecturesDiv");
+                
+        if(hiddenLecturesDiv.style.display == "block") {
+            hiddenLecturesDiv.style.display = "none";
+            showAllToggle.innerHTML = M.str.block_panopto.show_all;
+        } else {
+            hiddenLecturesDiv.style.display = "block";
+            showAllToggle.innerHTML = M.str.block_panopto.show_less;
+        }
+    },
+    launchNotes : function (url) {
+        // Open empty notes window, then POST SSO form to it.
+        var notesWindow = window.open("", "PanoptoNotes", "width=500,height=800,resizable=1,scrollbars=0,status=0,location=0");
+        document.SSO.action = url;
+        document.SSO.target = "PanoptoNotes";
+        document.SSO.submit();
+
+        // Ensure the new window is brought to the front of the z-order.
+        notesWindow.focus();
+    },
+    startSSO : function (linkElem) {
+        document.SSO.action = linkElem.href;
+        document.SSO.target = "_blank";
+        document.SSO.submit();
+                
+        // Cancel default link navigation.
+        return false;
     }
 }
