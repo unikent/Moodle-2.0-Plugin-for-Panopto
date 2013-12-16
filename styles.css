@@ -169,7 +169,7 @@
         float: right;
     }
 
-    .block_panopto.block div.content .panoptoterms .helplink img{
+    .block_panopto.block div.content .panoptoterms .helptooltip img{
         visibility: hidden;
         display: none;
     }
