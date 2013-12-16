@@ -12,6 +12,7 @@
       };
 
       function PanoptoTac(el, options) {
+        console.log(options);
         this.acceptTerms = __bind(this.acceptTerms, this);
         this.loadTermsPage = __bind(this.loadTermsPage, this);
         this.loadChoicePage = __bind(this.loadChoicePage, this);
@@ -23,23 +24,22 @@
         this.el = el;
         this.page = 0;
         this.isAnimating = false;
-        this.courseId = window.courseId;
         this.strings = {
-          role_choice_head: window.role_choice_head,
-          role_choice_ac_btn: window.role_choice_ac_btn,
-          role_choice_nac_btn: window.role_choice_nac_btn,
-          role_choice_cancel: window.role_choice_cancel,
-          terms_head: window.terms_head,
-          terms_back_btn: window.terms_back_btn,
-          terms_agree_btn: window.terms_agree_btn,
-          terms_decline_btn: window.terms_decline_btn,
-          accademic_terms: window.accademic_terms,
-          non_accademic_terms: window.non_accademic_terms,
-          success_roleassign: window.success_roleassign,
-          success_sync_succ: window.success_sync_succ,
-          success_sync_fail: window.success_sync_fail,
-          success_extras: window.success_extras,
-          error: window.error
+          role_choice_head: M.str.block_panopto.role_choice_head,
+          role_choice_ac_btn: M.str.block_panopto.role_choice_ac_btn,
+          role_choice_nac_btn: M.str.block_panopto.role_choice_nac_btn,
+          role_choice_cancel: M.str.block_panopto.role_choice_cancel,
+          terms_head: M.str.block_panopto.terms_head,
+          terms_back_btn: M.str.block_panopto.terms_back_btn,
+          terms_agree_btn: M.str.block_panopto.terms_agree_btn,
+          terms_decline_btn: M.str.block_panopto.terms_decline_btn,
+          accademic_terms: M.str.block_panopto.accademic_terms,
+          non_accademic_terms: M.str.block_panopto.non_accademic_terms,
+          success_roleassign: M.str.block_panopto.success_roleassign,
+          success_sync_succ: M.str.block_panopto.success_sync_succ,
+          success_sync_fail: M.str.block_panopto.success_sync_fail,
+          success_extras: M.str.block_panopto.success_extras,
+          error: M.str.block_panopto.error
         };
         this.setUpViews();
         this.loadChoicePage();
@@ -167,7 +167,7 @@
           return $.ajax(M.cfg.wwwroot + '/blocks/panopto/accept_terms.php', {
             data: {
               role: __this.role,
-              course: __this.courseId
+              course: __this.options.courseId
             },
             success: function(result) {
               var success;
