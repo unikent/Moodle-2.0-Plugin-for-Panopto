@@ -16,7 +16,7 @@ $USER->username = 'moodlesync';
 
 $result = array();
 
-// Go through all courses that need updating
+// Go through all courses that need updating and provision them
 $courses = $DB->get_records_select("panopto_course_update_list", "courseid");
 foreach ($courses as $course) {
   $courseid = $course->courseid;
@@ -29,13 +29,14 @@ foreach ($courses as $course) {
 
     $result []= array(
       'result' => 'ok',
-      'in' => $courseid,
-      'out' => '');
+      'course' => $courseid
+    );
   } catch( Exception $e ) {
     $result []= array(
       'result' => 'error',
-      'in' => $courseid,
-      'exception' => $e->getMessage());
+      'course' => $courseid,
+      'exception' => $e->getMessage()
+    );
   }
 }
 

@@ -49,10 +49,8 @@ class panopto_observers {
     	}
 
     	// Add to course update list
-
-		$update_course = new stdClass;
+		$update_course = new \stdClass;
 		$update_course->courseid = $event->courseid;
-
 		$DB->insert_record('panopto_course_update_list', $update_course);
 
     	return true;
