@@ -41,7 +41,20 @@ class panopto_observers {
      * @return void
      */
     public static function user_enrolment_created(\core\event\user_enrolment_created $event) {
-    	add_to_log(SITEID, 'login', 'warning', 'Panoptop', "Hey" . $event->courseid);
+    	global $DB;
+
+    	// Are we already due to update this course?
+    	if ($DB->record_exists('panopto_course_update_list', array('gradeid' => $event->courseid))) {
+    		return true;
+    	}
+
+    	// Add to course update list
+
+		$update_course = new stdClass;
+		$update_course->courseid = $event->courseid;
+
+		$DB->insert_record('panopto_course_update_list', $update_course);
+
     	return true;
     }
 }
