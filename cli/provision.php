@@ -13,16 +13,13 @@ require_once (dirname(__FILE__) . '/../lib/panopto_data.php');
 
 $USER->username = 'moodlesync';
 
-$sql = 'SELECT ctx.id, ctx.instanceid FROM {block_instances} bi
-          LEFT JOIN {context} ctx ON ctx.id = bi.parentcontextid
-        WHERE bi.blockname="panopto" AND ctx.contextlevel = ' . CONTEXT_COURSE;
-
-$courses = $DB->get_records_sql($sql);
 
 $result = array();
 
+// Go through all courses that need updating
+$courses = $DB->get_records_select("panopto_course_update_list", "courseid");
 foreach ($courses as $course) {
-  $courseid = $course->instanceid;
+  $courseid = $course->courseid;
   try {
     $panopto_data = new panopto_data($courseid);
     $provisioning_data = $panopto_data->get_provisioning_info();

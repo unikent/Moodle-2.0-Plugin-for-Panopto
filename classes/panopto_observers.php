@@ -44,7 +44,7 @@ class panopto_observers {
     	global $DB;
 
     	// Are we already due to update this course?
-    	if ($DB->record_exists('panopto_course_update_list', array('gradeid' => $event->courseid))) {
+    	if ($DB->record_exists('panopto_course_update_list', array('courseid' => $event->courseid))) {
     		return true;
     	}
 
