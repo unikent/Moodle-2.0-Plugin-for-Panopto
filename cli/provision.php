@@ -3,32 +3,41 @@
  * Panopto course provisioning script
  */
 
-define('CLI_SCRIPT',true);
+global $CFG, $USER, $DB;
 
-require_once (dirname(__FILE__).'/../../../config.php');
-require_once dirname(__FILE__).'/../lib/panopto_data.php';
+define('CLI_SCRIPT', true);
 
-global $CFG, $USER;
+require_once (dirname(__FILE__) . '/../../../config.php');
+require_once ($CFG->libdir . '/accesslib.php');
+require_once (dirname(__FILE__) . '/../lib/panopto_data.php');
 
 $USER->username = 'moodlesync';
 
+$sql = 'SELECT ctx.id, ctx.instanceid FROM {block_instances} bi
+          LEFT JOIN {context} ctx ON ctx.id = bi.parentcontextid
+        WHERE bi.blockname="panopto" AND ctx.contextlevel = ' . CONTEXT_COURSE;
+
+$courses = $DB->get_records_sql($sql);
+
 $result = array();
 
-foreach (json_decode(file_get_contents('php://stdin')) as $c) {
+foreach ($courses as $course) {
+  $courseid = $course->instanceid;
   try {
-    $panopto_data = new panopto_data(null);
-    $panopto_data->moodle_course_id = $c;
+    $panopto_data = new panopto_data($courseid);
     $provisioning_data = $panopto_data->get_provisioning_info();
-    $provisioned_data = $panopto_data->provision_course($provisioning_data);
+    
+    // Provision the course
+    $panopto_data->provision_course($provisioning_data);
 
     $result []= array(
       'result' => 'ok',
-      'in' => $c,
-      'out' => $provisioned_data);
+      'in' => $courseid,
+      'out' => '');
   } catch( Exception $e ) {
     $result []= array(
       'result' => 'error',
-      'in' => $c,
+      'in' => $courseid,
       'exception' => $e->getMessage());
   }
 }
