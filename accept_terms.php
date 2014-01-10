@@ -63,7 +63,7 @@ else {
 
 email_to_user($USER, get_admin(), get_string('email_subject', 'block_panopto'), $email_plain, $email_html);
 
-if ('1' === $CFG->block_panopto_admin_email_toggle) {
+if (!empty($CFG->block_panopto_admin_email_toggle)) {
 	$email_txt = 'User ' . $USER->firstname . ' ' . $USER->lastname . ' (' . $USER->username . '),';
 	$email_txt .= 'agreed to the ' . $role . ' terms and conditions on ' . date('d/m/Y', time()) . ' at ' . date('G:i', time());
 	email_to_user($CFG->block_panopto_admin_email, get_admin(), get_string('admin_email_subject', 'block_panopto'), $email_txt, $email_txt);

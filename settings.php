@@ -58,7 +58,7 @@ if ($ADMIN->fulltree) {
             'block_panopto_admin_email_toggle',
             get_string('block_panopto_admin_email_toggle', 'block_panopto'),
             '',
-            '1'));
+            true));
 
     $settings->add(
         new admin_setting_configtextarea(
