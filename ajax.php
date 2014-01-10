@@ -15,15 +15,20 @@ global $CFG, $DB, $USER, $OUTPUT,$PAGE;
 $context = context_course::instance($courseid, MUST_EXIST);
 
 $content = new stdClass;
+$content->text = "";
+$content->footer = "";
 
 // Construct the Panopto data proxy object
 $panopto_data = new panopto_data($courseid);
 
 if(empty($panopto_data->servername) || empty($panopto_data->instancename) || empty($panopto_data->applicationkey)) {
     $content->text = get_string('unconfigured', 'block_panopto');
-    $content->footer = "";
-    	
     return $content;
+}
+
+// Add in a status message (if we have one).
+if (!empty($CFG->block_panopto_status_message)) {
+    $content->text = $CFG->block_panopto_status_message;
 }
 
 try {
