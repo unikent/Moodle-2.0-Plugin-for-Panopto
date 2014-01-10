@@ -51,15 +51,20 @@ class block_panopto extends block_base {
         $perm_str = '';
         $role_assign_bool = false;
 
+        $this->page->requires->string_for_js('show_all', 'block_panopto');
+        $this->page->requires->string_for_js('show_less', 'block_panopto');
+
+        $this->page->requires->string_for_js('ajax_json_error', 'block_panopto');
+        $this->page->requires->string_for_js('ajax_data_error', 'block_panopto');
+        $this->page->requires->string_for_js('ajax_failure', 'block_panopto');
+        $this->page->requires->string_for_js('ajax_busy', 'block_panopto');
+
         if ($CFG->kent->distribution !== "2012") {
             $role_assign_bool = $this->has_access();
 
             $context = context_course::instance($COURSE->id, MUST_EXIST);
             $hasCreator = has_capability('block/panopto:panoptocreator', $context);
             $hasViewer = has_capability('block/panopto:panoptoviewer', $context);
-
-            $this->page->requires->string_for_js('show_all', 'block_panopto');
-            $this->page->requires->string_for_js('show_less', 'block_panopto');
 
             if ($role_assign_bool && $hasCreator) {
                 $perm_str = get_string('access_status_creator', 'block_panopto');
@@ -143,8 +148,16 @@ class block_panopto extends block_base {
         global $CFG, $COURSE;
 
         $this->content = new stdClass();
-        $this->content->text = '<div id="panopto-text">Please Wait</div>';
-        $this->content->footer = '<div id="panopto-footer"></div>';
+        $this->content->text = "";
+        $this->content->footer = "";
+
+        // Just return a status message if there is one.
+        if (!empty($CFG->block_panopto_status_message)) {
+            $this->content->text .= "<div id=\"panopto-status\">$CFG->block_panopto_status_message</div>";
+        }
+
+        $this->content->text .= '<div id="panopto-text">Please Wait</div>';
+        $this->content->footer .= '<div id="panopto-footer"></div>';
 
         return $this->content;
     }

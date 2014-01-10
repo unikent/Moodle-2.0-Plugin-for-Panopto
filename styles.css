@@ -110,6 +110,14 @@
     padding: 0px 0px 0px 0px !important;
 }
 
+.block_panopto.block #panopto-status {
+    margin-top: 10px;
+    background-color: #efefef;
+    border-top: 1px solid #e3e3e3;
+    border-bottom: 1px solid #e3e3e3;
+    padding-top: 10px;
+}
+
     .block_panopto.block div.content div {
         padding: 0px 15px 0px 20px;
     }

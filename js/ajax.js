@@ -24,12 +24,12 @@ M.local_panopto = {
                         data = Y.JSON.parse(o.responseText);
                     }
                     catch (e) {
-                        panopto.setHTML("Unable to obtain panopto data (Err Id: 1)");
+                        panopto.setHTML(M.str.block_panopto.ajax_json_error);
                         return;
                     }
 
                     if (data.error) {
-                        panopto.setHTML("Unable to obtain panopto data (Err Id: 2)");
+                        panopto.setHTML(M.str.block_panopto.ajax_data_error);
                     } else {
                         panopto.setHTML(data.text);
                         panoptofooter.setHTML(data.footer);
@@ -42,9 +42,9 @@ M.local_panopto = {
 
                 failure : function (x,o) {
                     if (o.statusText == "timeout") {
-                        panopto.setHTML("Panopto seems to be a bit busy right now! Try again later.");
+                        panopto.setHTML(M.str.block_panopto.ajax_busy);
                     } else {
-                        panopto.setHTML("Unable to obtain panopto data (Err Id: 3)");
+                        panopto.setHTML(M.str.block_panopto.ajax_failure);
                     }
                 }
             }
