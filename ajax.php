@@ -21,7 +21,7 @@ $content->footer = "";
 // Construct the Panopto data proxy object
 $panopto_data = new panopto_data($courseid);
 
-if(empty($panopto_data->servername) || empty($panopto_data->instancename) || empty($panopto_data->applicationkey)) {
+if (empty($panopto_data->servername) || empty($panopto_data->instancename) || empty($panopto_data->applicationkey)) {
     $content->text = get_string('unconfigured', 'block_panopto');
 
     $json = json_encode(array(
@@ -33,20 +33,23 @@ if(empty($panopto_data->servername) || empty($panopto_data->instancename) || emp
 }
 
 try {
-    if(!$panopto_data->sessiongroup_id) {
+    if (!$panopto_data->sessiongroup_id) {
         $content->text .= get_string('no_course_selected', 'block_panopto');
-    } else {
+    }
+    else {
         // Get course info from SOAP service.
         $course_info = $panopto_data->get_course();
 
         // Panopto course was deleted, or an exception was thrown while retrieving course data.
-        if($course_info->Access == "Error") {
+        if ($course_info->Access == "Error") {
             $content->text .= "<span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
-        } else {
+        }
+        else {
             // Kent Change
             if ($CFG->kent->distribution !== "2012") {
                 $content->text .= "<div id='panopto_perm_state'>$perm_str</div>";
-            } else {
+            }
+            else {
                 $role_assign_bool = true;
             }
             // End Kent Change
@@ -59,9 +62,9 @@ try {
              
             $content->text .= '<div><b>' . get_string('live_sessions', 'block_panopto') . '</b></div>';
             $live_sessions = $panopto_data->get_live_sessions();
-            if(!empty($live_sessions)) {
+            if (!empty($live_sessions)) {
                 $i = 0;
-                foreach($live_sessions as $live_session) {
+                foreach ($live_sessions as $live_session) {
                     // Alternate gray background for readability.
                     $altClass = ($i % 2) ? "listItemAlt" : "";
                      
@@ -71,7 +74,7 @@ try {
 												 <span class='nowrap'>
 												 	[<a href='javascript:M.local_panopto.launchNotes(\"$live_session->LiveNotesURL\")'
 												 		>" . get_string('take_notes', 'block_panopto') . '</a>]';
-                    if($live_session->BroadcastViewerURL) {
+                    if ($live_session->BroadcastViewerURL) {
                         $content->text .= "[<a href='$live_session->BroadcastViewerURL' onclick='return M.local_panopto.startSSO(this)'>" . get_string('watch_live', 'block_panopto') . '</a>]';
                     }
                     $content->text .= "
@@ -79,7 +82,8 @@ try {
 											</div>";
                     $i++;
                 }
-            } else {
+            }
+            else {
                 $content->text .= '<div class="listItem">' . get_string('no_live_sessions', 'block_panopto') . '</div>';
             }
              
@@ -87,9 +91,9 @@ try {
             $completed_deliveries = $panopto_data->get_completed_deliveries();
             if (!empty($completed_deliveries)) {
                 $i = 0;
-                foreach($completed_deliveries as $completed_delivery) {
+                foreach ($completed_deliveries as $completed_delivery) {
                     // Collapse to 3 lectures by default
-                    if($i == 3) {
+                    if ($i == 3) {
                         $content->text .= "<div id='hiddenLecturesDiv'>";
                     }
                     	
@@ -106,17 +110,18 @@ try {
                 }
 
                 // If some lectures are hidden, display "Show all" link.
-                if($i > 3) {
+                if ($i > 3) {
                     $content->text .= "</div>";
                     $content->text .= "<div id='showAllDiv'>";
                     $content->text .= "[<a id='showAllToggle' href='javascript:M.local_panopto.toggleHiddenLectures()'>" . get_string('show_all', 'block_panopto') . '</a>]';
                     $content->text .= "</div>";
                 }
-            } else {
+            }
+            else {
                 $content->text .= "<div class='listItem'>" . get_string('no_completed_recordings', 'block_panopto') . '</div>';
             }
              
-            if($course_info->AudioPodcastURL) {
+            if ($course_info->AudioPodcastURL) {
                 $content->text .= "<div class='sectionHeader'><b>" . get_string('podcast_feeds', 'block_panopto') . "</b></div>
 		        						 <div class='listItem'>
 		        						 	<img src='$CFG->wwwroot/blocks/panopto/images/feed_icon.gif' />
@@ -125,7 +130,7 @@ try {
 		        								><a href='$course_info->AudioRssURL' target='_blank' class='rssLink'>RSS</a
 	        								><span class='rssParen'>)</span>
                         				 </div>";
-                if($course_info->VideoPodcastURL) {
+                if ($course_info->VideoPodcastURL) {
                     $content->text .= "
 		        						 <div class='listItem'>
 	        								<img src='$CFG->wwwroot/blocks/panopto/images/feed_icon.gif' />	
@@ -137,7 +142,7 @@ try {
                 }
             }
             // Kent Change
-            if(has_capability('moodle/course:update', $context) && $role_assign_bool) {
+            if (has_capability('moodle/course:update', $context) && $role_assign_bool) {
             // End Change
                 $content->text .= "<div class='sectionHeader'><b>" . get_string('links', 'block_panopto') . "</b></div>
 		        						 <div class='listItem'>
@@ -155,15 +160,16 @@ try {
       }
    }
 }
-catch(Exception $e) {
+catch (Exception $e) {
     $content->text .= "<br><br><span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
 }
 
 $content->text .= "<span class='panoptoextras'>";
 $context = context_course::instance($courseid);
-if(has_capability('moodle/course:update', $context)) {
+if (has_capability('moodle/course:update', $context)) {
     $content->text .= "<span class='panoptohelp'>" . $OUTPUT->help_icon('help_staff', 'block_panopto') . "</span>";
-} else {
+}
+else {
     $content->text .= "<span class='panoptohelp'>" .$OUTPUT->help_icon('help_student', 'block_panopto') . "</span>";
 }
 $content->text .= "<span class='panoptoterms'>" . $OUTPUT->help_icon('help_terms', 'block_panopto', get_string('terms_link_title', 'block_panopto')) . "</span>"; 
