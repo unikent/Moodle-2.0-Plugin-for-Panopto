@@ -73,6 +73,7 @@ $string['ajax_json_error'] = 'Unable to obtain panopto data (Err Id: 1)';
 $string['ajax_data_error'] = 'Unable to obtain panopto data (Err Id: 2)';
 $string['ajax_failure'] = 'Unable to obtain panopto data (Err Id: 3)';
 $string['ajax_busy'] = 'Panopto seems to be a bit busy right now! Try again later.';
+$string['block_panopto_status_message'] = 'Panopto status message.';
 
 //Block permissions status and link to tcs
 $string['access_status_creator'] = 'Access: Creator';

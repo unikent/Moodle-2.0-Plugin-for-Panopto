@@ -59,6 +59,14 @@ if ($ADMIN->fulltree) {
             get_string('block_panopto_admin_email_toggle', 'block_panopto'),
             '',
             '1'));
+
+    $settings->add(
+        new admin_setting_configtext(
+            'block_panopto_status_message',
+            get_string('block_panopto_status_message', 'block_panopto'),
+            '',
+            '',
+            PARAM_RAW));
     // End Change
 
     $link ='<a href="'.$CFG->wwwroot.'/blocks/panopto/provision_course.php">' . get_string('block_global_add_courses', 'block_panopto') . '</a>';
