@@ -148,8 +148,16 @@ class block_panopto extends block_base {
         global $CFG, $COURSE;
 
         $this->content = new stdClass();
-        $this->content->text = '<div id="panopto-text">Please Wait</div>';
-        $this->content->footer = '<div id="panopto-footer"></div>';
+        $this->content->text = "";
+        $this->content->footer = "";
+
+        // Just return a status message if there is one.
+        if (!empty($CFG->block_panopto_status_message)) {
+            $this->content->text .= "<div id=\"panopto-status\">$CFG->block_panopto_status_message</div>";
+        }
+
+        $this->content->text .= '<div id="panopto-text">Please Wait</div>';
+        $this->content->footer .= '<div id="panopto-footer"></div>';
 
         return $this->content;
     }

@@ -32,11 +32,6 @@ if(empty($panopto_data->servername) || empty($panopto_data->instancename) || emp
     die($json);
 }
 
-// Add in a status message (if we have one).
-if (!empty($CFG->block_panopto_status_message)) {
-    $content->text = $CFG->block_panopto_status_message;
-}
-
 try {
     if(!$panopto_data->sessiongroup_id) {
         $content->text .= get_string('no_course_selected', 'block_panopto');
