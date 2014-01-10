@@ -51,6 +51,9 @@ class block_panopto extends block_base {
         $perm_str = '';
         $role_assign_bool = false;
 
+        $this->page->requires->string_for_js('show_all', 'block_panopto');
+        $this->page->requires->string_for_js('show_less', 'block_panopto');
+
         $this->page->requires->string_for_js('ajax_json_error', 'block_panopto');
         $this->page->requires->string_for_js('ajax_data_error', 'block_panopto');
         $this->page->requires->string_for_js('ajax_failure', 'block_panopto');
@@ -62,9 +65,6 @@ class block_panopto extends block_base {
             $context = context_course::instance($COURSE->id, MUST_EXIST);
             $hasCreator = has_capability('block/panopto:panoptocreator', $context);
             $hasViewer = has_capability('block/panopto:panoptoviewer', $context);
-
-            $this->page->requires->string_for_js('show_all', 'block_panopto');
-            $this->page->requires->string_for_js('show_less', 'block_panopto');
 
             if ($role_assign_bool && $hasCreator) {
                 $perm_str = get_string('access_status_creator', 'block_panopto');
