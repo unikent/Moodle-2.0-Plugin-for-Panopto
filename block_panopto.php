@@ -51,6 +51,11 @@ class block_panopto extends block_base {
         $perm_str = '';
         $role_assign_bool = false;
 
+        $this->page->requires->string_for_js('ajax_json_error', 'block_panopto');
+        $this->page->requires->string_for_js('ajax_data_error', 'block_panopto');
+        $this->page->requires->string_for_js('ajax_failure', 'block_panopto');
+        $this->page->requires->string_for_js('ajax_busy', 'block_panopto');
+
         if ($CFG->kent->distribution !== "2012") {
             $role_assign_bool = $this->has_access();
 
@@ -60,10 +65,6 @@ class block_panopto extends block_base {
 
             $this->page->requires->string_for_js('show_all', 'block_panopto');
             $this->page->requires->string_for_js('show_less', 'block_panopto');
-            $this->page->requires->string_for_js('ajax_json_error', 'block_panopto');
-            $this->page->requires->string_for_js('ajax_data_error', 'block_panopto');
-            $this->page->requires->string_for_js('ajax_failure', 'block_panopto');
-            $this->page->requires->string_for_js('ajax_busy', 'block_panopto');
 
             if ($role_assign_bool && $hasCreator) {
                 $perm_str = get_string('access_status_creator', 'block_panopto');
