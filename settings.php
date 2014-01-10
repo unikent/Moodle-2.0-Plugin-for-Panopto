@@ -61,7 +61,7 @@ if ($ADMIN->fulltree) {
             '1'));
 
     $settings->add(
-        new admin_setting_configtext(
+        new admin_setting_configtextarea(
             'block_panopto_status_message',
             get_string('block_panopto_status_message', 'block_panopto'),
             '',
