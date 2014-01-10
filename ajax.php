@@ -23,7 +23,13 @@ $panopto_data = new panopto_data($courseid);
 
 if(empty($panopto_data->servername) || empty($panopto_data->instancename) || empty($panopto_data->applicationkey)) {
     $content->text = get_string('unconfigured', 'block_panopto');
-    return $content;
+
+    $json = json_encode(array(
+        "footer" => $content->footer,
+        "text" => $content->text
+    ));
+
+    die($json);
 }
 
 // Add in a status message (if we have one).
