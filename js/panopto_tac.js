@@ -153,7 +153,7 @@
         }
       };
 
-      window.PanoptoTac.prototype.acceptTerms = function(e) {
+      PanoptoTac.prototype.acceptTerms = function(e) {
         var loading, __this;
         e.preventDefault();
         __this = this;
