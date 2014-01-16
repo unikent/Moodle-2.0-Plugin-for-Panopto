@@ -10,7 +10,7 @@ require_sesskey();
 $courseid = required_param('courseid', PARAM_INTEGER);
 $perm_str = required_param('permstr', PARAM_RAW);
 $role_assign_bool = required_param('role_assign_bool', PARAM_RAW);
-$is_editing = optional_param('editing', 0, PARAM_INTEGER);
+$is_editing = optional_param('editing', 0, PARAM_BOOL);
 
 global $CFG, $DB, $USER, $OUTPUT;
 $context = context_course::instance($courseid, MUST_EXIST);
