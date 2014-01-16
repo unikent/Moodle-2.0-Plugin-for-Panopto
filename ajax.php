@@ -10,8 +10,9 @@ require_sesskey();
 $courseid = required_param('courseid', PARAM_INTEGER);
 $perm_str = required_param('permstr', PARAM_RAW);
 $role_assign_bool = required_param('role_assign_bool', PARAM_RAW);
+$is_editing = optional_param('editing', 0, PARAM_INTEGER);
 
-global $CFG, $DB, $USER, $OUTPUT,$PAGE;
+global $CFG, $DB, $USER, $OUTPUT;
 $context = context_course::instance($courseid, MUST_EXIST);
 
 $content = new stdClass;
@@ -176,7 +177,7 @@ $content->text .= "<span class='panoptoterms'>" . $OUTPUT->help_icon('help_terms
 $content->text .= "</span>";
 
 $content->footer = ' ';
-if ($PAGE->user_is_editing()) {
+if ($is_editing) {
     $params = new stdClass;
     $params->course_id = $courseid;
     $params->return_url = "/course/view.php?id=" . $courseid;
