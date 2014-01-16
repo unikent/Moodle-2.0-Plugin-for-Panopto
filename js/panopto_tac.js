@@ -153,7 +153,7 @@
         }
       };
 
-      PanoptoTac.prototype.acceptTerms = function(e) {
+      window.PanoptoTac.prototype.acceptTerms = function(e) {
         var loading, __this;
         e.preventDefault();
         __this = this;
@@ -168,10 +168,11 @@
               role: __this.role,
               course: __this.options.courseid
             },
+            dataType: 'json',
             success: function(result) {
               var success;
               $('.panoptotac_loading', _this).fadeOut();
-              success = "<div class='panoptotac_success'>Success<span>" + ("" + __this.strings.success_roleassign) + ("" + (result.course_provision === true ? __this.strings.success_sync_succ : __this.strings.success_sync_fail)) + ("" + __this.strings.success_extras) + "</span></div>";
+              success = "<div class='panoptotac_success'>Success<span>" + ("" + __this.strings.success_roleassign) + ("" + (result.course_provision ? __this.strings.success_sync_succ : __this.strings.success_sync_fail)) + ("" + __this.strings.success_extras) + "</span></div>";
               $('.panoptotac_terms .panoptotac_content').hide(function() {
                 return $(this).html(success).fadeIn();
               });
