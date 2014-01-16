@@ -166,7 +166,7 @@
           return $.ajax(M.cfg.wwwroot + '/blocks/panopto/accept_terms.php', {
             data: {
               role: __this.role,
-              course: __this.options.courseId
+              course: __this.options.courseid
             },
             success: function(result) {
               var success;
