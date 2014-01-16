@@ -58,6 +58,8 @@ class block_panopto extends block_base {
         $this->page->requires->string_for_js('ajax_data_error', 'block_panopto');
         $this->page->requires->string_for_js('ajax_failure', 'block_panopto');
         $this->page->requires->string_for_js('ajax_busy', 'block_panopto');
+        
+        $this->page->requires->string_for_js('error', 'block_panopto');
 
         if ($CFG->kent->distribution !== "2012") {
             $role_assign_bool = $this->has_access();
@@ -91,7 +93,6 @@ class block_panopto extends block_base {
                 $this->page->requires->string_for_js('success_sync_succ', 'block_panopto');
                 $this->page->requires->string_for_js('success_sync_fail', 'block_panopto');
                 $this->page->requires->string_for_js('success_extras', 'block_panopto');
-                $this->page->requires->string_for_js('error', 'block_panopto');
 
                 // Add in our JS
                 $this->page->requires->js('/blocks/panopto/js/underscore-min.js');
