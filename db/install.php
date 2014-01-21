@@ -42,5 +42,12 @@ function xmldb_block_panopto_install() {
         	"",
         	"Authenticated user"
         );
+        
+        create_role(
+            "KentPlayer Recorder",
+            "panopto_creator",
+            "",
+            ""
+        );
     }
 }
