@@ -169,5 +169,53 @@ class block_panopto extends block_base {
             'all' => true
         );
     }
+
+    /**
+     * cron - goes through all pending synchronisations and runs them
+     *
+     * @return boolean true if all feeds were retrieved succesfully
+     */
+    function cron() {
+        global $DB;
+
+        mtrace('');
+
+        $panopto_data = new panopto_data(null);
+
+        // Grab 25 updates
+        $rs = $DB->get_recordset('panopto_course_update_list', null, '', '*', 0, 25);
+        foreach ($rs as $rec) {
+            mtrace('Panopto - Provisioning ' . $rec->courseid);
+
+            // Try to provision
+
+            $panopto_data->moodle_course_id = $rec->courseid;
+
+            try {
+                $provisioning_data = $panopto_data->get_provisioning_info();
+
+                // Provision the course
+                $panopto_data->provision_course($provisioning_data);
+
+                mtrace('Success!');
+            }
+            catch(Exception $e) {
+                mtrace('Error...');
+                mtrace($e->getMessage());
+                mtrace('');
+            }
+        }
+
+        // Clear out the DB
+        $DB->delete_records_list("panopto_course_update_list", "courseid", array_map(function($rec) {
+          return $rec->courseid;
+        }, $rs));
+
+        mtrace('Finished Panopto Course Synchronisations');
+        mtrace('');
+
+        
+        return true;
+    }
 }
 // End of block_panopto.php
