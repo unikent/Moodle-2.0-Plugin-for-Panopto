@@ -178,9 +178,16 @@ class block_panopto extends block_base {
     function cron() {
         global $DB;
 
+        require_once(dirname(__FILE__) . '/lib/panopto_data.php');
+
         mtrace('');
 
         $panopto_data = new panopto_data(null);
+
+        if (empty($panopto_data->servername) || empty($panopto_data->instancename) || empty($panopto_data->applicationkey)) {
+            mtrace('Panopto is not configured to run, leaving alone...');
+            return true;
+        }
 
         // Grab 25 updates
         $rs = $DB->get_recordset('panopto_course_update_list', null, '', '*', 0, 25);
