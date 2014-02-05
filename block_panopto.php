@@ -190,18 +190,19 @@ class block_panopto extends block_base {
         }
 
         // Grab 25 updates
+        $rs_ids = array();
         $rs = $DB->get_recordset('panopto_course_update_list', null, '', '*', 0, 25);
         foreach ($rs as $rec) {
             mtrace('Panopto - Provisioning ' . $rec->courseid);
 
-            // Try to provision
-
+            $rs_ids[] = $rec->courseid;
             $panopto_data->moodle_course_id = $rec->courseid;
 
             try {
+                // Try to provision.
                 $provisioning_data = $panopto_data->get_provisioning_info();
 
-                // Provision the course
+                // Provision the course.
                 $panopto_data->provision_course($provisioning_data);
 
                 mtrace('Success!');
@@ -211,12 +212,13 @@ class block_panopto extends block_base {
                 mtrace($e->getMessage());
                 mtrace('');
             }
+
         }
 
         // Clear out the DB
-        $DB->delete_records_list("panopto_course_update_list", "courseid", array_map(function($rec) {
-          return $rec->courseid;
-        }, $rs));
+        if (!empty($rs_ids)) {
+            $DB->delete_records_list("panopto_course_update_list", "courseid", $rs_ids);
+        }
 
         mtrace('Finished Panopto Course Synchronisations');
         mtrace('');
