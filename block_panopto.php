@@ -72,7 +72,13 @@ class block_panopto extends block_base {
                 $perm_str = get_string('access_status_creator', 'block_panopto');
             } elseif ($hasCreator && $this->page->user_is_editing()) {
                 $perm_str = get_string('access_status_tcs', 'block_panopto') . ' <div id="panopto_ts_button">'.get_string('access_status_tcs_btn', 'block_panopto').'</div>';
+            } elseif ($hasViewer) {
+                $perm_str = get_string('access_status_viewer', 'block_panopto');
+            } else {
+                $perm_str = get_string('access_status_none', 'block_panopto');
+            }
 
+            if ($this->page->user_is_editing()) {
                 // We need jQuery!
                 $this->page->requires->jquery();
                 $this->page->requires->jquery_plugin('migrate');
@@ -96,12 +102,8 @@ class block_panopto extends block_base {
 
                 // Add in our JS
                 $this->page->requires->js('/blocks/panopto/js/underscore-min.js');
-                $this->page->requires->js('/blocks/panopto/js/panopto_tac.js');
                 $this->page->requires->js('/blocks/panopto/js/panopto_init.js');
-            } elseif ($hasViewer) {
-                $perm_str = get_string('access_status_viewer', 'block_panopto');
-            } else {
-                $perm_str = get_string('access_status_none', 'block_panopto');
+                $this->page->requires->js('/blocks/panopto/js/panopto_tac.js');
             }
         }
 
