@@ -28,24 +28,20 @@ defined('MOODLE_INTERNAL') || die;
 function xmldb_block_panopto_install() {
     global $CFG;
 
-    if (\phpunit_util::is_test_site()) {
-        return true;
-    }
-
     create_role(
     	"Panopto academic user",
     	"panopto_academic",
     	"",
     	"Authenticated user"
     );
-    
+
     create_role(
     	"Panopto non academic user",
     	"panopto_non_academic",
     	"",
     	"Authenticated user"
     );
-    
+
     create_role(
         "KentPlayer Recorder",
         "panopto_creator",
