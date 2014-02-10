@@ -29,23 +29,23 @@ function xmldb_block_panopto_install() {
     global $CFG;
 
     create_role(
-    	"Panopto academic user",
+    	"Academic (Panopto)",
     	"panopto_academic",
-    	"",
-    	"Authenticated user"
+    	"Panopto Academic User",
+        "panopto_academic"
     );
 
     create_role(
-    	"Panopto non academic user",
+    	"Non-Academic (Panopto)",
     	"panopto_non_academic",
-    	"",
-    	"Authenticated user"
+    	"Panopto Non-Academic User",
+        "panopto_non_academic"
     );
 
     create_role(
-        "KentPlayer Recorder",
+        "Course Creator (Panopto)",
         "panopto_creator",
-        "",
-        ""
+        "Panopto Course Creator",
+        "panopto_creator"
     );
 }
