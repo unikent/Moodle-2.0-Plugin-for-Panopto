@@ -25,7 +25,7 @@ switch ($role) {
 		break;
 }
 
-$role = $DB->get_record('role', array('shortname' => $role));
+$role = \block_panopto\util::get_role($role);
 if ($role === false) {
 	throw new moodle_exception('Incorrect role given');
 }
