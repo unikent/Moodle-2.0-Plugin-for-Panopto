@@ -52,7 +52,7 @@ if (has_capability('block/panopto:provision_course', $crsContext)) {
 	$course_provision = empty($provisioned_data) ? false : true;
 }
 
-if ($role = 'panopto_academic') {
+if ($role->shortname == 'panopto_academic') {
 	$email_plain = get_string('accademic_terms_plain_txt', 'block_panopto');
 	$email_html = get_string('accademic_terms', 'block_panopto');
 }
