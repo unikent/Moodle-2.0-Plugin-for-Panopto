@@ -39,7 +39,7 @@ class util {
 	 * Ensures a role is created, then returns it.
 	 */
 	public static function get_role($shortname) {
-		global $DB;
+		global $DB, $CFG;
 
 		static $data_map = array(
 	        "panopto_academic" => array(
