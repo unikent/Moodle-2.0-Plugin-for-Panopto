@@ -69,7 +69,7 @@ class util {
         // Create this if it doesnt exist.
         if (!$DB->record_exists('role', array('shortname' => $shortname))) {
             require_once($CFG->libdir . "/accesslib.php");
-            create_role($data_map[$shortname]);
+            call_user_func_array("create_role", $data_map[$shortname]);
         }
 
         return $DB->get_record('role', array(
