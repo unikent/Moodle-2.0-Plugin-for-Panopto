@@ -32,20 +32,20 @@ function xmldb_block_panopto_install() {
     	"Academic (Panopto)",
     	"panopto_academic",
     	"Panopto Academic User",
-        "panopto_academic"
+        "user"
     );
 
     create_role(
     	"Non-Academic (Panopto)",
     	"panopto_non_academic",
     	"Panopto Non-Academic User",
-        "panopto_non_academic"
+        "user"
     );
 
     create_role(
         "Course Creator (Panopto)",
         "panopto_creator",
         "Panopto Course Creator",
-        "panopto_creator"
+        "user"
     );
 }
