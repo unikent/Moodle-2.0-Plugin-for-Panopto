@@ -48,9 +48,8 @@ class panopto_observers {
     		return true;
     	}
 
-        $ctx = \context_course::instance($event->courseid);
-
         // Do we have a valid Panopto module?
+        $ctx = \context_course::instance($event->courseid);
         if (!$DB->record_exists('block_instances', array('blockname' => 'panopto', 'parentcontextid' => $ctx->id))) {
             return true;
         }
