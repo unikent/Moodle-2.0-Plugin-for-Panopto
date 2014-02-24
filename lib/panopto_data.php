@@ -144,8 +144,8 @@ class panopto_data {
 
         if(!empty($instructors)) {
             // Kent Change
-            $ar = $DB->get_record('role', array('shortname' => 'panopto_academic'));
-            $nar = $DB->get_record('role', array('shortname' => 'panopto_non_academic'));
+            $ar = \block_panopto\util::get_role('panopto_academic');
+            $nar = \block_panopto\util::get_role('panopto_non_academic');
             // End Change
 
             $provisioning_info->Instructors = array();

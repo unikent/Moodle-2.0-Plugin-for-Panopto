@@ -31,10 +31,10 @@ class block_panopto extends block_base {
     private function has_access() {
         global $DB, $USER;
 
-        $ar = $DB->get_record('role', array('shortname' => 'panopto_academic'));
+        $ar = \block_panopto\util::get_role('panopto_academic');
         $ar_check = !empty($ar) ? user_has_role_assignment($USER->id, $ar->id, context_system::instance()->id) : false;
 
-        $nar = $DB->get_record('role', array('shortname' => 'panopto_non_academic'));
+        $nar = \block_panopto\util::get_role('panopto_non_academic');
         $nar_check = !empty($nar) ? user_has_role_assignment($USER->id, $nar->id, context_system::instance()->id) : false;
 
         return $ar_check || $nar_check;
