@@ -143,7 +143,6 @@ class panopto_data {
         $provisioning_info = new stdClass;
         $provisioning_info->ShortName = $shortname;
         $provisioning_info->LongName = $longname;
-
         // There must be a primary course, which is unfortunate.
         $provisioning_info->ExternalCourseID = $this->instancename . ":" . $this->moodle_course_id;
 
