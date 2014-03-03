@@ -182,7 +182,7 @@ class panopto_data {
     // End Change
 
     // Fetch course name and membership info from DB in preparation for provisioning operation.
-    function get_provisioning_info() {
+    function get_provisioning_info($depth = 0) {
         // Kent Change
         global $DB, $CFG;
         // End Change
@@ -198,11 +198,12 @@ class panopto_data {
 
         // Lookup table to avoid adding instructors as Viewers as well as Creators.
         $instructor_hash = array();
-         
+
         // moodle/course:update capability will include admins along with teachers, course creators, etc.
         // Could also use moodle/legacy:teacher, moodle/legacy:editingteacher, etc. if those turn out to be more appropriate.
         // Kent Change
         $instructors = get_users_by_capability($course_context, 'block/panopto:panoptocreator');
+        $provisioning_info->Instructors = array();
         // End Change
 
         if(!empty($instructors)) {
@@ -211,7 +212,6 @@ class panopto_data {
             $nar = \block_panopto\util::get_role('panopto_non_academic');
             // End Change
 
-            $provisioning_info->Instructors = array();
             foreach($instructors as $instructor) {
                 // Kent Change
                 if ($CFG->kent->distribution !== "2012" &&
@@ -237,12 +237,14 @@ class panopto_data {
         // Use get_enrolled_users because, as of Moodle 2.0, capability moodle/course:view no longer corresponds to a participant list.
         // Kent Change
         $students = get_users_by_capability($course_context, 'block/panopto:panoptoviewer');
+        $provisioning_info->Students = array();
         // End Change
 
-        if(!empty($students)) {
-            $provisioning_info->Students = array();
-            foreach($students as $student) {
-                if(array_key_exists($student->username, $instructor_hash)) continue;
+        if (!empty($students)) {
+            foreach ($students as $student) {
+                if (array_key_exists($student->username, $instructor_hash)) {
+                    continue;
+                }
 
                 $student_info = new stdClass;
                 $student_info->UserKey = $this->panopto_decorate_username($student->username);
@@ -254,29 +256,37 @@ class panopto_data {
 
         // Kent Change
         // We also want to check for "related" courses, e.g. courses that display this course's block.
-        $courses = $DB->get_records('block_panopto_foldermap', array(
-            'panopto_id' => $this->sessiongroup_id
-        ));
-        foreach ($courses as $course) {
-            if ($course->moodleid == $this->moodle_course_id) {
-                continue;
-            }
-
-            // Add in students and lecturers from this course.
-            $tmp_data = new panopto_data($course->moodleid);
-            $info = $tmp_data->get_provisioning_info();
-
-            // First Instructors.
-            foreach ($info->Instructors as $instructor) {
-                if (!in_array($instructor, $provisioning_info->Instructors)) {
-                    array_push($provisioning_info->Instructors, $instructor);
+        if ($depth === 0) {
+            $courses = $DB->get_records('block_panopto_foldermap', array(
+                'panopto_id' => self::get_panopto_course_id($this->moodle_course_id)
+            ));
+            foreach ($courses as $course) {
+                if ($course->moodleid == $this->moodle_course_id) {
+                    continue;
                 }
-            }
 
-            // Then Students.
-            foreach ($info->Students as $student) {
-                if (!in_array($student, $provisioning_info->Students)) {
-                    array_push($provisioning_info->Students, $student);
+                // Add in students and lecturers from this course.
+                $tmp_data = new panopto_data($course->moodleid);
+                $info = $tmp_data->get_provisioning_info(1);
+
+                // First Instructors.
+                foreach ($info->Instructors as $instructor) {
+                    if (!in_array($instructor, $provisioning_info->Instructors)) {
+                        array_push($provisioning_info->Instructors, $instructor);
+                    }
+
+                    $instructor_hash[$instructor->UserKey] = true;
+                }
+
+                // Then Students.
+                foreach ($info->Students as $student) {
+                    if (array_key_exists($student->UserKey, $instructor_hash)) {
+                        continue;
+                    }
+
+                    if (!in_array($student, $provisioning_info->Students)) {
+                        array_push($provisioning_info->Students, $student);
+                    }
                 }
             }
         }

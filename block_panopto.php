@@ -135,10 +135,18 @@ class block_panopto extends block_base {
 
     // Save per-instance config in custom table instead of mdl_block_instance configdata column
     function instance_config_save($data, $nolongerused = false) {
-        global $COURSE;
+        global $DB, $COURSE;
 
         if (!empty($data->course)) {
             require_once(dirname(__FILE__) . '/lib/panopto_data.php');
+
+            // Mark the course for update.
+            if (!$DB->record_exists('panopto_course_update_list', array('courseid' => $COURSE->id))) {
+                $DB->insert_record('panopto_course_update_list', array(
+                    "courseid" => $COURSE->id
+                ));
+            }
+
             return panopto_data::set_panopto_course_id($COURSE->id, $data->course);
         }
 
