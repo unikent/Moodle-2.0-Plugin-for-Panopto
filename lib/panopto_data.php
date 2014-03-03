@@ -373,14 +373,18 @@ class panopto_data {
     }
 
     // Called by Moodle block instance config save method, so must be static.
-    static function set_panopto_course_id($moodle_course_id, $sessiongroup_id) {
+    static function set_panopto_course_id($moodle_course_id, $sessiongroup_id, $master = true) {
         global $DB;
-        if($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodle_course_id))) {
+
+        if ($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodle_course_id))) {
             return $DB->set_field('block_panopto_foldermap', 'panopto_id', $sessiongroup_id, array('moodleid' => $moodle_course_id));
-        } else {
-            $row = (object) array('moodleid' => $moodle_course_id, 'panopto_id' => $sessiongroup_id);
-            return $DB->insert_record('block_panopto_foldermap', $row);
         }
+
+        return $DB->insert_record('block_panopto_foldermap', array(
+            'moodleid' => $moodle_course_id,
+            'panopto_id' => $sessiongroup_id,
+            'master' => $master ? 1 : 0
+        ));
     }
 
     function get_course_options() {

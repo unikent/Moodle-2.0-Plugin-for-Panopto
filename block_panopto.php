@@ -147,7 +147,7 @@ class block_panopto extends block_base {
                 ));
             }
 
-            return panopto_data::set_panopto_course_id($COURSE->id, $data->course);
+            return panopto_data::set_panopto_course_id($COURSE->id, $data->course, false);
         }
 
         // If server is not set globally, there will be no other form values to push into config.
