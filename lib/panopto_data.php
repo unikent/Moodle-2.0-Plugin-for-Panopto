@@ -251,6 +251,37 @@ class panopto_data {
             }
         }
 
+
+        // Kent Change
+        // We also want to check for "related" courses, e.g. courses that display this course's block.
+        $courses = $DB->get_records('block_panopto_foldermap', array(
+            'panopto_id' => $this->sessiongroup_id
+        ));
+        foreach ($courses as $course) {
+            if ($course->moodleid == $this->moodle_course_id) {
+                continue;
+            }
+
+            // Add in students and lecturers from this course.
+            $tmp_data = new panopto_data($course->moodleid);
+            $info = $tmp_data->get_provisioning_info();
+
+            // First Instructors.
+            foreach ($info->Instructors as $instructor) {
+                if (!in_array($instructor, $provisioning_info->Instructors)) {
+                    array_push($provisioning_info->Instructors, $instructor);
+                }
+            }
+
+            // Then Students.
+            foreach ($info->Students as $student) {
+                if (!in_array($student, $provisioning_info->Students)) {
+                    array_push($provisioning_info->Students, $student);
+                }
+            }
+        }
+        // End Change
+
         return $provisioning_info;
     }
 

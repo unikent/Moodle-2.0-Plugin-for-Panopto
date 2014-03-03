@@ -177,7 +177,7 @@ class block_panopto extends block_base {
      *
      * @return boolean true if all feeds were retrieved succesfully
      */
-    function cron() {
+    public function cron() {
         global $DB;
 
         require_once(dirname(__FILE__) . '/lib/panopto_data.php');
@@ -208,13 +208,11 @@ class block_panopto extends block_base {
                 $panopto_data->provision_course($provisioning_data);
 
                 mtrace('Success!');
-            }
-            catch(Exception $e) {
+            } catch (Exception $e) {
                 mtrace('Error...');
                 mtrace($e->getMessage());
                 mtrace('');
             }
-
         }
 
         // Clear out the DB
@@ -225,7 +223,6 @@ class block_panopto extends block_base {
         mtrace('Finished Panopto Course Synchronisations');
         mtrace('');
 
-        
         return true;
     }
 }
