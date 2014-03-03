@@ -87,7 +87,7 @@ class panopto_data {
 
     // Kent Change
     // Provision folders for each of a courses instructors
-    function provision_user_folders($provisioning_info) {
+    public function provision_user_folders($provisioning_info) {
         global $CFG;
 
         // Dont do this for 2012
@@ -104,7 +104,7 @@ class panopto_data {
         foreach ($provisioning_info->Instructors as $instructor) {
             $instructor_folder = new stdClass;
             $userkey = explode("\\", $instructor->UserKey);
-            $instructor_folder->ShortName ='';
+            $instructor_folder->ShortName = '';
             $instructor_folder->LongName = $userkey[1] . "'s unlisted recordings";
             $instructor_folder->ExternalCourseID = $this->instancename . ":" . $userkey[1];
 
@@ -115,6 +115,70 @@ class panopto_data {
         }
 
         return $folder_infos;
+    }
+    // End Change
+
+    // Kent Change
+    /**
+     * Create a shared folder between multiple courses
+     */
+    public function provision_shared_folder($courses, $shortname, $longname) {
+        if (empty($courses)) {
+            throw new \moodle_exception("You must specify one or more courses!");
+        }
+
+        // First, extract a set of provisioning information for each course.
+        $provisioning_infos = array();
+        {
+            $saved_id = $this->moodle_course_id;
+            foreach ($courses as $course) {
+                $this->moodle_course_id = $course->id;
+                $provisioning_infos[] = $this->get_provisioning_info();
+            }
+
+            $this->moodle_course_id = $saved_id;
+        }
+
+        // Now merge it all into one giant block.
+        $provisioning_info = new stdClass;
+        $provisioning_info->ShortName = $shortname;
+        $provisioning_info->LongName = $longname;
+
+        // There must be a primary course, which is unfortunate.
+        $provisioning_info->ExternalCourseID = $this->instancename . ":" . $this->moodle_course_id;
+
+        // Merge Instructors in.
+        {
+            $provisioning_info->Instructors = array();
+            foreach ($provisioning_infos as $pi) {
+                foreach ($pi->Instructors as $instructor) {
+                    if (!isset($provisioning_info->Instructors[$instructor->UserKey])) {
+                        $provisioning_info->Instructors[$instructor->UserKey] = $instructor;
+                    }
+                }
+            }
+
+            // Reset the keys.
+            $provisioning_info->Instructors = array_values($provisioning_info->Instructors);
+        }
+
+        // Merge Students in.
+        {
+            $provisioning_info->Students = array();
+            foreach ($provisioning_infos as $pi) {
+                foreach ($pi->Students as $student) {
+                    if (!isset($provisioning_info->Students[$student->UserKey])) {
+                        $provisioning_info->Students[$student->UserKey] = $student;
+                    }
+                }
+            }
+
+            // Reset the keys.
+            $provisioning_info->Students = array_values($provisioning_info->Students);
+        }
+
+        // Create the "course" in Panopto.
+        return $this->soap_client->ProvisionCourse($provisioning_info);
     }
     // End Change
 
