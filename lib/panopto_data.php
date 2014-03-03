@@ -182,13 +182,25 @@ class panopto_data {
     // End Change
 
     // Fetch course name and membership info from DB in preparation for provisioning operation.
-    function get_provisioning_info($depth = 0) {
+    function get_provisioning_info($master = true) {
         // Kent Change
         global $DB, $CFG;
         // End Change
 
         // Kent Change
         $provisioning_info = new stdClass;
+        // Support course linking if this is the master course in a chain.
+        if ($master) {
+            $panoptoid = self::get_panopto_course_id($this->moodle_course_id);
+            $count = $DB->count_records('block_panopto_foldermap', array(
+                'panopto_id' => $panoptoid
+            ));
+            // Select the master and provision that instead.
+            $this->moodle_course_id = $DB->get_field('block_panopto_foldermap', 'moodleid', array(
+                'panopto_id' => $panoptoid,
+                'master' => 1
+            ));
+        }
         // End Change
         $provisioning_info->ShortName = $DB->get_field('course', 'shortname', array('id' => $this->moodle_course_id));
         $provisioning_info->LongName = $DB->get_field('course', 'fullname', array('id' => $this->moodle_course_id));
@@ -256,7 +268,7 @@ class panopto_data {
 
         // Kent Change
         // We also want to check for "related" courses, e.g. courses that display this course's block.
-        if ($depth === 0) {
+        if ($master) {
             $courses = $DB->get_records('block_panopto_foldermap', array(
                 'panopto_id' => self::get_panopto_course_id($this->moodle_course_id)
             ));
@@ -267,12 +279,14 @@ class panopto_data {
 
                 // Add in students and lecturers from this course.
                 $tmp_data = new panopto_data($course->moodleid);
-                $info = $tmp_data->get_provisioning_info(1);
+                $info = $tmp_data->get_provisioning_info(false);
 
                 // First Instructors.
                 foreach ($info->Instructors as $instructor) {
-                    if (!in_array($instructor, $provisioning_info->Instructors)) {
-                        array_push($provisioning_info->Instructors, $instructor);
+                    // If they are an instructor for the parent course, leave it.
+                    // If not, add them in as a student ('viewer').
+                    if (!in_array($instructor, $provisioning_info->Instructors) && !in_array($instructor, $provisioning_info->Students)) {
+                        array_push($provisioning_info->Students, $instructor);
                     }
 
                     $instructor_hash[$instructor->UserKey] = true;
