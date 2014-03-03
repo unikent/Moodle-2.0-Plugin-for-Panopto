@@ -122,7 +122,7 @@ class panopto_data {
     /**
      * Create a shared folder between multiple courses
      */
-    public function provision_shared_folder($courses, $shortname, $longname) {
+    public function provision_shared_folder($shortname, $longname, $courses) {
         if (empty($courses)) {
             throw new \moodle_exception("You must specify one or more courses!");
         }
