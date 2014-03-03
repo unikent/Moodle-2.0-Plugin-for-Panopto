@@ -50,7 +50,7 @@ function xmldb_block_panopto_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2013122001, 'panopto');
     }
 
-    if ($oldversion < 2014030300) {
+    if ($oldversion < 2014030400) {
         // Define field master to be added to block_panopto_foldermap.
         $table = new xmldb_table('block_panopto_foldermap');
 
@@ -70,8 +70,22 @@ function xmldb_block_panopto_upgrade($oldversion, $block) {
             $dbman->add_index($table, $index);
         }
 
+        // Set a single master for every currently mirrored course.
+        $courses = $DB->get_records('block_panopto_foldermap');
+        $map = array();
+        foreach ($courses as $course) {
+            if (isset($map[$course->panopto_id])) {
+                $DB->set_field('block_panopto_foldermap', 'master', 0, array(
+                    'id' => $course->id
+                ));
+                continue;
+            }
+
+            $map[$course->panopto_id] = $course;
+        }
+
         // Panopto savepoint reached.
-        upgrade_block_savepoint(true, 2014030300, 'panopto');
+        upgrade_block_savepoint(true, 2014030400, 'panopto');
     }
 
     return true;
