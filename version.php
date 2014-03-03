@@ -31,14 +31,14 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
- 
+
 defined('MOODLE_INTERNAL') || die();
- 
-$plugin->version   = 2014021100;
+
+$plugin->version   = 2014030200;
 $plugin->requires  = 2013110500; // Version 2.6
 $plugin->cron      = 600; // 10 minutes
 $plugin->maturity  = MATURITY_STABLE;
- 
+
 $plugin->dependencies = array(
     'mod_forum' => ANY_VERSION
 );

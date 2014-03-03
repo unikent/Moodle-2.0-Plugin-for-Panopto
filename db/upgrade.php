@@ -28,7 +28,6 @@ function xmldb_block_panopto_upgrade($oldversion, $block) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2013122001) {
-
         // Define table panopto_course_update_list to be created.
         $table = new xmldb_table('panopto_course_update_list');
 
@@ -49,6 +48,30 @@ function xmldb_block_panopto_upgrade($oldversion, $block) {
 
         // Panopto savepoint reached.
         upgrade_block_savepoint(true, 2013122001, 'panopto');
+    }
+
+    if ($oldversion < 2014030300) {
+        // Define field master to be added to block_panopto_foldermap.
+        $table = new xmldb_table('block_panopto_foldermap');
+
+        // Add the master field.
+        $field = new xmldb_field('master', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'panopto_id');
+
+        // Conditionally launch add field master.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Add an index on panopto ID.
+        $index = new xmldb_index('mpfm_pid', XMLDB_INDEX_NOTUNIQUE, array('panopto_id'));
+
+        // Conditionally launch add index mpfm_pid.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Panopto savepoint reached.
+        upgrade_block_savepoint(true, 2014030300, 'panopto');
     }
 
     return true;

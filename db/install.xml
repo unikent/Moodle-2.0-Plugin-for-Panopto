@@ -26,10 +26,14 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="id of the table, please edit me"/>
         <FIELD NAME="moodleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of Moodle course."/>
         <FIELD NAME="panopto_id" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false" COMMENT="Public ID of Panopto folder."/>
+        <FIELD NAME="master" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Is this the master course for this Panopto ID?"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for test"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="mpfm_pid" UNIQUE="false" FIELDS="panopto_id" COMMENT="Index Panopto ID"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="panopto_course_update_list" COMMENT="List of courses to be updated next sync">
       <FIELDS>
