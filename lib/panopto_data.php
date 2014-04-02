@@ -195,11 +195,15 @@ class panopto_data {
             $count = $DB->count_records('block_panopto_foldermap', array(
                 'panopto_id' => $panoptoid
             ));
-            // Select the master and provision that instead.
-            $this->moodle_course_id = $DB->get_field('block_panopto_foldermap', 'moodleid', array(
-                'panopto_id' => $panoptoid,
-                'master' => 1
-            ));
+
+            // only set new id if in db already
+            if($count > 0) {
+                // Select the master and provision that instead.
+                $this->moodle_course_id = $DB->get_field('block_panopto_foldermap', 'moodleid', array(
+                    'panopto_id' => $panoptoid,
+                    'master' => 1
+                ));    
+            }
         }
         // End Change
         $provisioning_info->ShortName = $DB->get_field('course', 'shortname', array('id' => $this->moodle_course_id));
