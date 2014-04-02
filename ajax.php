@@ -14,6 +14,7 @@ $is_editing = optional_param('editing', 0, PARAM_BOOL);
 
 global $CFG, $DB, $USER, $OUTPUT;
 $context = context_course::instance($courseid, MUST_EXIST);
+$PAGE->set_context($context);
 
 $content = new stdClass;
 $content->text = "";
