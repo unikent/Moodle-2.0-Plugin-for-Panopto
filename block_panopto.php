@@ -147,7 +147,13 @@ class block_panopto extends block_base {
                 ));
             }
 
-            return panopto_data::set_panopto_course_id($COURSE->id, $data->course, false);
+            // We are the master of this installation if nothing preceeds us.
+            $master = !$DB->record_exists('block_panopto_foldermap', array(
+                'panopto_id' => $data->course,
+                'master' => 1
+            ));
+
+            return panopto_data::set_panopto_course_id($COURSE->id, $data->course, $master);
         }
 
         // If server is not set globally, there will be no other form values to push into config.

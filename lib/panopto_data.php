@@ -191,7 +191,9 @@ class panopto_data {
         $provisioning_info = new stdClass;
         $provisioning_info->Instructors = array();
         $provisioning_info->Students = array();
+        // End Change
 
+        // Kent Change
         // Support course linking if this is the master course in a chain.
         if ($master) {
             $panoptoid = self::get_panopto_course_id($this->moodle_course_id);
@@ -210,6 +212,7 @@ class panopto_data {
             }
         }
         // End Change
+
         $provisioning_info->ShortName = $DB->get_field('course', 'shortname', array('id' => $this->moodle_course_id));
         $provisioning_info->LongName = $DB->get_field('course', 'fullname', array('id' => $this->moodle_course_id));
         $provisioning_info->ExternalCourseID = $this->instancename . ":" . $this->moodle_course_id;
