@@ -189,20 +189,24 @@ class panopto_data {
 
         // Kent Change
         $provisioning_info = new stdClass;
+        $provisioning_info->Instructors = array();
+        $provisioning_info->Students = array();
+
         // Support course linking if this is the master course in a chain.
         if ($master) {
             $panoptoid = self::get_panopto_course_id($this->moodle_course_id);
-            $count = $DB->count_records('block_panopto_foldermap', array(
-                'panopto_id' => $panoptoid
-            ));
+            $params = array(
+                'panopto_id' => $panoptoid,
+                'master' => 1
+            );
 
             // only set new id if in db already
-            if($count > 0) {
+            if ($DB->record_exists('block_panopto_foldermap', $params)) {
                 // Select the master and provision that instead.
                 $this->moodle_course_id = $DB->get_field('block_panopto_foldermap', 'moodleid', array(
                     'panopto_id' => $panoptoid,
                     'master' => 1
-                ));    
+                ));
             }
         }
         // End Change
@@ -219,16 +223,15 @@ class panopto_data {
         // Could also use moodle/legacy:teacher, moodle/legacy:editingteacher, etc. if those turn out to be more appropriate.
         // Kent Change
         $instructors = get_users_by_capability($course_context, 'block/panopto:panoptocreator');
-        $provisioning_info->Instructors = array();
         // End Change
 
-        if(!empty($instructors)) {
+        if (!empty($instructors)) {
             // Kent Change
             $ar = \block_panopto\util::get_role('panopto_academic');
             $nar = \block_panopto\util::get_role('panopto_non_academic');
             // End Change
 
-            foreach($instructors as $instructor) {
+            foreach ($instructors as $instructor) {
                 // Kent Change
                 if ($CFG->kent->distribution !== "2012" &&
 					!user_has_role_assignment($instructor->id, $ar->id, context_system::instance()->id) && 
@@ -236,7 +239,7 @@ class panopto_data {
                     continue;
                 }
                 // End Change
-                
+
                 $instructor_info = new stdClass;
                 $instructor_info->UserKey = $this->panopto_decorate_username($instructor->username);
                 $instructor_info->FirstName = $instructor->firstname;
