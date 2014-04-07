@@ -384,7 +384,9 @@ class panopto_data {
         global $DB;
 
         if ($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodle_course_id))) {
-            return $DB->set_field('block_panopto_foldermap', 'panopto_id', $sessiongroup_id, array('moodleid' => $moodle_course_id));
+            // Todo - Skylar doesnt like this as it disregards multiple blocks.
+            return  $DB->set_field('block_panopto_foldermap', 'master', $master, array('moodleid' => $moodle_course_id)) &&
+                    $DB->set_field('block_panopto_foldermap', 'panopto_id', $sessiongroup_id, array('moodleid' => $moodle_course_id));
         }
 
         return $DB->insert_record('block_panopto_foldermap', array(
