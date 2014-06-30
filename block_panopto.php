@@ -185,59 +185,5 @@ class block_panopto extends block_base {
             'all' => true
         );
     }
-
-    /**
-     * cron - goes through all pending synchronisations and runs them
-     *
-     * @return boolean true if all feeds were retrieved succesfully
-     */
-    public function cron() {
-        global $DB;
-
-        require_once(dirname(__FILE__) . '/lib/panopto_data.php');
-
-        mtrace('');
-
-        $panopto_data = new panopto_data(null);
-
-        if (empty($panopto_data->servername) || empty($panopto_data->instancename) || empty($panopto_data->applicationkey)) {
-            mtrace('Panopto is not configured to run, leaving alone...');
-            return true;
-        }
-
-        // Grab 25 updates
-        $rs_ids = array();
-        $rs = $DB->get_recordset('panopto_course_update_list', null, '', '*', 0, 25);
-        foreach ($rs as $rec) {
-            mtrace('Panopto - Provisioning ' . $rec->courseid);
-
-            $rs_ids[] = $rec->courseid;
-            $panopto_data->moodle_course_id = $rec->courseid;
-
-            try {
-                // Try to provision.
-                $provisioning_data = $panopto_data->get_provisioning_info();
-
-                // Provision the course.
-                $panopto_data->provision_course($provisioning_data);
-
-                mtrace('Success!');
-            } catch (Exception $e) {
-                mtrace('Error...');
-                mtrace($e->getMessage());
-                mtrace('');
-            }
-        }
-
-        // Clear out the DB
-        if (!empty($rs_ids)) {
-            $DB->delete_records_list("panopto_course_update_list", "courseid", $rs_ids);
-        }
-
-        mtrace('Finished Panopto Course Synchronisations');
-        mtrace('');
-
-        return true;
-    }
 }
 // End of block_panopto.php
