@@ -68,7 +68,7 @@ $PAGE->set_pagelayout('base');
 $mform = new panopto_provision_form($PAGE->url);
 
 if ($mform->is_cancelled()) {
-    redirect($return_url);
+    redirect(new moodle_url($return_url));
 } else {
     $provision_title = get_string('provision_courses', 'block_panopto');
     $PAGE->set_pagelayout('base');
@@ -80,7 +80,8 @@ if ($mform->is_cancelled()) {
         require_capability('block/panopto:provision_course', $context);
 
         $courses = array($course_id_param);
-        $PAGE->navbar->add(get_string('pluginname', 'block_panopto'), $return_url);
+        $edit_course_url = new moodle_url($return_url);
+        $PAGE->navbar->add(get_string('pluginname', 'block_panopto'), $edit_course_url);
     } else {
         // System context
         require_capability('block/panopto:provision_multiple', $context);
