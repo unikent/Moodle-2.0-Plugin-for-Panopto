@@ -36,7 +36,7 @@ if (empty($panopto_data->servername) || empty($panopto_data->instancename) || em
 
 try {
     if (!$panopto_data->sessiongroup_id) {
-        $content->text .= get_string('no_course_selected', 'block_panopto');
+        $content->text = get_string('no_course_selected', 'block_panopto');
     }
     else {
         // Get course info from SOAP service.
