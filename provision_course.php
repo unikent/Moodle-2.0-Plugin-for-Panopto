@@ -80,6 +80,7 @@ if ($mform->is_cancelled()) {
         require_capability('block/panopto:provision_course', $context);
 
         $courses = array($course_id_param);
+        $edit_course_url = new moodle_url($return_url);
         $PAGE->navbar->add(get_string('pluginname', 'block_panopto'), $edit_course_url);
     } else {
         // System context
