@@ -286,6 +286,11 @@ class panopto_data {
                 if ($course->moodleid == $this->moodle_course_id) {
                     continue;
                 }
+                
+                // Check the course exists.
+                if (!$DB->record_exists('course', array('id' => $rec->courseid))) {
+                	continue
+                }
 
                 // Add in students and lecturers from this course.
                 $tmp_data = new panopto_data($course->moodleid);
