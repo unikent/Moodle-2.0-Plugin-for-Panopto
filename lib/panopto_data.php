@@ -205,10 +205,15 @@ class panopto_data {
             // only set new id if in db already
             if ($DB->record_exists('block_panopto_foldermap', $params)) {
                 // Select the master and provision that instead.
-                $this->moodle_course_id = $DB->get_field('block_panopto_foldermap', 'moodleid', array(
+                $masterid = $DB->get_field('block_panopto_foldermap', 'moodleid', array(
                     'panopto_id' => $panoptoid,
                     'master' => 1
                 ));
+
+                // Check the course exists.
+                if ($DB->record_exists('course', array('id' => $masterid))) {
+                	$this->moodle_course_id = $masterid;
+                }
             }
         }
         // End Change
@@ -288,7 +293,7 @@ class panopto_data {
                 }
                 
                 // Check the course exists.
-                if (!$DB->record_exists('course', array('id' => $rec->courseid))) {
+                if (!$DB->record_exists('course', array('id' => $course->moodleid))) {
                 	continue;
                 }
 
