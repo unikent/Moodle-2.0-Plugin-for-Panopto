@@ -51,6 +51,11 @@ class course_provisions extends \core\task\scheduled_task
             $ids[] = $rec->courseid;
             $data->moodle_course_id = $rec->courseid;
 
+            // Does it still exist?
+            if (!$DB->record_exists('course', array('id' => $rec->courseid))) {
+                continue;
+            }
+
             // Try to provision.
             $info = $data->get_provisioning_info();
 
