@@ -289,7 +289,7 @@ class panopto_data {
                 
                 // Check the course exists.
                 if (!$DB->record_exists('course', array('id' => $rec->courseid))) {
-                	continue
+                	continue;
                 }
 
                 // Add in students and lecturers from this course.
