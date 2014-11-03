@@ -44,7 +44,7 @@ class panopto_observers {
         global $DB;
 
         // Are we already due to update this course?
-        if ($DB->record_exists('panopto_course_update_list', array('courseid' => $event->courseid))) {
+        if ($DB->record_exists('block_panopto_updates', array('courseid' => $event->courseid))) {
             return true;
         }
 
@@ -55,7 +55,7 @@ class panopto_observers {
         }
 
         // Add to course update list.
-        $DB->insert_record('panopto_course_update_list', array(
+        $DB->insert_record('block_panopto_updates', array(
             "courseid" => $event->courseid
         ));
 
@@ -71,7 +71,7 @@ class panopto_observers {
     public static function course_deleted(\core\event\course_deleted $event) {
         global $DB;
 
-        $DB->delete_records("panopto_course_update_list", array(
+        $DB->delete_records("block_panopto_updates", array(
             "courseid" => $event->objectid
         ));
 
