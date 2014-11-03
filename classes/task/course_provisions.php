@@ -70,4 +70,4 @@ class course_provisions extends \core\task\scheduled_task
 
         return;
     }
-} 
+}
