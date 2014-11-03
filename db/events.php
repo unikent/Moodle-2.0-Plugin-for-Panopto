@@ -24,10 +24,12 @@
  */
 
 $observers = array(
-  
     array(
         'eventname' => '\core\event\user_enrolment_created',
         'callback' => '\block_panopto\panopto_observers::user_enrolment_created',
+    ),
+    array(
+        'eventname' => '\core\event\course_deleted',
+        'callback' => '\block_panopto\panopto_observers::course_deleted',
     )
- 
 );

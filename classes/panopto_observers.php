@@ -61,4 +61,22 @@ class panopto_observers {
 
         return true;
     }
+
+    /**
+     * A course deletion has occurred.
+     *
+     * @param \core\event\base $event The event.
+     * @return void
+     */
+    public static function course_deleted(\core\event\course_deleted $event) {
+        global $DB;
+
+        $DB->delete_records("panopto_course_update_list", array(
+            "courseid" => $event->objectid
+        ));
+
+        $DB->delete_records("block_panopto_foldermap", array(
+            "moodleid" => $event->objectid
+        ));
+    }
 }
