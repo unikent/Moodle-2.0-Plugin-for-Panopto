@@ -141,8 +141,8 @@ class block_panopto extends block_base {
             require_once(dirname(__FILE__) . '/lib/panopto_data.php');
 
             // Mark the course for update.
-            if (!$DB->record_exists('panopto_course_update_list', array('courseid' => $COURSE->id))) {
-                $DB->insert_record('panopto_course_update_list', array(
+            if (!$DB->record_exists('block_panopto_updates', array('courseid' => $COURSE->id))) {
+                $DB->insert_record('block_panopto_updates', array(
                     "courseid" => $COURSE->id
                 ));
             }

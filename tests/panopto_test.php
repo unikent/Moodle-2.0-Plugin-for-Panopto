@@ -57,8 +57,8 @@ class block_panopto_panopto_testcase extends advanced_testcase {
         	'defaultweight' => '0'
         ));
 
-        $this->assertFalse($DB->record_exists('panopto_course_update_list', array("courseid" => $c1->id)));
-        $this->assertFalse($DB->record_exists('panopto_course_update_list', array("courseid" => $c2->id)));
+        $this->assertFalse($DB->record_exists('block_panopto_updates', array("courseid" => $c1->id)));
+        $this->assertFalse($DB->record_exists('block_panopto_updates', array("courseid" => $c2->id)));
 
         // Enroll users on both courses.
         $user = $this->getDataGenerator()->create_user();
@@ -75,8 +75,8 @@ class block_panopto_panopto_testcase extends advanced_testcase {
         $plugin->enrol_user($instance, $user->id, $role->id);
 
         // Check only c1 was added to the queue.
-        $this->assertTrue($DB->record_exists('panopto_course_update_list', array("courseid" => $c1->id)));
-        $this->assertFalse($DB->record_exists('panopto_course_update_list', array("courseid" => $c2->id)));
+        $this->assertTrue($DB->record_exists('block_panopto_updates', array("courseid" => $c1->id)));
+        $this->assertFalse($DB->record_exists('block_panopto_updates', array("courseid" => $c2->id)));
 
         // Enroll two.
         $instance = $DB->get_record('enrol', array(
@@ -86,7 +86,7 @@ class block_panopto_panopto_testcase extends advanced_testcase {
         $plugin->enrol_user($instance, $user->id, $role->id);
 
         // Check only c1 was added to the queue (again).
-        $this->assertTrue($DB->record_exists('panopto_course_update_list', array("courseid" => $c1->id)));
-        $this->assertFalse($DB->record_exists('panopto_course_update_list', array("courseid" => $c2->id)));
+        $this->assertTrue($DB->record_exists('block_panopto_updates', array("courseid" => $c1->id)));
+        $this->assertFalse($DB->record_exists('block_panopto_updates', array("courseid" => $c2->id)));
     }
 }

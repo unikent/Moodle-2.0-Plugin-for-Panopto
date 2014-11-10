@@ -17,7 +17,7 @@ $result = array();
 $panopto_data = new panopto_data(null);
 
 // Go through all courses that need updating and provision them
-$courses = $DB->get_records_select("panopto_course_update_list", "courseid");
+$courses = $DB->get_records_select("block_panopto_updates", "courseid");
 foreach ($courses as $course) {
   $panopto_data->moodle_course_id = $course->courseid;
   try {
@@ -40,7 +40,7 @@ foreach ($courses as $course) {
 }
 
 // Clear out the DB
-$DB->delete_records_list("panopto_course_update_list", "courseid", array_map(function($course) {
+$DB->delete_records_list("block_panopto_updates", "courseid", array_map(function($course) {
   return $course->courseid;
 }, $courses));
 

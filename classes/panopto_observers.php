@@ -41,12 +41,12 @@ class panopto_observers {
      * @return void
      */
     public static function user_enrolment_created(\core\event\user_enrolment_created $event) {
-    	global $DB;
+        global $DB;
 
-    	// Are we already due to update this course?
-    	if ($DB->record_exists('panopto_course_update_list', array('courseid' => $event->courseid))) {
-    		return true;
-    	}
+        // Are we already due to update this course?
+        if ($DB->record_exists('block_panopto_updates', array('courseid' => $event->courseid))) {
+            return true;
+        }
 
         // Do we have a valid Panopto module?
         $ctx = \context_course::instance($event->courseid);
@@ -54,11 +54,29 @@ class panopto_observers {
             return true;
         }
 
-    	// Add to course update list.
-		$DB->insert_record('panopto_course_update_list', array(
+        // Add to course update list.
+        $DB->insert_record('block_panopto_updates', array(
             "courseid" => $event->courseid
         ));
 
-    	return true;
+        return true;
+    }
+
+    /**
+     * A course deletion has occurred.
+     *
+     * @param \core\event\base $event The event.
+     * @return void
+     */
+    public static function course_deleted(\core\event\course_deleted $event) {
+        global $DB;
+
+        $DB->delete_records("block_panopto_updates", array(
+            "courseid" => $event->objectid
+        ));
+
+        $DB->delete_records("block_panopto_foldermap", array(
+            "moodleid" => $event->objectid
+        ));
     }
 }

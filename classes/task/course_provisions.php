@@ -46,7 +46,7 @@ class course_provisions extends \core\task\scheduled_task
 
         // Grab 25 updates.
         $ids = array();
-        $rs = $DB->get_recordset('panopto_course_update_list', null, '', '*', 0, 25);
+        $rs = $DB->get_recordset('block_panopto_updates', null, '', '*', 0, 25);
         foreach ($rs as $rec) {
             $ids[] = $rec->courseid;
             $data->moodle_course_id = $rec->courseid;
@@ -65,9 +65,9 @@ class course_provisions extends \core\task\scheduled_task
 
         // Clear out the DB.
         if (!empty($ids)) {
-            $DB->delete_records_list("panopto_course_update_list", "courseid", $ids);
+            $DB->delete_records_list("block_panopto_updates", "courseid", $ids);
         }
 
         return;
     }
-} 
+}

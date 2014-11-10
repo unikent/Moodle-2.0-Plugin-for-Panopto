@@ -16,10 +16,10 @@
  You should have received a copy of the GNU General Public License
  along with the Panopto plugin for Moodle.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
-<XMLDB PATH="blocks/panopto/db" VERSION="20090610" COMMENT="XMLDB file for Panopto Focus block"
+<XMLDB PATH="blocks/panopto/db" VERSION="20141103" COMMENT="XMLDB file for Panopto Focus block"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="block_panopto_foldermap" COMMENT="Map Moodle courses to Panopto folders">
       <FIELDS>
@@ -35,7 +35,7 @@
         <INDEX NAME="mpfm_pid" UNIQUE="false" FIELDS="panopto_id" COMMENT="Index Panopto ID"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="panopto_course_update_list" COMMENT="List of courses to be updated next sync">
+    <TABLE NAME="block_panopto_updates" COMMENT="List of courses to be updated next sync">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

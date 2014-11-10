@@ -35,45 +35,45 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class util {
-	/**
-	 * Ensures a role is created, then returns it.
-	 */
-	public static function get_role($shortname) {
-		global $DB, $CFG;
+    /**
+     * Ensures a role is created, then returns it.
+     */
+    public static function get_role($shortname) {
+        global $DB, $CFG;
 
-		static $data_map = array(
-	        "panopto_academic" => array(
-	        	"Academic (Panopto)",
-	        	"panopto_academic",
-	        	"Panopto Academic User",
-	            "user"
-	        ),
-	        "panopto_non_academic" => array(
-	        	"Non-Academic (Panopto)",
-	        	"panopto_non_academic",
-	        	"Panopto Non-Academic User",
-	            "user"
-	        ),
-	        "panopto_creator" => array(
-	            "Course Creator (Panopto)",
-	            "panopto_creator",
-	            "Panopto Course Creator",
-	            "user"
-	        )
+        static $map = array(
+            "panopto_academic" => array(
+                "Academic (Panopto)",
+                "panopto_academic",
+                "Panopto Academic User",
+                "user"
+            ),
+            "panopto_non_academic" => array(
+                "Non-Academic (Panopto)",
+                "panopto_non_academic",
+                "Panopto Non-Academic User",
+                "user"
+            ),
+            "panopto_creator" => array(
+                "Course Creator (Panopto)",
+                "panopto_creator",
+                "Panopto Course Creator",
+                "user"
+            )
         );
 
-        if (!isset($data_map[$shortname])) {
-        	throw new \moodle_exception("Invalid Panopto role '$shortname'!");
+        if (!isset($map[$shortname])) {
+            throw new \moodle_exception("Invalid Panopto role '$shortname'!");
         }
 
         // Create this if it doesnt exist.
         if (!$DB->record_exists('role', array('shortname' => $shortname))) {
             require_once($CFG->libdir . "/accesslib.php");
-            call_user_func_array("create_role", $data_map[$shortname]);
+            call_user_func_array("create_role", $map[$shortname]);
         }
 
         return $DB->get_record('role', array(
             'shortname' => $shortname
         ));
-	}
+    }
 }
