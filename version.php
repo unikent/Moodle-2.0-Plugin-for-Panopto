@@ -34,7 +34,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014121702;
+$plugin->version   = 2015012000;
 $plugin->requires  = 2014051200;
 $plugin->cron      = 0;
 $plugin->component = 'block_panopto';
@@ -43,4 +43,3 @@ $plugin->maturity  = MATURITY_STABLE;
 $plugin->dependencies = array(
     'mod_forum' => ANY_VERSION
 );
-/* End of file version.php */

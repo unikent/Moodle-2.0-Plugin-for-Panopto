@@ -22,7 +22,7 @@
  * @param object $block
  */
 function xmldb_block_panopto_upgrade($oldversion, $block) {
-    global $DB;
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 
@@ -97,6 +97,28 @@ function xmldb_block_panopto_upgrade($oldversion, $block) {
 
         // Panopto savepoint reached.
         upgrade_block_savepoint(true, 2014110300, 'panopto');
+    }
+
+    // Skylar says blame Panopto.
+    if ($oldversion < 2015012000) {
+        $table = new xmldb_table('block_panopto_foldermap');
+
+        // Define field panopto_server to be added to block_panopto_foldermap.
+        $field = new xmldb_field('panopto_server', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null, 'panopto_id');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $DB->set_field('block_panopto_foldermap', 'panopto_server', $CFG->block_panopto_server_name, null);
+        }
+
+        // Define field panopto_app_key to be added to block_panopto_foldermap.
+        $field = new xmldb_field('panopto_app_key', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null, 'panopto_server');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $DB->set_field('block_panopto_foldermap', 'panopto_app_key', $CFG->block_panopto_application_key, null);
+        }
+
+        // Panopto savepoint reached.
+        upgrade_block_savepoint(true, 2015012000, 'panopto');
     }
 
     return true;

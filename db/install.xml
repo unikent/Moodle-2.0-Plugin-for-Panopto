@@ -26,6 +26,8 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="id of the table, please edit me"/>
         <FIELD NAME="moodleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of Moodle course."/>
         <FIELD NAME="panopto_id" TYPE="char" LENGTH="36" NOTNULL="true" SEQUENCE="false" COMMENT="Public ID of Panopto folder."/>
+        <FIELD NAME="panopto_server" TYPE="char" LENGTH = "64" NOTNULL="true" SEQUENCE = "false" COMMENT="Panopto server name for course." PREVIOUS="panopto_id" NEXT="panopto_app_key"/> 
+        <FIELD NAME="panopto_app_key" TYPE="char" LENGTH = "64" NOTNULL="true" SEQUENCE = "false" COMMENT="Panopto application key for server." PREVIOUS="panopto_server"/>   
         <FIELD NAME="master" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Is this the master course for this Panopto ID?"/>
       </FIELDS>
       <KEYS>
