@@ -24,7 +24,9 @@ $content->footer = "";
 $panopto_data = new panopto_data($courseid);
 
 if (empty($panopto_data->servername) || empty($panopto_data->instancename) || empty($panopto_data->applicationkey)) {
-    $content->text = get_string('unconfigured', 'block_panopto');
+    $content->text = get_string('unprovisioned', 'block_panopto');
+    $content->text .= '<br/><br/>';
+    $content->text .= "<a href=\"{$CFG->wwwroot}/blocks/panopto/provision_course_internal.php?id={$courseid}\">Provision Course</a>";
 
     $json = json_encode(array(
         "footer" => $content->footer,
