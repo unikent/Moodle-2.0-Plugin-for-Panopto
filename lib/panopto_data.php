@@ -32,34 +32,26 @@ class panopto_data {
     var $moodle_course_id;
 
     var $servername;
+
     var $applicationkey;
 
     var $soap_client;
 
     var $sessiongroup_id;
 
+    var $uname;
+
     function __construct($moodle_course_id) {
         global $USER, $CFG;
 
         // Fetch global settings from DB
         $this->instancename = $CFG->block_panopto_instance_name;
-        $this->servername = $CFG->block_panopto_server_name;
-        $this->applicationkey = $CFG->block_panopto_application_key;
 
-        if(!empty($this->servername)) {
-            if(isset($USER->username)) {
-                $username = $USER->username;
-            } else {
-                $username = "guest";
-            }
-
-            // Compute web service credentials for current user.
-            $apiuser_userkey = panopto_decorate_username($username);
-            $apiuser_authcode = panopto_generate_auth_code($apiuser_userkey . "@" . $this->servername);
-
-            // Instantiate our SOAP client.
-            $this->soap_client = new PanoptoSoapClient($this->servername, $apiuser_userkey, $apiuser_authcode);
-        }
+        //get servername and application key specific to moodle course if ID is specified
+		if(isset($moodle_course_id)){
+		$this->servername = panopto_data::get_panopto_servername($moodle_course_id);
+		$this->applicationkey = panopto_data::get_panopto_app_key($moodle_course_id);
+		}
 
         // Fetch current CC course mapping if we have a Moodle course ID.
         // Course will be null initially for batch-provisioning case.
@@ -71,15 +63,25 @@ class panopto_data {
 
     // returns SystemInfo
     function get_system_info() {
-        return $this->soap_client->GetSystemInfo();
+    	//If no soap client for this instance, instantiate one
+    	if(!isset($this->soap_client)){
+    		$this->soap_client = panopto_data::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
+    	}
+
+    	return $this->soap_client->GetSystemInfo();
     }
 
     // Create the Panopto course and populate its ACLs.
     function provision_course($provisioning_info) {
+    	//If no soap client for this instance, instantiate one
+    	if(!isset($this->soap_client)){
+    		$this->soap_client = panopto_data::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
+    	}
         $course_info = $this->soap_client->ProvisionCourse($provisioning_info);
-
         if(!empty($course_info) && !empty($course_info->PublicID)) {
             panopto_data::set_panopto_course_id($this->moodle_course_id, $course_info->PublicID);
+            panopto_data::set_panopto_server_name($this->moodle_course_id, $this->servername);
+            panopto_data::set_panopto_app_key($this->moodle_course_id, $this->applicationkey);
         }
 
         return $course_info;
@@ -221,7 +223,7 @@ class panopto_data {
         $provisioning_info->ShortName = $DB->get_field('course', 'shortname', array('id' => $this->moodle_course_id));
         $provisioning_info->LongName = $DB->get_field('course', 'fullname', array('id' => $this->moodle_course_id));
         $provisioning_info->ExternalCourseID = $this->instancename . ":" . $this->moodle_course_id;
-
+        $provisioning_info->Server = $this->servername;
         $course_context = context_course::instance($this->moodle_course_id, MUST_EXIST);
 
         // Lookup table to avoid adding instructors as Viewers as well as Creators.
@@ -331,6 +333,10 @@ class panopto_data {
 
     // Get courses visible to the current user.
     function get_courses() {
+    	if(!isset($this->soap_client)){
+    		$this->soap_client = panopto_data::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
+    	}
+
         $courses_result = $this->soap_client->GetCourses();
         $courses = array();
         if(!empty($courses_result->CourseInfo)) {
@@ -340,12 +346,17 @@ class panopto_data {
                 $courses = array($courses);
             }
         }
-        	
+
         return $courses;
     }
 
     // Get info about the currently mapped course.
     function get_course() {
+    	//If no soap client for this instance, instantiate one
+    	if(!isset($this->soap_client)){
+    		$this->soap_client = panopto_data::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
+    	}
+
         return $this->soap_client->GetCourse($this->sessiongroup_id);
     }
 
@@ -392,6 +403,16 @@ class panopto_data {
         return $DB->get_field('block_panopto_foldermap', 'panopto_id', array('moodleid' => $moodle_course_id));
     }
 
+    static function get_panopto_servername($moodle_course_id) {
+    	global $DB;
+    	return $DB->get_field('block_panopto_foldermap', 'panopto_server', array('moodleid' => $moodle_course_id));
+    }
+
+    static function get_panopto_app_key($moodle_course_id) {
+    	global $DB;
+    	return $DB->get_field('block_panopto_foldermap', 'panopto_app_key', array('moodleid' => $moodle_course_id));
+    }
+
     // Called by Moodle block instance config save method, so must be static.
     static function set_panopto_course_id($moodle_course_id, $sessiongroup_id, $master = true) {
         global $DB;
@@ -407,6 +428,26 @@ class panopto_data {
             'panopto_id' => $sessiongroup_id,
             'master' => $master ? 1 : 0
         ));
+    }
+
+    static function set_panopto_server_name($moodle_course_id, $panopto_servername) {
+    	global $DB;
+    	if($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodle_course_id))) {
+    		return $DB->set_field('block_panopto_foldermap', 'panopto_server', $panopto_servername, array('moodleid' => $moodle_course_id));
+    	} else {
+    		$row = (object) array('moodleid' => $moodle_course_id, 'panopto_server' => $panopto_servername);
+    		return $DB->insert_record('block_panopto_foldermap', $row);
+    	}
+    }
+
+    static function set_panopto_app_key($moodle_course_id, $panopto_appkey) {
+    	global $DB;
+    	if($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodle_course_id))) {
+    		return $DB->set_field('block_panopto_foldermap', 'panopto_app_key', $panopto_appkey, array('moodleid' => $moodle_course_id));
+    	} else {
+    		$row = (object) array('moodleid' => $moodle_course_id, 'panopto_app_key' => $panopto_appkey);
+    		return $DB->insert_record('block_panopto_foldermap', $row);
+    	}
     }
 
     function get_course_options() {
@@ -436,6 +477,25 @@ class panopto_data {
         }
 
         return array('courses' => $options, 'selected' => $this->sessiongroup_id);
+    }
+
+
+    //Used to instantiate a soap client for a given instance of panopto_data. Should be called only the first time a soap client is needed for an instance
+    function instantiate_soap_client($username, $servername, $applicationkey){
+    	if(!empty($this->servername)) {
+    		if(isset($USER->username)) {
+    			$username = $USER->username;
+    		} else {
+    			$username = "guest";
+    		}
+    		$this->uname = $username;
+    	}
+    	// Compute web service credentials for current user.
+    	$apiuser_userkey = panopto_decorate_username($username);
+    	$apiuser_authcode = panopto_generate_auth_code($apiuser_userkey . "@" . $this->servername, $this->applicationkey);
+
+    	// Instantiate our SOAP client.
+    	return new PanoptoSoapClient($this->servername, $apiuser_userkey, $apiuser_authcode);
     }
 }
 /* End of file panopto_data.php */
