@@ -49,15 +49,17 @@ class panopto_data {
 
         //get servername and application key specific to moodle course if ID is specified
 		if(isset($moodle_course_id)){
-		$this->servername = panopto_data::get_panopto_servername($moodle_course_id);
-		$this->applicationkey = panopto_data::get_panopto_app_key($moodle_course_id);
-		}
+    		$this->servername = panopto_data::get_panopto_servername($moodle_course_id);
+    		$this->applicationkey = panopto_data::get_panopto_app_key($moodle_course_id);
 
-        // Fetch current CC course mapping if we have a Moodle course ID.
-        // Course will be null initially for batch-provisioning case.
-        if(!empty($moodle_course_id)) {
-            $this->moodle_course_id = $moodle_course_id;
-            $this->sessiongroup_id = panopto_data::get_panopto_course_id($moodle_course_id);
+            // Fetch current CC course mapping if we have a Moodle course ID.
+            // Course will be null initially for batch-provisioning case.
+            if(!empty($moodle_course_id)) {
+                $this->moodle_course_id = $moodle_course_id;
+                $this->sessiongroup_id = panopto_data::get_panopto_course_id($moodle_course_id);
+            }
+
+            $this->soap_client = panopto_data::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
         }
     }
 
@@ -482,7 +484,8 @@ class panopto_data {
 
     //Used to instantiate a soap client for a given instance of panopto_data. Should be called only the first time a soap client is needed for an instance
     function instantiate_soap_client($username, $servername, $applicationkey){
-    	if(!empty($this->servername)) {
+        global $USER;
+    	if(empty($username)) {
     		if(isset($USER->username)) {
     			$username = $USER->username;
     		} else {
