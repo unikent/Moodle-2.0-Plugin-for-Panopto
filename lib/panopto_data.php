@@ -396,6 +396,11 @@ class panopto_data {
 
     // Get recordings available to view for the currently mapped course.
     function get_completed_deliveries() {
+        //If no soap client for this instance, instantiate one
+        if(!isset($this->soap_client)){
+            $this->soap_client = panopto_data::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
+        }
+
         $completed_deliveries_result = $this->soap_client->GetCompletedDeliveries($this->sessiongroup_id);
 
         $completed_deliveries = array();
