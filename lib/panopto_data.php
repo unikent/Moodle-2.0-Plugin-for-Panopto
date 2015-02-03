@@ -240,13 +240,33 @@ class panopto_data {
         $course_context = context_course::instance($this->moodle_course_id, MUST_EXIST);
 
         // Lookup table to avoid adding instructors as Viewers as well as Creators.
+        $publisher_hash = array();
         $instructor_hash = array();
+
+        $publishers = get_users_by_capability($course_context, 'block/panopto:provision_aspublisher');
+
+        if(!empty($publishers)) {
+            $provisioning_info->Publishers = array();
+            foreach($publishers as $publisher) {
+                $publisher_info = new stdClass;
+                $publisher_info->UserKey = $this->panopto_decorate_username($publisher->username);
+                $publisher_info->FirstName = $publisher->firstname;
+                $publisher_info->LastName = $publisher->lastname;
+                $publisher_info->Email = $publisher->email;
+
+                array_push($provisioning_info->Publishers, $publisher_info);
+
+                $publisher_hash[$publisher->username] = true;
+            }
+            
+        }
+        
 
         // moodle/course:update capability will include admins along with teachers, course creators, etc.
         // Could also use moodle/legacy:teacher, moodle/legacy:editingteacher, etc. if those turn out to be more appropriate.
-        // Kent Change
-        $instructors = get_users_by_capability($course_context, 'block/panopto:panoptocreator');
-        // End Change
+        // File edited - new capability added to access.php to identify instructors without including all site admins etc.
+        // New capability used to identify instructors for provisioning.
+        $instructors = get_users_by_capability($course_context, 'block/panopto:provision_asteacher');
 
         if (!empty($instructors)) {
             // Kent Change
@@ -287,9 +307,15 @@ class panopto_data {
                 if (array_key_exists($student->username, $instructor_hash)) {
                     continue;
                 }
+                if (array_key_exists($student->username, $publisher_hash)) {
+                    continue;
+                }
 
                 $student_info = new stdClass;
                 $student_info->UserKey = $this->panopto_decorate_username($student->username);
+                $student_info->FirstName = $student->firstname;
+                $student_info->LastName = $student->lastname;
+                $student_info->Email = $student->email;
 
                 array_push($provisioning_info->Students, $student_info);
             }
@@ -435,6 +461,18 @@ class panopto_data {
     	global $DB;
     	return $DB->get_field('block_panopto_foldermap', 'panopto_app_key', array('moodleid' => $moodle_course_id));
     }
+    
+    static function get_course_role_mappings($moodle_course_id) {
+    	global $DB;
+        //get publisher roles as string and explode to array
+        $pubrolesraw =  $DB->get_field('block_panopto_foldermap', 'publisher_mapping', array('moodleid' => $moodle_course_id));
+        $pubroles = explode("," , $pubrolesraw);
+       
+        //get creator roles as string, then explode to array       
+        $createrolesraw =  $DB->get_field('block_panopto_foldermap', 'creator_mapping', array('moodleid' => $moodle_course_id));
+        $creatorroles = explode(",", $createrolesraw);
+        return array("publisher" => $pubroles, "creator" => $creatorroles);
+    }
 
     // Called by Moodle block instance config save method, so must be static.
     static function set_panopto_course_id($moodle_course_id, $sessiongroup_id, $master = true) {
@@ -473,8 +511,32 @@ class panopto_data {
     	}
     }
 
-    //Called by enrollment event to add course id of course with changed enrollment to db
-    static function set_course_id_to_provision($course_id) {
+        static function set_course_role_mappings($moodle_course_id, $publisherroles, $creatorroles) {
+    	global $DB;
+    	
+                  //implode roles to string
+                   $publisher_role_string = implode(',', $publisherroles);
+
+                  if($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodle_course_id))) {
+                    $pubsuccess = $DB->set_field('block_panopto_foldermap', 'publisher_mapping', $publisher_role_string, array('moodleid' => $moodle_course_id));
+                } else {
+                $row = (object) array('moodleid' => $moodle_course_id, 'publisher_mapping' => $publisher_role_string);
+                $pubsuccess = $DB->insert_record('block_panopto_foldermap', $row);
+                
+                }
+
+                  //implode roles to string
+                   $creator_role_string = implode(',', $creatorroles);
+
+                  if($DB->get_records('block_panopto_foldermap', array('moodleid' => $moodle_course_id))) {
+                   $csuccess = $DB->set_field('block_panopto_foldermap', 'creator_mapping', $creator_role_string, array('moodleid' => $moodle_course_id));
+                    } else {
+                    $row = (object) array('moodleid' => $moodle_course_id, 'creator_mapping' => $creator_role_string);
+    		 $csuccess = $DB->insert_record('block_panopto_foldermap', $row);
+    	}
+
+        
+                 
     }
 
     function get_course_options() {

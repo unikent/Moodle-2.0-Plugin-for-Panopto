@@ -121,6 +121,32 @@ function xmldb_block_panopto_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2015012000, 'panopto');
     }
 
+
+        if ($oldversion < 2015020300) {
+
+                // Define field publisher_mapping to be added to block_panopto_foldermap.
+        $table = new xmldb_table('block_panopto_foldermap');
+        $field = new xmldb_field('publisher_mapping', XMLDB_TYPE_CHAR, '20', null, null, null, '1', 'panopto_app_key');
+
+        // Conditionally launch add field publisher_mapping.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field creator_mapping to be added to block_panopto_foldermap.
+        $table = new xmldb_table('block_panopto_foldermap');
+        $field = new xmldb_field('creator_mapping', XMLDB_TYPE_CHAR, '20', null, null, null, '3,4', 'publisher_mapping');
+
+        // Conditionally launch add field creator_mapping.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+
+        // Panopto savepoint reached.
+        upgrade_block_savepoint(true, 2015020300, 'panopto');
+    }
+
     return true;
 }
 
