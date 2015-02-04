@@ -19,8 +19,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 global $CFG;
-global $numservers;
-$numservers = $CFG->block_panopto_server_number;
+
+$numservers = isset($CFG->block_panopto_server_number) ? $CFG->block_panopto_server_number : 0;
 
 $default = 0;
 if ($ADMIN->fulltree) {
