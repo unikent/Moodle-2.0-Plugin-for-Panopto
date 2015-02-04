@@ -33,35 +33,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class panopto_observers {
-    /**
-     * A user enrollment has occurred.
-     *
-     * @param \core\event\base $event The event.
-     * @return void
-     */
-    public static function user_enrolment_created(\core\event\user_enrolment_created $event) {
-        global $DB;
-
-        // Are we already due to update this course?
-        if ($DB->record_exists('block_panopto_updates', array('courseid' => $event->courseid))) {
-            return true;
-        }
-
-        // Do we have a valid Panopto module?
-        $ctx = \context_course::instance($event->courseid);
-        if (!$DB->record_exists('block_instances', array('blockname' => 'panopto', 'parentcontextid' => $ctx->id))) {
-            return true;
-        }
-
-        // Add to course update list.
-        $DB->insert_record('block_panopto_updates', array(
-            "courseid" => $event->courseid
-        ));
-
-        return true;
-    }
-
+class panopto_observers
+{
     /**
      * A course deletion has occurred.
      *
@@ -70,10 +43,6 @@ class panopto_observers {
      */
     public static function course_deleted(\core\event\course_deleted $event) {
         global $DB;
-
-        $DB->delete_records("block_panopto_updates", array(
-            "courseid" => $event->objectid
-        ));
 
         $DB->delete_records("block_panopto_foldermap", array(
             "moodleid" => $event->objectid

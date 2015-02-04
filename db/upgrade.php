@@ -147,6 +147,20 @@ function xmldb_block_panopto_upgrade($oldversion, $block) {
         upgrade_block_savepoint(true, 2015020300, 'panopto');
     }
 
+    if ($oldversion < 2015020400) {
+
+        // Define table block_panopto_updates to be dropped.
+        $table = new xmldb_table('block_panopto_updates');
+
+        // Conditionally launch drop table for block_panopto_updates.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Panopto savepoint reached.
+        upgrade_block_savepoint(true, 2015020400, 'panopto');
+    }
+
     return true;
 }
 

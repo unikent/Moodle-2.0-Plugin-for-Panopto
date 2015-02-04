@@ -86,5 +86,3 @@ class block_panopto_rollingsync{
         return $info;
     }
 }
-
-?>
