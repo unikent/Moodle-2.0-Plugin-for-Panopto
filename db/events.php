@@ -25,36 +25,27 @@
 
 $observers = array(
     array(
-        'eventname' => '\core\event\user_enrolment_created',
-        'callback' => '\block_panopto\panopto_observers::user_enrolment_created',
-    ),
-    array(
         'eventname' => '\core\event\course_deleted',
-        'callback' => '\block_panopto\panopto_observers::course_deleted',
-    )
-    /*
-        //User enrolled event
+        'callback'  => '\block_panopto\panopto_observers::course_deleted',
+    ),
+
     array(
         'eventname' => '\core\event\user_enrolment_created',
-        'callback'  =>  'block_panopto_rollingsync::enrolmentcreated',
+        'callback'  => 'block_panopto_rollingsync::enrolmentcreated',
     ),
 
-    //User unenrolled event
-        array(
+    array(
         'eventname' => '\core\event\user_enrolment_deleted',
-        'callback'  =>  'block_panopto_rollingsync::enrolmentdeleted',
+        'callback'  => 'block_panopto_rollingsync::enrolmentdeleted',
     ),
 
-        
-    //Event when user has role added to enrollment
-        array(
+    array(
         'eventname' => '\core\event\role_assigned',
-        'callback'  =>  'block_panopto_rollingsync::roleadded',
+        'callback'  => 'block_panopto_rollingsync::roleadded',
     ),
 
-    //Event when user has role removed from enrollment
-        array(
+    array(
         'eventname' => '\core\event\role_unassigned',
-        'callback'  =>  'block_panopto_rollingsync::roledeleted',
-    ),   */
+        'callback'  => 'block_panopto_rollingsync::roledeleted',
+    )
 );

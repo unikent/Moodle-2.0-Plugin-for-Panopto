@@ -19,8 +19,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 global $CFG;
-global $numservers;
-$numservers = $CFG->block_panopto_server_number;
+
+$numservers = isset($CFG->block_panopto_server_number) ? $CFG->block_panopto_server_number : 0;
 
 $default = 0;
 if ($ADMIN->fulltree) {
@@ -90,7 +90,8 @@ if ($ADMIN->fulltree) {
     $link ='<a href="'.$CFG->wwwroot.'/blocks/panopto/provision_course.php">' . get_string('block_global_add_courses', 'block_panopto') . '</a>';
     $settings->add(new admin_setting_heading('block_panopto_add_courses', '', $link));
 
-    $settings->add(new admin_setting_heading('block_panopto_rolling_sync', get_string('rolling_sync_header', 'block_panopto'), get_string('rolling_sync_info', 'block_panopto')));
+    
+    
 }
 
 /* End of file settings.php */

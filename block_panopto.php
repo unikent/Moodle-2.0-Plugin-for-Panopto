@@ -17,6 +17,9 @@
  * along with the Panopto plugin for Moodle.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once("lib/panopto_data.php");
+require_once (dirname(__FILE__) . '/../../lib/accesslib.php');
+
 class block_panopto extends block_base {
     var $blockname = "panopto";
 
@@ -184,6 +187,41 @@ class block_panopto extends block_base {
             'my' => false,
             'all' => true
         );
+    }
+    
+    //Gives selected capabilities to specified roles
+    function set_course_role_permissions($courseid, $publisher_roles, $creator_roles){
+        $course_context = context_course::instance($courseid);
+        
+        //clear capabilities from all of course's roles to be reassigned
+        block_panopto::clear_capabilities_for_course($courseid);
+
+        foreach($publisher_roles as $role){
+         assign_capability('block/panopto:provision_aspublisher', CAP_ALLOW, $role, $course_context, $overwrite = false);
+        }      
+         foreach($creator_roles as $role){
+            assign_capability('block/panopto:provision_asteacher', CAP_ALLOW, $role, $course_context, $overwrite = false);
+        }
+        //Mark dirty (moodle standard for capability changes at context level)
+        $course_context->mark_dirty();
+     
+        panopto_data::set_course_role_mappings($courseid, $publisher_roles, $creator_roles);  
+    }
+    
+    //Clears capabilities from all roles so that they may be reassigned as specified
+    function clear_capabilities_for_course($courseid){
+        $course_context = context_course::instance($courseid);
+        
+        //Get all roles for current course
+        $current_course_roles = get_all_roles($course_context);
+        
+        //remove publisher and creator capabilities from all roles
+        foreach($current_course_roles as $role){
+            unassign_capability( 'block/panopto:provision_aspublisher', $role->id, $course_context);
+            unassign_capability( 'block/panopto:provision_asteacher', $role->id, $course_context); 
+            //Mark dirty (moodle standard for capability changes at context level)
+            $course_context->mark_dirty();            
+        }
     }
 }
 // End of block_panopto.php
