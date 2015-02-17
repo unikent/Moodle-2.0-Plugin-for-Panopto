@@ -60,6 +60,7 @@ $string['show_less'] = 'Show Less';
 $string['role_map_header'] = 'Change Panopto Role Mappings';
 $string['role_map_info_text'] = "Choose which Panopto roles a user's Moodle role will map to. <br> Unmapped roles will be given the 'Viewer' role in Panopto.
  <br> If a role is mapped to both 'Publisher' and 'Creator', 'Publisher' will take precedence.<br><br> ";
+$string['block_panopto_async_tasks'] = 'Asynchronous enrolment sync';
 
 /* Kent Changes */
 $string['panopto:panoptocreator'] = 'Role is a creator in panopto';

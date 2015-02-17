@@ -62,6 +62,15 @@ if ($ADMIN->fulltree) {
         				PARAM_TEXT));
     }
 
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'block_panopto_async_tasks',
+            get_string('block_panopto_async_tasks', 'block_panopto'),
+            '',
+            0
+        )
+    );
+
     // Kent Change
     $settings->add(
         new admin_setting_configtext(
