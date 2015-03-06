@@ -346,11 +346,26 @@ class panopto_data {
                 foreach ($info->Instructors as $instructor) {
                     // If they are an instructor for the parent course, leave it.
                     // If not, add them in as a student ('viewer').
-                    if (!in_array($instructor, $provisioning_info->Instructors) && !in_array($instructor, $provisioning_info->Students)) {
-                        array_push($provisioning_info->Students, $instructor);
+                    if (!in_array($instructor, $provisioning_info->Instructors) &&
+                        !in_array($instructor, $provisioning_info->Publishers) &&
+                        !in_array($instructor, $provisioning_info->Students)) {
+                        array_push($provisioning_info->Instructors, $instructor);
                     }
 
                     $instructor_hash[$instructor->UserKey] = true;
+                }
+
+                // Then Publishers.
+                foreach ($info->Publishers as $publisher) {
+                    // If they are an instructor for the parent course, leave it.
+                    // If not, add them in as a student ('viewer').
+                    if (!in_array($publisher, $provisioning_info->Instructors) &&
+                        !in_array($publisher, $provisioning_info->Publishers) &&
+                        !in_array($publisher, $provisioning_info->Students)) {
+                        array_push($provisioning_info->Publishers, $publisher);
+                    }
+
+                    $publisher_hash[$publisher->UserKey] = true;
                 }
 
                 // Then Students.
@@ -358,8 +373,14 @@ class panopto_data {
                     if (array_key_exists($student->UserKey, $instructor_hash)) {
                         continue;
                     }
+                    
+                    if (array_key_exists($student->UserKey, $publisher_hash)) {
+                        continue;
+                    }
 
-                    if (!in_array($student, $provisioning_info->Students)) {
+                    if (!in_array($student, $provisioning_info->Instructors) &&
+                        !in_array($student, $provisioning_info->Publishers) &&
+                        !in_array($student, $provisioning_info->Students)) {
                         array_push($provisioning_info->Students, $student);
                     }
                 }
