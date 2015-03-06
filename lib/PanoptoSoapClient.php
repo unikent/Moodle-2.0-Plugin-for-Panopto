@@ -173,6 +173,8 @@ class PanoptoSoapClient extends SoapClient {
                 
         $soap_struct .= $this->GetXMLDataElement("LongName", $provisioning_info->LongName);
 
+        // Kent - for now, until we upgrade to 4.8.
+        /*
         if(!empty($provisioning_info->Publishers))  {
             $soap_struct .= "<ns1:Publishers>";
             foreach($provisioning_info->Publishers as $publisher) {
@@ -187,6 +189,8 @@ class PanoptoSoapClient extends SoapClient {
         }   else {
             $soap_struct .= "<ns1:Publishers />";
         }
+        */
+        // End Kent.
                 
         $soap_struct .= $this->GetXMLDataElement("ShortName", $provisioning_info->ShortName);
        
