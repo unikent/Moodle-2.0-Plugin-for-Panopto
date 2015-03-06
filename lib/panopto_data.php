@@ -256,7 +256,7 @@ class panopto_data {
 
                 array_push($provisioning_info->Publishers, $publisher_info);
 
-                $publisher_hash[$publisher->username] = true;
+                $publisher_hash[$publisher_info->UserKey] = true;
             }
             
         }
@@ -291,7 +291,7 @@ class panopto_data {
 
                 array_push($provisioning_info->Instructors, $instructor_info);
 
-                $instructor_hash[$instructor->username] = true;
+                $instructor_hash[$instructor_info->UserKey] = true;
             }
         }
 
@@ -304,18 +304,19 @@ class panopto_data {
 
         if (!empty($students)) {
             foreach ($students as $student) {
-                if (array_key_exists($student->username, $instructor_hash)) {
-                    continue;
-                }
-                if (array_key_exists($student->username, $publisher_hash)) {
-                    continue;
-                }
-
                 $student_info = new stdClass;
                 $student_info->UserKey = $this->panopto_decorate_username($student->username);
                 $student_info->FirstName = $student->firstname;
                 $student_info->LastName = $student->lastname;
                 $student_info->Email = $student->email;
+
+                if (array_key_exists($student_info->UserKey, $instructor_hash)) {
+                    continue;
+                }
+
+                if (array_key_exists($student_info->UserKey, $publisher_hash)) {
+                    continue;
+                }
 
                 array_push($provisioning_info->Students, $student_info);
             }
@@ -373,7 +374,7 @@ class panopto_data {
                     if (array_key_exists($student->UserKey, $instructor_hash)) {
                         continue;
                     }
-                    
+
                     if (array_key_exists($student->UserKey, $publisher_hash)) {
                         continue;
                     }
