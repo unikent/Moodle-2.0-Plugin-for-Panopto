@@ -37,8 +37,14 @@ class update_user extends \core\task\adhoc_task
 
     public function execute() {
         $eventdata = (array)$this->get_custom_data();
-
         $panopto = new \panopto_data($eventdata['courseid']);
+
+        // Kent - for now, until we upgrade to 4.8.
+        $info = $panopto->get_provisioning_info();
+        $panopto->provision_course($info);
+        return;
+        // End Kent.
+
         $enrolmentinfo = $this->get_info_for_enrolment_change($panopto, $eventdata['relateduserid'], $eventdata['contextid']);
 
         switch ($eventdata['eventtype']) {
