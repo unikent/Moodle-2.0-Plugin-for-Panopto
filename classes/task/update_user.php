@@ -36,7 +36,16 @@ class update_user extends \core\task\adhoc_task
     }
 
     public function execute() {
+        global $DB;
+
         $eventdata = (array)$this->get_custom_data();
+
+        // If we delete a course, roles get deleted.
+        // Course might not exist anymore..
+        if (!$DB->record_exists('course', array('id' => $eventdata['courseid']))) {
+            return true;
+        }
+
         $panopto = new \panopto_data($eventdata['courseid']);
 
         // Kent - for now, until we upgrade to 4.8.
