@@ -41,17 +41,21 @@ if (has_capability('block/panopto:panoptocreator', $crsContext)) {
     }
 }
 
-$course_provision = false;
+$provisioned = false;
 if (has_capability('block/panopto:provision_course', $crsContext)) {
-    $panopto_data = new panopto_data(null);
-    $panopto_data->moodle_course_id = $courseid;
-    $provisioning_data = $panopto_data->get_provisioning_info();
-    $provisioned_data = $panopto_data->provision_course($provisioning_data);
-    if (!empty($provisioned_data)) {
-        $panopto_data->provision_user_folders($provisioning_data);
+    $panoptodata = new panopto_data(null);
+    $panoptodata->moodlecourseid = $courseid;
+    $panoptodata->servername = $panoptodata->get_panopto_servername($panoptodata->moodlecourseid);
+    $panoptodata->applicationkey = $panoptodata->get_panopto_app_key($panoptodata->moodlecourseid);
+
+    $provisioningdata = $panoptodata->get_provisioning_info();
+    $provisioneddata = $panoptodata->provision_course($provisioningdata);
+
+    if(!empty($provisioned_data)) {
+        $panoptodata->provision_user_folders($provisioningdata);
     }
 
-    $course_provision = empty($provisioned_data) ? false : true;
+    $provisioned = empty($provisioneddata) ? false : true;
 }
 
 if ($role->shortname == 'panopto_academic') {
@@ -72,5 +76,5 @@ if (!empty($CFG->block_panopto_admin_email_toggle)) {
 
 echo json_encode(array(
     'role_assign' => true,
-    'course_provision' => $course_provision
+    'course_provision' => $provisioned
 ));

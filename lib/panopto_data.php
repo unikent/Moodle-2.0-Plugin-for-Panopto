@@ -101,7 +101,7 @@ class panopto_data {
 
     // Kent Change
     // Provision folders for each of a courses instructors
-    public function provision_user_folders($provisioning_info) {
+    public function provision_user_folders($provisioninginfo) {
         global $CFG;
 
         // Dont do this for 2012
@@ -109,31 +109,32 @@ class panopto_data {
             return null;
         }
 
-        if (empty($provisioning_info->Instructors)) {
+        if (empty($provisioninginfo->Instructors)) {
             return array();
         }
 
     	//If no soap client for this instance, instantiate one
-    	if(!isset($this->soap_client)){
-    		$this->soap_client = panopto_data::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
-    	}
-
-        $folder_infos = array();
-
-        foreach ($provisioning_info->Instructors as $instructor) {
-            $instructor_folder = new stdClass;
-            $userkey = explode("\\", $instructor->UserKey);
-            $instructor_folder->ShortName = '';
-            $instructor_folder->LongName = $userkey[1] . "'s unlisted recordings";
-            $instructor_folder->ExternalCourseID = $this->instancename . ":" . $userkey[1];
-
-            $instructor_folder->Instructors = array();
-            $instructor_folder->Instructors[] = $instructor;
-
-            $folder_infos[] = $this->soap_client->ProvisionCourse($instructor_folder);
+        if (!isset($this->soapclient)) {
+            $this->soapclient = $this->instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
         }
 
-        return $folder_infos;
+        $folders = array();
+
+        foreach ($provisioninginfo->Instructors as $instructor) {
+            $userkey = explode("\\", $instructor->UserKey);
+            
+            $folder = new stdClass;
+            $folder->ShortName = '';
+            $folder->LongName = $userkey[1] . "'s unlisted recordings";
+            $folder->ExternalCourseID = $this->instancename . ":" . $userkey[1];
+
+            $folder->Instructors = array();
+            $folder->Instructors[] = $instructor;
+
+            $folders[] = $this->soapclient->provision_course($folder);
+        }
+
+        return $folders;
     }
     // End Change
 
