@@ -189,7 +189,7 @@ class block_panopto extends block_base {
      * Generate HTML for block contents.
      */
     public function get_ajax_content() {
-        global $CFG, $COURSE, $PAGE, $USER;
+        global $CFG, $COURSE, $PAGE, $USER, $OUTPUT;
 
         $context = \context_course::instance($COURSE->id, \MUST_EXIST);
         $hasedit = $this->has_access();
@@ -211,25 +211,32 @@ class block_panopto extends block_base {
         // They will be the default values if this is the first time running.
         $mapping = panopto_data::get_course_role_mappings($COURSE->id);
         self::set_course_role_permissions($COURSE->id, $mapping['publisher'], $mapping['creator']);
+
         if ($this->content !== null) {
             return $this->content;
         }
+
         $this->content = new stdClass;
+
         // Construct the Panopto data proxy object.
         $panoptodata = new panopto_data($COURSE->id);
+
         if (empty($panoptodata->servername) || empty($panoptodata->instancename) || empty($panoptodata->applicationkey)) {
             $this->content->text = get_string('unprovisioned', 'block_panopto') . "
             <br/><br/>
             <a href='$CFG->wwwroot/blocks/panopto/provision_course_internal.php?id=$COURSE->id'>Provision Course</a>";
             $this->content->footer = "";
+
             return $this->content;
         }
+
         try {
             if (!$panoptodata->sessiongroupid) {
                 $this->content->text = get_string('no_course_selected', 'block_panopto');
             } else {
                 // Get course info from SOAP service.
                 $courseinfo = $panoptodata->get_course();
+
                 // Panopto course was deleted, or an exception was thrown while retrieving course data.
                 if ($courseinfo->Access == "Error") {
                     $this->content->text .= "<span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
@@ -247,6 +254,7 @@ class block_panopto extends block_base {
                         <form name='SSO' method='post'>
                             <input type='hidden' name='instance' value='$panoptodata->instancename' />
                         </form>";
+
                     $this->content->text .= '<div><b>' . get_string('live_sessions', 'block_panopto') . '</b></div>';
                     $livesessions = $panoptodata->get_live_sessions();
                     if (!empty($livesessions)) {
@@ -254,6 +262,7 @@ class block_panopto extends block_base {
                         foreach ($livesessions as $livesession) {
                             // Alternate gray background for readability.
                             $altclass = ($i % 2) ? "listItemAlt" : "";
+
                             $livesessiondisplayname = s($livesession->Name);
                             $this->content->text .= "<div class='listItem $altclass'>
                             $livesessiondisplayname
@@ -273,6 +282,7 @@ class block_panopto extends block_base {
                         $this->content->text .= '<div class="listItem">'
                                 . get_string('no_live_sessions', 'block_panopto') . '</div>';
                     }
+
                     $this->content->text .= "<div class='sectionHeader'><b>"
                             . get_string('completed_recordings', 'block_panopto') . '</b></div>';
                     $completeddeliveries = $panoptodata->get_completed_deliveries();
@@ -283,8 +293,10 @@ class block_panopto extends block_base {
                             if ($i == 3) {
                                 $this->content->text .= "<div id='hiddenLecturesDiv'>";
                             }
+
                             // Alternate gray background for readability.
                             $altclass = ($i % 2) ? "listItemAlt" : "";
+
                             $completeddeliverydisplayname = s($completeddelivery->DisplayName);
                             $this->content->text .= "<div class='listItem $altclass'>
                                                         <a href='$completeddelivery->ViewerURL' onclick='return M.local_panopto.startSSO(this)'>
@@ -293,6 +305,7 @@ class block_panopto extends block_base {
                                                     </div>";
                             $i++;
                         }
+
                         // If some lectures are hidden, display "Show all" link.
                         if ($i > 3) {
                             $this->content->text .= "</div>";
@@ -304,6 +317,7 @@ class block_panopto extends block_base {
                     } else {
                         $this->content->text .= "<div class='listItem'>" . get_string('no_completed_recordings', 'block_panopto') . '</div>';
                     }
+
                     if ($courseinfo->AudioPodcastURL) {
                         $this->content->text .= "<div class='sectionHeader'><b>" . get_string('podcast_feeds', 'block_panopto') . "</b></div>
                                                  <div class='listItem'>
@@ -356,6 +370,8 @@ class block_panopto extends block_base {
         $this->content->text .= "<span class='panoptoterms'>" . $OUTPUT->help_icon('help_terms', 'block_panopto', get_string('terms_link_title', 'block_panopto')) . "</span>"; 
         $this->content->text .= "</span>";
         // END KENT
+
+        $this->content->footer = '';
 
         return $this->content;
     }

@@ -137,83 +137,14 @@ class panopto_data {
     }
     // End Change
 
-    // Kent Change
-    /**
-     * Create a shared folder between multiple courses
-     */
-    public function provision_shared_folder($shortname, $longname, $courses) {
-        if (empty($courses)) {
-            throw new \moodle_exception("You must specify one or more courses!");
-        }
-
-    	//If no soap client for this instance, instantiate one
-    	if(!isset($this->soap_client)){
-    		$this->soap_client = panopto_data::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
-    	}
-
-        // First, extract a set of provisioning information for each course.
-        $provisioning_infos = array();
-        {
-            $saved_id = $this->moodle_course_id;
-            foreach ($courses as $course) {
-                $this->moodle_course_id = $course->id;
-                $provisioning_infos[] = $this->get_provisioning_info();
-            }
-
-            $this->moodle_course_id = $saved_id;
-        }
-
-        // Now merge it all into one giant block.
-        $provisioning_info = new stdClass;
-        $provisioning_info->ShortName = $shortname;
-        $provisioning_info->LongName = $longname;
-        // There must be a primary course, which is unfortunate.
-        $provisioning_info->ExternalCourseID = $this->instancename . ":" . $this->moodle_course_id;
-
-        // Merge Instructors in.
-        {
-            $provisioning_info->Instructors = array();
-            foreach ($provisioning_infos as $pi) {
-                foreach ($pi->Instructors as $instructor) {
-                    if (!isset($provisioning_info->Instructors[$instructor->UserKey])) {
-                        $provisioning_info->Instructors[$instructor->UserKey] = $instructor;
-                    }
-                }
-            }
-
-            // Reset the keys.
-            $provisioning_info->Instructors = array_values($provisioning_info->Instructors);
-        }
-
-        // Merge Students in.
-        {
-            $provisioning_info->Students = array();
-            foreach ($provisioning_infos as $pi) {
-                foreach ($pi->Students as $student) {
-                    if (!isset($provisioning_info->Students[$student->UserKey])) {
-                        $provisioning_info->Students[$student->UserKey] = $student;
-                    }
-                }
-            }
-
-            // Reset the keys.
-            $provisioning_info->Students = array_values($provisioning_info->Students);
-        }
-
-        // Create the "course" in Panopto.
-        return $this->soap_client->ProvisionCourse($provisioning_info);
-    }
-    // End Change
-
     /**
      *  Fetch course name and membership info from DB in preparation for provisioning operation.
      */
     public function get_provisioning_info() {
+        global $DB;
+
         // Kent Change
-        global $DB, $CFG;
         $provisioninginfo = new stdClass;
-        $provisioninginfo->Instructors = array();
-        $provisioninginfo->Students = array();
         // End Change
 
         $provisioninginfo->ShortName = $DB->get_field('course', 'shortname', array('id' => $this->moodlecourseid));
@@ -270,7 +201,6 @@ class panopto_data {
          */
         // Kent Change
         $students = get_users_by_capability($coursecontext, 'block/panopto:panoptoviewer');
-        $provisioninginfo->Students = array();
         // End Change
 
         if (!empty($students)) {

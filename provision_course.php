@@ -173,7 +173,7 @@ if ($mform->is_cancelled()) {
             
             // Kent Change
             if(!empty($provisioned_data)) {
-                $panopto_data->provision_user_folders($provisioning_data);
+                $panoptodata->provision_user_folders($provisioningdata);
             }
             // End Change
 

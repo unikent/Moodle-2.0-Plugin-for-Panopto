@@ -4,6 +4,7 @@ define('AJAX_SCRIPT', true);
 
 /** Include config */
 require_once(dirname(__FILE__) . '/../../config.php');
+require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
 require_once(dirname(__FILE__) . '/block_panopto.php');
 
 require_sesskey();
