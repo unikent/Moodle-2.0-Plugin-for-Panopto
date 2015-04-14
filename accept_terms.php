@@ -43,15 +43,11 @@ if (has_capability('block/panopto:panoptocreator', $crsContext)) {
 
 $provisioned = false;
 if (has_capability('block/panopto:provision_course', $crsContext)) {
-    $panoptodata = new panopto_data(null);
-    $panoptodata->moodlecourseid = $courseid;
-    $panoptodata->servername = $panoptodata->get_panopto_servername($panoptodata->moodlecourseid);
-    $panoptodata->applicationkey = $panoptodata->get_panopto_app_key($panoptodata->moodlecourseid);
-
+    $panoptodata = new panopto_data($courseid);
     $provisioningdata = $panoptodata->get_provisioning_info();
     $provisioneddata = $panoptodata->provision_course($provisioningdata);
 
-    if(!empty($provisioned_data)) {
+    if (!empty($provisioned_data)) {
         $panoptodata->provision_user_folders($provisioningdata);
     }
 

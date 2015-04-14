@@ -217,6 +217,8 @@ class block_panopto extends block_base {
         }
 
         $this->content = new stdClass;
+        $this->content->text = "";
+        $this->content->footer = "";
 
         // Construct the Panopto data proxy object.
         $panoptodata = new panopto_data($COURSE->id);
