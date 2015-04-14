@@ -99,17 +99,15 @@ class panopto_data {
         return $courseinfo;
     }
 
-    // Kent Change
-    // Provision folders for each of a courses instructors
+    /**
+     * Provision folders for each of a courses instructors
+     *
+     * Kent addition
+     */
     public function provision_user_folders($provisioninginfo) {
         global $CFG;
 
-        // Dont do this for 2012
-        if ($CFG->kent->distribution === "2012") {
-            return null;
-        }
-
-        if (empty($provisioninginfo->Instructors)) {
+        if ($CFG->kent->distribution === "2012" || empty($provisioninginfo->Instructors)) {
             return array();
         }
 
@@ -122,7 +120,7 @@ class panopto_data {
 
         foreach ($provisioninginfo->Instructors as $instructor) {
             $userkey = explode("\\", $instructor->UserKey);
-            
+
             $folder = new stdClass;
             $folder->ShortName = '';
             $folder->LongName = $userkey[1] . "'s unlisted recordings";
