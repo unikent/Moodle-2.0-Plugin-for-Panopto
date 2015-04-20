@@ -1,7 +1,7 @@
 M.local_panopto = {
     Y : null,
     transaction : [],
-    init : function(Y, courseid, permstr, role_assign_bool, editing) {
+    init : function(Y, courseid, editing) {
         var panopto = Y.one("#panopto-text");
         var panoptofooter = Y.one("#panopto-footer");
         panopto.setHTML("Requesting data...");
@@ -11,11 +11,7 @@ M.local_panopto = {
             timeout: 8000,
             method: "GET",
             data: {
-                sesskey: M.cfg.sesskey,
-                courseid: courseid,
-                permstr: permstr,
-                role_assign_bool: role_assign_bool,
-                editing: editing
+                sesskey: M.cfg.sesskey
             },
             on: {
                 success : function (x,o) {

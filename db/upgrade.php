@@ -15,116 +15,60 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Upgrade the Panopto block
+ * Scripts used for upgrading database when upgrading block from an older version
  *
- * @global moodle_database $DB
- * @param int $oldversion
- * @param object $block
+ * @package block_panopto
+ * @copyright  Panopto 2009 - 2015 with contributions from Spenser Jones (sjones@ambrose.edu)
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function xmldb_block_panopto_upgrade($oldversion, $block) {
-    global $CFG, $DB;
 
+defined('MOODLE_INTERNAL') || die();
+
+function xmldb_block_panopto_upgrade($oldversion = 0) {
+    global $CFG, $DB;
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2013122001) {
-        // Define table block_panopto_updates to be created.
-        $table = new xmldb_table('block_panopto_updates');
+    if ($oldversion < 2014121502) {
 
-        // Adding fields to table block_panopto_updates.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-
-        // Adding keys to table block_panopto_updates.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        // Adding indexes to table block_panopto_updates.
-        $table->add_index('courseid_key', XMLDB_INDEX_UNIQUE, array('courseid'));
-
-        // Conditionally launch create table for block_panopto_updates.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
+        // Add db fields for servername and application key per course.
+        if (isset($CFG->block_panopto_server_name)) {
+            $oldservername = $CFG->block_panopto_server_name;
         }
-
-        // Panopto savepoint reached.
-        upgrade_block_savepoint(true, 2013122001, 'panopto');
-    }
-
-    if ($oldversion < 2014030400) {
-        // Define field master to be added to block_panopto_foldermap.
-        $table = new xmldb_table('block_panopto_foldermap');
-
-        // Add the master field.
-        $field = new xmldb_field('master', XMLDB_TYPE_INTEGER, '1', null, null, null, '1', 'panopto_id');
-
-        // Conditionally launch add field master.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
+        if (isset($CFG->block_panopto_application_key)) {
+            $oldappkey = $CFG->block_panopto_application_key;
         }
-
-        // Add an index on panopto ID.
-        $index = new xmldb_index('mpfm_pid', XMLDB_INDEX_NOTUNIQUE, array('panopto_id'));
-
-        // Conditionally launch add index mpfm_pid.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-        // Set a single master for every currently mirrored course.
-        $courses = $DB->get_records('block_panopto_foldermap');
-        $map = array();
-        foreach ($courses as $course) {
-            if (isset($map[$course->panopto_id])) {
-                $DB->set_field('block_panopto_foldermap', 'master', 0, array(
-                    'id' => $course->id
-                ));
-                continue;
-            }
-
-            $map[$course->panopto_id] = $course;
-        }
-
-        // Panopto savepoint reached.
-        upgrade_block_savepoint(true, 2014030400, 'panopto');
-    }
-
-    if ($oldversion < 2014110300) {
-
-        // Define table panopto_course_update_list to be renamed to block_panopto_updates.
-        $table = new xmldb_table('panopto_course_update_list');
-
-        // Launch rename table for panopto_course_update_list.
-        $dbman->rename_table($table, 'block_panopto_updates');
-
-        // Panopto savepoint reached.
-        upgrade_block_savepoint(true, 2014110300, 'panopto');
-    }
-
-    // Skylar says blame Panopto.
-    if ($oldversion < 2015012000) {
-        $table = new xmldb_table('block_panopto_foldermap');
 
         // Define field panopto_server to be added to block_panopto_foldermap.
+        $table = new xmldb_table('block_panopto_foldermap');
         $field = new xmldb_field('panopto_server', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null, 'panopto_id');
+
+        // Conditionally launch add field panopto_server.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
-            $DB->set_field('block_panopto_foldermap', 'panopto_server', $CFG->block_panopto_server_name, null);
+            if (isset($oldservername)) {
+                $DB->set_field('block_panopto_foldermap', 'panopto_server', $oldservername, null);
+            }
         }
 
         // Define field panopto_app_key to be added to block_panopto_foldermap.
+        $table = new xmldb_table('block_panopto_foldermap');
         $field = new xmldb_field('panopto_app_key', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL, null, null, 'panopto_server');
+
+        // Conditionally launch add field panopto_app_key.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
-            $DB->set_field('block_panopto_foldermap', 'panopto_app_key', $CFG->block_panopto_application_key, null);
+            if (isset($oldappkey)) {
+                $DB->set_field('block_panopto_foldermap', 'panopto_app_key', $oldappkey, null);
+            }
         }
 
         // Panopto savepoint reached.
-        upgrade_block_savepoint(true, 2015012000, 'panopto');
+        upgrade_block_savepoint(true, 2014121502, 'panopto');
     }
 
+    if ($oldversion < 2015012901) {
 
-        if ($oldversion < 2015020300) {
-
-                // Define field publisher_mapping to be added to block_panopto_foldermap.
+        // Define field publisher_mapping to be added to block_panopto_foldermap.
         $table = new xmldb_table('block_panopto_foldermap');
         $field = new xmldb_field('publisher_mapping', XMLDB_TYPE_CHAR, '20', null, null, null, '1', 'panopto_app_key');
 
@@ -142,25 +86,9 @@ function xmldb_block_panopto_upgrade($oldversion, $block) {
             $dbman->add_field($table, $field);
         }
 
-
         // Panopto savepoint reached.
-        upgrade_block_savepoint(true, 2015020300, 'panopto');
-    }
-
-    if ($oldversion < 2015020400) {
-
-        // Define table block_panopto_updates to be dropped.
-        $table = new xmldb_table('block_panopto_updates');
-
-        // Conditionally launch drop table for block_panopto_updates.
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table);
-        }
-
-        // Panopto savepoint reached.
-        upgrade_block_savepoint(true, 2015020400, 'panopto');
+        upgrade_block_savepoint(true, 2015012901, 'panopto');
     }
 
     return true;
 }
-
