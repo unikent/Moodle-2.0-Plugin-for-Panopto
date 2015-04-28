@@ -7,6 +7,9 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot . '/blocks/moodleblock.class.php');
 require_once(dirname(__FILE__) . '/block_panopto.php');
 
+$courseid = required_param('courseid', PARAM_INT);
+
+require_login($courseid);
 require_sesskey();
 
 $PAGE->set_context(context_course::instance($COURSE->id, MUST_EXIST));

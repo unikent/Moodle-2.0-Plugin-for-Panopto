@@ -11,7 +11,8 @@ M.local_panopto = {
             timeout: 8000,
             method: "GET",
             data: {
-                sesskey: M.cfg.sesskey
+                sesskey: M.cfg.sesskey,
+                courseid: courseid
             },
             on: {
                 success : function (x,o) {
