@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -123,43 +122,6 @@ class panopto_data {
 
         $this->soapclient->provision_course($folder);
     }
-
-    /**
-     * Provision folders for each of a courses instructors
-     *
-     * Kent addition
-     */
-    public function provision_user_folders($provisioninginfo) {
-        global $CFG;
-
-        if ($CFG->kent->distribution === "2012" || empty($provisioninginfo->Instructors)) {
-            return array();
-        }
-
-    	//If no soap client for this instance, instantiate one
-        if (!isset($this->soapclient)) {
-            $this->soapclient = $this->instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
-        }
-
-        $folders = array();
-
-        foreach ($provisioninginfo->Instructors as $instructor) {
-            $userkey = explode("\\", $instructor->UserKey);
-
-            $folder = new stdClass;
-            $folder->ShortName = '';
-            $folder->LongName = $userkey[1] . "'s unlisted recordings";
-            $folder->ExternalCourseID = $this->instancename . ":" . $userkey[1];
-
-            $folder->Instructors = array();
-            $folder->Instructors[] = $instructor;
-
-            $folders[] = $this->soapclient->provision_course($folder);
-        }
-
-        return $folders;
-    }
-    // End Change
 
     /**
      *  Fetch course name and membership info from DB in preparation for provisioning operation.
@@ -545,9 +507,9 @@ class panopto_data {
         try {
             $result = $this->soapclient->remove_user_from_course($this->sessiongroupid, $role, $userkey);
         } catch (Exception $e) {
-            error_log("Error: " . $e->getMessage());
-            error_log("Code: " . $e->getCode());
-            error_log("Line: " . $e->getLine());
+            debugging("Error: " . $e->getMessage());
+            debugging("Code: " . $e->getCode());
+            debugging("Line: " . $e->getLine());
         }
         return $result;
     }
@@ -557,7 +519,7 @@ class panopto_data {
      */
     public function change_user_role($role, $userkey) {
 
-        //If user is to have both creator and publisher roles, change his current role to publisher, and add a creator role.
+        // If user is to have both creator and publisher roles, change his current role to publisher, and add a creator role.
         if ($role == "Creator/Publisher") {
             $this->change_user_role_soap_call("Publisher", $userkey);
             $this->add_course_user_soap_call("Creator", $userkey);
@@ -577,9 +539,9 @@ class panopto_data {
         try {
             $result = $this->soapclient->change_user_role($this->sessiongroupid, $role, $userkey);
         } catch (Exception $e) {
-            error_log("Error: " . $e->getMessage());
-            error_log("Code: " . $e->getCode());
-            error_log("Line: " . $e->getLine());
+            debugging("Error: " . $e->getMessage());
+            debugging("Code: " . $e->getCode());
+            debugging("Line: " . $e->getLine());
         }
         return $result;
     }
