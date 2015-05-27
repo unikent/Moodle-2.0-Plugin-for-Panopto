@@ -24,8 +24,6 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once('lib/panopto_data.php');
 
-global $courses;
-
 // Populate list of servernames to select from.
 $aserverarray = array();
 $appkeyarray = array();
@@ -87,7 +85,7 @@ class panopto_provision_form extends moodleform {
 }
 
 require_login();
-
+require_sesskey();
 
 // Set course context if we are in a course, otherwise use system context.
 $courseidparam = optional_param('course_id', 0, PARAM_INT);
