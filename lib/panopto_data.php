@@ -100,41 +100,22 @@ class panopto_data {
     }
 
     /**
-     * Provision folders for each of a courses instructors
-     *
-     * Kent addition
+     * Provision one user folder.
+     * Kent change.
      */
-    public function provision_user_folders($provisioninginfo) {
-        global $CFG;
+    public function provision_user_folder($fullkey) {
+        $userkey = explode("\\", $fullkey);
 
-        if ($CFG->kent->distribution === "2012" || empty($provisioninginfo->Instructors)) {
-            return array();
-        }
+        $folder = new \stdClass();
+        $folder->ShortName = '';
+        $folder->LongName = $userkey[1] . "'s unlisted recordings";
+        $folder->ExternalCourseID = $this->instancename . ":" . $userkey[1];
 
-    	//If no soap client for this instance, instantiate one
-        if (!isset($this->soapclient)) {
-            $this->soapclient = $this->instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
-        }
+        $folder->Instructors = array();
+        $folder->Instructors[] = $fullkey;
 
-        $folders = array();
-
-        foreach ($provisioninginfo->Instructors as $instructor) {
-            $userkey = explode("\\", $instructor->UserKey);
-
-            $folder = new stdClass;
-            $folder->ShortName = '';
-            $folder->LongName = $userkey[1] . "'s unlisted recordings";
-            $folder->ExternalCourseID = $this->instancename . ":" . $userkey[1];
-
-            $folder->Instructors = array();
-            $folder->Instructors[] = $instructor;
-
-            $folders[] = $this->soapclient->provision_course($folder);
-        }
-
-        return $folders;
+        $this->soapclient->provision_course($folder);
     }
-    // End Change
 
     /**
      *  Fetch course name and membership info from DB in preparation for provisioning operation.
@@ -443,10 +424,14 @@ class panopto_data {
      */
     public function add_course_user($role, $userkey) {
 
-        //If user has both publisher and creator roles, add both
+        // If user has both publisher and creator roles, add both.
         if ($role == "Creator/Publisher") {
             $this->add_course_user_soap_call("Publisher", $userkey);
             $this->add_course_user_soap_call("Creator", $userkey);
+
+            // Kent Change.
+            $this->provision_user_folder($userkey);
+            // End Kent Change.
         } else {
             $this->add_course_user_soap_call($role, $userkey);
         }

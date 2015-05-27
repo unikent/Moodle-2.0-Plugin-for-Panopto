@@ -170,12 +170,6 @@ if ($mform->is_cancelled()) {
             }
             $provisioningdata = $panoptodata->get_provisioning_info();
             $provisioneddata = $panoptodata->provision_course($provisioningdata);
-            
-            // Kent Change
-            if(!empty($provisioned_data)) {
-                $panoptodata->provision_user_folders($provisioningdata);
-            }
-            // End Change
 
             include('views/provisioned_course.html.php');
         }

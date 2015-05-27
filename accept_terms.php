@@ -47,10 +47,6 @@ if (has_capability('block/panopto:provision_course', $crsContext)) {
     $provisioningdata = $panoptodata->get_provisioning_info();
     $provisioneddata = $panoptodata->provision_course($provisioningdata);
 
-    if (!empty($provisioned_data)) {
-        $panoptodata->provision_user_folders($provisioningdata);
-    }
-
     $provisioned = empty($provisioneddata) ? false : true;
 }
 
