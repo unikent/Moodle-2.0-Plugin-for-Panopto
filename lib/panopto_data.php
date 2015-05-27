@@ -110,15 +110,29 @@ class panopto_data {
      * Kent change.
      */
     public function provision_user_folder($fullkey) {
+        global $DB;
+
         $userkey = explode("\\", $fullkey);
+        $user = $DB->get_record('user', array(
+            'username' => $userkey[1]
+        ));
+
+        if (!$user) {
+            debugging("Couldn't find user: $userkey! ($fullkey)");
+            return;
+        }
+
+        $instructor = new \stdClass();
+        $instructor->UserKey = $fullkey;
+        $instructor->FirstName = $user->firstname;
+        $instructor->LastName = $user->lastname;
+        $instructor->Email = $user->email;
 
         $folder = new \stdClass();
         $folder->ShortName = '';
-        $folder->LongName = $userkey[1] . "'s unlisted recordings";
-        $folder->ExternalCourseID = $this->instancename . ":" . $userkey[1];
-
-        $folder->Instructors = array();
-        $folder->Instructors[] = $fullkey;
+        $folder->LongName = $user->username . "'s unlisted recordings";
+        $folder->ExternalCourseID = $this->instancename . ":" . $user->username;
+        $folder->Instructors = array($instructor);
 
         $this->soapclient->provision_course($folder);
     }

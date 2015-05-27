@@ -106,10 +106,12 @@ $urlparams['return_url'] = $returnurl;
 $PAGE->set_url('/blocks/panopto/provision_course.php', $urlparams);
 $PAGE->set_pagelayout('base');
 
+$returnurl = new moodle_url($returnurl);
+
 $mform = new panopto_provision_form($PAGE->url);
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url($returnurl));
+    redirect($returnurl);
 } else {
     $provisiontitle = get_string('provision_courses', 'block_panopto');
     $PAGE->set_pagelayout('base');

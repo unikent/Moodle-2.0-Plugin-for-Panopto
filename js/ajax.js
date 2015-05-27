@@ -12,7 +12,8 @@ M.local_panopto = {
             method: "GET",
             data: {
                 sesskey: M.cfg.sesskey,
-                courseid: courseid
+                courseid: courseid,
+                editing: editing
             },
             on: {
                 success : function (x,o) {
