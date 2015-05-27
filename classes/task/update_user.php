@@ -44,11 +44,13 @@ class update_user extends \core\task\adhoc_task {
         switch ($eventdata['eventtype']) {
             case 'enrol_add':
                 // Kent change.
-                $parole = \block_panopto\util::get_role('panopto_academic');
-                $panrole = \block_panopto\util::get_role('panopto_non_academic');
+                if ($enrolmentinfo['role'] != 'Viewer') {
+                    $parole = \block_panopto\util::get_role('panopto_academic');
+                    $panrole = \block_panopto\util::get_role('panopto_non_academic');
 
-                if (!user_has_role_assignment($eventdata['relateduserid'], $parole->id) && !user_has_role_assignment($eventdata['relateduserid'], $panrole->id)) {
-                    return;
+                    if (!user_has_role_assignment($eventdata['relateduserid'], $parole->id) && !user_has_role_assignment($eventdata['relateduserid'], $panrole->id)) {
+                        return;
+                    }
                 }
                 // End Kent change.
 
@@ -60,7 +62,7 @@ class update_user extends \core\task\adhoc_task {
                 break;
 
             case 'role':
-                $panopto->change_user_role($enrolmentinfo['role'], $enrolmentinfo['userkey']);
+                //$panopto->change_user_role($enrolmentinfo['role'], $enrolmentinfo['userkey']);
                 break;
         }
     }
