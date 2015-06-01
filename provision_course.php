@@ -24,8 +24,6 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once('lib/panopto_data.php');
 
-global $courses;
-
 // Populate list of servernames to select from.
 $aserverarray = array();
 $appkeyarray = array();
@@ -87,7 +85,7 @@ class panopto_provision_form extends moodleform {
 }
 
 require_login();
-
+require_sesskey();
 
 // Set course context if we are in a course, otherwise use system context.
 $courseidparam = optional_param('course_id', 0, PARAM_INT);
@@ -106,10 +104,12 @@ $urlparams['return_url'] = $returnurl;
 $PAGE->set_url('/blocks/panopto/provision_course.php', $urlparams);
 $PAGE->set_pagelayout('base');
 
+$returnurl = new moodle_url($returnurl);
+
 $mform = new panopto_provision_form($PAGE->url);
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url($returnurl));
+    redirect($returnurl);
 } else {
     $provisiontitle = get_string('provision_courses', 'block_panopto');
     $PAGE->set_pagelayout('base');
@@ -170,12 +170,6 @@ if ($mform->is_cancelled()) {
             }
             $provisioningdata = $panoptodata->get_provisioning_info();
             $provisioneddata = $panoptodata->provision_course($provisioningdata);
-            
-            // Kent Change
-            if(!empty($provisioned_data)) {
-                $panoptodata->provision_user_folders($provisioningdata);
-            }
-            // End Change
 
             include('views/provisioned_course.html.php');
         }

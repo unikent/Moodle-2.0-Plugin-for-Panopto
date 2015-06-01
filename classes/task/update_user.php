@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -44,6 +43,17 @@ class update_user extends \core\task\adhoc_task {
 
         switch ($eventdata['eventtype']) {
             case 'enrol_add':
+                // Kent change.
+                if ($enrolmentinfo['role'] != 'Viewer') {
+                    $parole = \block_panopto\util::get_role('panopto_academic');
+                    $panrole = \block_panopto\util::get_role('panopto_non_academic');
+
+                    if (!user_has_role_assignment($eventdata['relateduserid'], $parole->id) && !user_has_role_assignment($eventdata['relateduserid'], $panrole->id)) {
+                        return;
+                    }
+                }
+                // End Kent change.
+
                 $panopto->add_course_user($enrolmentinfo['role'], $enrolmentinfo['userkey']);
                 break;
 
@@ -52,7 +62,7 @@ class update_user extends \core\task\adhoc_task {
                 break;
 
             case 'role':
-                $panopto->change_user_role($enrolmentinfo['role'], $enrolmentinfo['userkey']);
+                //$panopto->change_user_role($enrolmentinfo['role'], $enrolmentinfo['userkey']);
                 break;
         }
     }

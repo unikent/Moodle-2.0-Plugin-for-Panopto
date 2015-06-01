@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -90,6 +89,13 @@ class panopto_data {
         }
         $courseinfo = $this->soapclient->provision_course($provisioninginfo);
 
+        // Kent Change.
+        $instructors = array_merge($provisioninginfo->Publishers, $provisioninginfo->Instructors);
+        foreach ($instructors as $instructor) {
+            $this->provision_user_folder($instructor->UserKey);
+        }
+        // End Kent Change.
+
         if (!empty($courseinfo) && !empty($courseinfo->PublicID)) {
             self::set_panopto_course_id($this->moodlecourseid, $courseinfo->PublicID);
             self::set_panopto_server_name($this->moodlecourseid, $this->servername);
@@ -100,41 +106,36 @@ class panopto_data {
     }
 
     /**
-     * Provision folders for each of a courses instructors
-     *
-     * Kent addition
+     * Provision one user folder.
+     * Kent change.
      */
-    public function provision_user_folders($provisioninginfo) {
-        global $CFG;
+    public function provision_user_folder($fullkey) {
+        global $DB;
 
-        if ($CFG->kent->distribution === "2012" || empty($provisioninginfo->Instructors)) {
-            return array();
+        $userkey = explode("\\", $fullkey);
+        $user = $DB->get_record('user', array(
+            'username' => $userkey[1]
+        ));
+
+        if (!$user) {
+            debugging("Couldn't find user: $userkey! ($fullkey)");
+            return;
         }
 
-    	//If no soap client for this instance, instantiate one
-        if (!isset($this->soapclient)) {
-            $this->soapclient = $this->instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
-        }
+        $instructor = new \stdClass();
+        $instructor->UserKey = $fullkey;
+        $instructor->FirstName = $user->firstname;
+        $instructor->LastName = $user->lastname;
+        $instructor->Email = $user->email;
 
-        $folders = array();
+        $folder = new \stdClass();
+        $folder->ShortName = '';
+        $folder->LongName = $user->username . "'s unlisted recordings";
+        $folder->ExternalCourseID = $this->instancename . ":" . $user->username;
+        $folder->Instructors = array($instructor);
 
-        foreach ($provisioninginfo->Instructors as $instructor) {
-            $userkey = explode("\\", $instructor->UserKey);
-
-            $folder = new stdClass;
-            $folder->ShortName = '';
-            $folder->LongName = $userkey[1] . "'s unlisted recordings";
-            $folder->ExternalCourseID = $this->instancename . ":" . $userkey[1];
-
-            $folder->Instructors = array();
-            $folder->Instructors[] = $instructor;
-
-            $folders[] = $this->soapclient->provision_course($folder);
-        }
-
-        return $folders;
+        $this->soapclient->provision_course($folder);
     }
-    // End Change
 
     /**
      *  Fetch course name and membership info from DB in preparation for provisioning operation.
@@ -143,7 +144,9 @@ class panopto_data {
         global $DB;
 
         // Kent Change
-        $provisioninginfo = new stdClass;
+        $provisioninginfo = new \stdClass();
+        $parole = \block_panopto\util::get_role('panopto_academic');
+        $panrole = \block_panopto\util::get_role('panopto_non_academic');
         // End Change
 
         $provisioninginfo->ShortName = $DB->get_field('course', 'shortname', array('id' => $this->moodlecourseid));
@@ -161,6 +164,12 @@ class panopto_data {
         if (!empty($publishers)) {
             $provisioninginfo->Publishers = array();
             foreach ($publishers as $publisher) {
+                // Kent change.
+                if (!user_has_role_assignment($publisher->id, $parole->id) && !user_has_role_assignment($publisher->id, $panrole->id)) {
+                    continue;
+                }
+                // End Kent change.
+
                 $publisherinfo = new stdClass;
                 $publisherinfo->UserKey = $this->panopto_decorate_username($publisher->username);
                 $publisherinfo->FirstName = $publisher->firstname;
@@ -182,6 +191,12 @@ class panopto_data {
         if (!empty($instructors)) {
             $provisioninginfo->Instructors = array();
             foreach ($instructors as $instructor) {
+                // Kent change.
+                if (!user_has_role_assignment($instructor->id, $parole->id) && !user_has_role_assignment($instructor->id, $panrole->id)) {
+                    continue;
+                }
+                // End Kent change.
+
                 $instructorinfo = new stdClass;
                 $instructorinfo->UserKey = $this->panopto_decorate_username($instructor->username);
                 $instructorinfo->FirstName = $instructor->firstname;
@@ -442,14 +457,29 @@ class panopto_data {
      * Add a user enrollment to the current course
      */
     public function add_course_user($role, $userkey) {
+        // Kent Change.
+        switch ($role) {
+            case "Creator/Publisher":
+                $this->add_course_user_soap_call("Publisher", $userkey);
+                $this->add_course_user_soap_call("Creator", $userkey);
+                $this->provision_user_folder($userkey);
+            break;
 
-        //If user has both publisher and creator roles, add both
-        if ($role == "Creator/Publisher") {
-            $this->add_course_user_soap_call("Publisher", $userkey);
-            $this->add_course_user_soap_call("Creator", $userkey);
-        } else {
-            $this->add_course_user_soap_call($role, $userkey);
+            case "Publisher":
+                $this->add_course_user_soap_call("Publisher", $userkey);
+                $this->provision_user_folder($userkey);
+            break;
+
+            case "Creator":
+                $this->add_course_user_soap_call("Creator", $userkey);
+                $this->provision_user_folder($userkey);
+            break;
+
+            default:
+                $this->add_course_user_soap_call($role, $userkey);
+            break;
         }
+        // End Kent Change.
     }
 
     /**
@@ -464,9 +494,9 @@ class panopto_data {
         try {
             $result = $this->soapclient->add_user_to_course($this->sessiongroupid, $role, $userkey);
         } catch (Exception $e) {
-            error_log("Error: " . $e->getMessage());
-            error_log("Code: " . $e->getCode());
-            error_log("Line: " . $e->getLine());
+            debugging("Error: " . $e->getMessage());
+            debugging("Code: " . $e->getCode());
+            debugging("Line: " . $e->getLine());
         }
         return $result;
     }
@@ -475,7 +505,11 @@ class panopto_data {
      * Remove a user's enrollment from the current course
      */
     public function remove_course_user($role, $userkey) {
-        {
+        // If user has both publisher and creator roles, remove both.
+        if ($role == "Creator/Publisher") {
+            $this->remove_course_user_soap_call("Publisher", $userkey);
+            $this->remove_course_user_soap_call("Creator", $userkey);
+        } else {
             $this->remove_course_user_soap_call($role, $userkey);
         }
     }
@@ -491,9 +525,9 @@ class panopto_data {
         try {
             $result = $this->soapclient->remove_user_from_course($this->sessiongroupid, $role, $userkey);
         } catch (Exception $e) {
-            error_log("Error: " . $e->getMessage());
-            error_log("Code: " . $e->getCode());
-            error_log("Line: " . $e->getLine());
+            debugging("Error: " . $e->getMessage());
+            debugging("Code: " . $e->getCode());
+            debugging("Line: " . $e->getLine());
         }
         return $result;
     }
@@ -503,7 +537,7 @@ class panopto_data {
      */
     public function change_user_role($role, $userkey) {
 
-        //If user is to have both creator and publisher roles, change his current role to publisher, and add a creator role.
+        // If user is to have both creator and publisher roles, change his current role to publisher, and add a creator role.
         if ($role == "Creator/Publisher") {
             $this->change_user_role_soap_call("Publisher", $userkey);
             $this->add_course_user_soap_call("Creator", $userkey);
@@ -523,9 +557,9 @@ class panopto_data {
         try {
             $result = $this->soapclient->change_user_role($this->sessiongroupid, $role, $userkey);
         } catch (Exception $e) {
-            error_log("Error: " . $e->getMessage());
-            error_log("Code: " . $e->getCode());
-            error_log("Line: " . $e->getLine());
+            debugging("Error: " . $e->getMessage());
+            debugging("Code: " . $e->getCode());
+            debugging("Line: " . $e->getLine());
         }
         return $result;
     }

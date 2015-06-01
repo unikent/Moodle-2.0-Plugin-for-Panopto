@@ -188,7 +188,7 @@ class block_panopto extends block_base {
     /**
      * Generate HTML for block contents.
      */
-    public function get_ajax_content() {
+    public function get_ajax_content($editing) {
         global $CFG, $COURSE, $PAGE, $USER, $OUTPUT;
 
         // Sync role mapping. In case this is the first time block is running we need to load old settings from db.
@@ -208,9 +208,9 @@ class block_panopto extends block_base {
         $permstr = '';
         if ($hasedit && $hascreator) {
             $permstr = get_string('access_status_creator', 'block_panopto');
-        } elseif ($hascreator && $PAGE->user_is_editing()) {
+        } else if ($hascreator && $editing) {
             $permstr = get_string('access_status_tcs', 'block_panopto') . ' <div id="panopto_ts_button">'.get_string('access_status_tcs_btn', 'block_panopto').'</div>';
-        } elseif ($hasviewer) {
+        } else if ($hasviewer) {
             $permstr = get_string('access_status_viewer', 'block_panopto');
         } else {
             $permstr = get_string('access_status_none', 'block_panopto');
@@ -224,9 +224,14 @@ class block_panopto extends block_base {
         $panoptodata = new panopto_data($COURSE->id);
 
         if (empty($panoptodata->servername) || empty($panoptodata->instancename) || empty($panoptodata->applicationkey)) {
+            $url = new \moodle_url('/blocks/panopto/provision_course_internal.php', array(
+                'id' => $COURSE->id,
+                'sesskey' => sesskey()
+            ));
+
             $this->content->text = get_string('unprovisioned', 'block_panopto') . "
             <br/><br/>
-            <a href='$CFG->wwwroot/blocks/panopto/provision_course_internal.php?id=$COURSE->id'>Provision Course</a>";
+            <a href='$url'>Provision Course</a>";
             $this->content->footer = "";
 
             return $this->content;
@@ -365,8 +370,7 @@ class block_panopto extends block_base {
         $this->content->text .= "<span class='panoptoextras'>";
         if (has_capability('moodle/course:update', $context)) {
             $this->content->text .= "<span class='panoptohelp'>" . $OUTPUT->help_icon('help_staff', 'block_panopto') . "</span>";
-        }
-        else {
+        } else {
             $this->content->text .= "<span class='panoptohelp'>" .$OUTPUT->help_icon('help_student', 'block_panopto') . "</span>";
         }
         $this->content->text .= "<span class='panoptoterms'>" . $OUTPUT->help_icon('help_terms', 'block_panopto', get_string('terms_link_title', 'block_panopto')) . "</span>"; 
@@ -374,6 +378,16 @@ class block_panopto extends block_base {
         // END KENT
 
         $this->content->footer = '';
+        if ($editing) {
+            $url = new \moodle_url('/blocks/panopto/provision_course.php', array(
+                'course_id' => $COURSE->id,
+                'return_url' => '/course/view.php?id=' . $COURSE->id,
+                'sesskey' => sesskey()
+            ));
+            $this->content->footer = \html_writer::link($url, get_string('reprovision', 'block_panopto'), array(
+                'class' => 'reprovision'
+            ));
+        }
 
         return $this->content;
     }

@@ -24,8 +24,6 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once('lib/panopto_data.php');
 
-global $courses;
-
 // Populate list of servernames to select from.
 $aserverarray = array();
 $appkeyarray = array();
@@ -80,7 +78,7 @@ class panopto_provision_form extends moodleform {
 }
 
 require_login();
-
+require_sesskey();
 
 // This page requires a course ID to be passed in as a param. If accessed directly without clicking on a link for the course,
 // no id is passed and the script fails. Similarly if no ID is passed with via a link (should never happen) the script will fail.

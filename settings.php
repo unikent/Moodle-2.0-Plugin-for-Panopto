@@ -66,7 +66,11 @@ if ($ADMIN->fulltree) {
             )
     );
 
-    $link = '<a href="' . $CFG->wwwroot . '/blocks/panopto/provision_course.php">' . get_string('block_global_add_courses', 'block_panopto') . '</a>';
+    $url = new \moodle_url('/blocks/panopto/provision_course.php', array(
+        'sesskey' => sesskey()
+    ));
+
+    $link = '<a href="' . $url . '">' . get_string('block_global_add_courses', 'block_panopto') . '</a>';
     $settings->add(new admin_setting_heading('block_panopto_add_courses', '', $link));
 }
 

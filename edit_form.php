@@ -46,11 +46,11 @@ class block_panopto_edit_form extends block_edit_form {
         if (!empty($panoptodata->servername) && !empty($panoptodata->instancename) && !empty($panoptodata->applicationkey)) {
             $mform->addElement('header', 'configheader', get_string('block_edit_header', 'block_panopto'));
 
-            $params = new stdClass;
-            $params->course_id = $COURSE->id;
-            $params->return_url = $_SERVER['REQUEST_URI'];
-            $querystring = http_build_query($params, '', '&');
-            $provisionurl = "$CFG->wwwroot/blocks/panopto/provision_course.php?" . $querystring;
+            $provisionurl = new \moodle_url('/blocks/panopto/provision_course.php', array(
+                'course_id' => $COURSE->id,
+                'return_url' => $_SERVER['REQUEST_URI'],
+                'sesskey' => sesskey()
+            ));
 
             $addtopanopto = get_string('add_to_panopto', 'block_panopto');
             $or = get_string('or', 'block_panopto');
