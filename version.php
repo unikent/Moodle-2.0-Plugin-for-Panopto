@@ -22,9 +22,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2015060500;
-$plugin->requires = 2010112400;  // Version 2.0 .
-$plugin->cron = 0;
+$plugin->version = 2015061700;
+$plugin->requires = 2015051100;  // Version 2.9.
 $plugin->component = 'block_panopto';
 $plugin->maturity = MATURITY_STABLE;
 

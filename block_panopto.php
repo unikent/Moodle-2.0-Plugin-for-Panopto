@@ -167,10 +167,16 @@ class block_panopto extends block_base {
     }
 
     // Generate HTML for block contents
-    function get_content() {
+    public function get_content() {
         global $CFG, $COURSE;
 
-        $this->content = new stdClass();
+        $cache = \cache::make('block_panopto', 'blockdata');
+        $this->content = $cache->get("data_{$COURSE->id}");
+        if ($this->content) {
+            return $this->content;
+        }
+
+        $this->content = new \stdClass();
         $this->content->text = "";
         $this->content->footer = "";
 
@@ -195,15 +201,20 @@ class block_panopto extends block_base {
             return $this->content;
         }
 
-        // Sync role mapping. In case this is the first time block is running we need to load old settings from db.
-        // They will be the default values if this is the first time running.
-        $mapping = panopto_data::get_course_role_mappings($COURSE->id);
-        self::set_course_role_permissions($COURSE->id, $mapping['publisher'], $mapping['creator']);
-
         $context = \context_course::instance($COURSE->id, \MUST_EXIST);
         $hasedit = $this->has_access();
         $hascreator = has_capability('block/panopto:panoptocreator', $context);
         $hasviewer = has_capability('block/panopto:panoptoviewer', $context);
+
+        $cache = \cache::make('block_panopto', 'blockdata');
+        $cachekey = "data_{$COURSE->id}_{$hasedit}_{$hascreator}_{$hasviewer}";
+        if (!$hascreator && !$hasedit && $hasviewer) {
+            $cachekey = "data_{$COURSE->id}";
+        }
+        $this->content = $cache->get($cachekey);
+        if ($this->content) {
+            return $this->content;
+        }
 
         $permstr = '';
         if ($hasedit && $hascreator) {
@@ -216,7 +227,12 @@ class block_panopto extends block_base {
             $permstr = get_string('access_status_none', 'block_panopto');
         }
 
-        $this->content = new stdClass;
+        // Sync role mapping. In case this is the first time block is running we need to load old settings from db.
+        // They will be the default values if this is the first time running.
+        $mapping = panopto_data::get_course_role_mappings($COURSE->id);
+        self::set_course_role_permissions($COURSE->id, $mapping['publisher'], $mapping['creator']);
+
+        $this->content = new \stdClass();
         $this->content->text = "";
         $this->content->footer = "";
 
@@ -387,6 +403,8 @@ class block_panopto extends block_base {
             $this->content->footer = \html_writer::link($url, get_string('reprovision', 'block_panopto'), array(
                 'class' => 'reprovision'
             ));
+        } else {
+            $cache->set($cachekey);
         }
 
         return $this->content;
