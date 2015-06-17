@@ -170,8 +170,6 @@ class block_panopto extends block_base {
     public function get_content() {
         global $CFG, $COURSE;
 
-        $cache = \cache::make('block_panopto', 'blockdata');
-        $this->content = $cache->get("data_{$COURSE->id}");
         if ($this->content) {
             return $this->content;
         }
@@ -179,6 +177,17 @@ class block_panopto extends block_base {
         $this->content = new \stdClass();
         $this->content->text = "";
         $this->content->footer = "";
+
+        $context = \context_course::instance($COURSE->id, \MUST_EXIST);
+        if (!has_capability('block/panopto:panoptoviewer', $context)) {
+            return $this->content;
+        }
+
+        $cache = \cache::make('block_panopto', 'blockdata');
+        if (($cachecontent = $cache->get("data_{$COURSE->id}"))) {
+            $this->content = $cachecontent;
+            return $this->content;
+        }
 
         // Just return a status message if there is one.
         if (!empty($CFG->block_panopto_status_message)) {
