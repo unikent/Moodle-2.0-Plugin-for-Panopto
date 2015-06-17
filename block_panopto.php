@@ -191,14 +191,14 @@ class block_panopto extends block_base {
     public function get_ajax_content($editing) {
         global $CFG, $COURSE, $PAGE, $USER, $OUTPUT;
 
+        if ($this->content !== null) {
+            return $this->content;
+        }
+
         // Sync role mapping. In case this is the first time block is running we need to load old settings from db.
         // They will be the default values if this is the first time running.
         $mapping = panopto_data::get_course_role_mappings($COURSE->id);
         self::set_course_role_permissions($COURSE->id, $mapping['publisher'], $mapping['creator']);
-
-        if ($this->content !== null) {
-            return $this->content;
-        }
 
         $context = \context_course::instance($COURSE->id, \MUST_EXIST);
         $hasedit = $this->has_access();
