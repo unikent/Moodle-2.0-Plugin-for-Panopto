@@ -18,8 +18,9 @@
  * Our MUC caches
  */
 $definitions = array(
-    'panopto' => array(
-        'mode' => cache_store::MODE_SESSION,
-        'ttl' => 300
+    'blockdata' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'ttl' => 14400,
+        'simplekeys' => true
     )
 );
