@@ -26,7 +26,7 @@ require_once(dirname(__FILE__) . '/../../lib/accesslib.php');
 
 /**
  * Base class for the Panopto block for Moodle.
- * 
+ *
  * @package block_panopto
  * @copyright  Panopto 2009 - 2015
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +34,7 @@ require_once(dirname(__FILE__) . '/../../lib/accesslib.php');
 class block_panopto extends block_base {
 
     /**
-     *Name of the panopto block. Should match the block's directory name on the server.
+     * Name of the panopto block. Should match the block's directory name on the server.
      */
     public $blockname = "panopto";
 
@@ -46,8 +46,8 @@ class block_panopto extends block_base {
     }
 
     /**
-    * Block has global config (display "Settings" link on blocks admin page).
-    */
+     * Block has global config (display "Settings" link on blocks admin page).
+     */
     public function has_config() {
         return true;
     }
@@ -97,33 +97,29 @@ class block_panopto extends block_base {
         global $DB, $USER;
 
         $ar = \block_panopto\util::get_role('panopto_academic');
-        $ar_check = !empty($ar) ? user_has_role_assignment($USER->id, $ar->id, context_system::instance()->id) : false;
+        $archeck = !empty($ar) ? user_has_role_assignment($USER->id, $ar->id, context_system::instance()->id) : false;
 
         $nar = \block_panopto\util::get_role('panopto_non_academic');
-        $nar_check = !empty($nar) ? user_has_role_assignment($USER->id, $nar->id, context_system::instance()->id) : false;
+        $narcheck = !empty($nar) ? user_has_role_assignment($USER->id, $nar->id, context_system::instance()->id) : false;
 
-        return $ar_check || $nar_check;
+        return $archeck || $narcheck;
     }
 
     /**
      * Required JS
      */
     public function get_required_javascript() {
-        parent::get_required_javascript();
-
         global $COURSE, $CFG;
 
-        $perm_str = '';
-        $role_assign_bool = false;
+        parent::get_required_javascript();
 
         $this->page->requires->string_for_js('show_all', 'block_panopto');
         $this->page->requires->string_for_js('show_less', 'block_panopto');
-
         $this->page->requires->string_for_js('ajax_json_error', 'block_panopto');
         $this->page->requires->string_for_js('ajax_data_error', 'block_panopto');
         $this->page->requires->string_for_js('ajax_failure', 'block_panopto');
         $this->page->requires->string_for_js('ajax_busy', 'block_panopto');
-        
+
         $this->page->requires->string_for_js('error', 'block_panopto');
 
         if ($CFG->kent->distribution !== "2012") {
@@ -167,10 +163,14 @@ class block_panopto extends block_base {
     }
 
     // Generate HTML for block contents
-    function get_content() {
+    public function get_content() {
         global $CFG, $COURSE;
 
-        $this->content = new stdClass();
+        if ($this->content) {
+            return $this->content;
+        }
+
+        $this->content = new \stdClass();
         $this->content->text = "";
         $this->content->footer = "";
 
@@ -191,11 +191,6 @@ class block_panopto extends block_base {
     public function get_ajax_content($editing) {
         global $CFG, $COURSE, $PAGE, $USER, $OUTPUT;
 
-        // Sync role mapping. In case this is the first time block is running we need to load old settings from db.
-        // They will be the default values if this is the first time running.
-        $mapping = panopto_data::get_course_role_mappings($COURSE->id);
-        self::set_course_role_permissions($COURSE->id, $mapping['publisher'], $mapping['creator']);
-
         if ($this->content !== null) {
             return $this->content;
         }
@@ -204,6 +199,13 @@ class block_panopto extends block_base {
         $hasedit = $this->has_access();
         $hascreator = has_capability('block/panopto:panoptocreator', $context);
         $hasviewer = has_capability('block/panopto:panoptoviewer', $context);
+
+        $cache = \cache::make('block_panopto', 'blockdata');
+        $cachekey = "data_{$COURSE->id}_{$hasedit}_{$hascreator}_{$hasviewer}";
+        $this->content = $cache->get($cachekey);
+        if ($this->content) {
+            return $this->content;
+        }
 
         $permstr = '';
         if ($hasedit && $hascreator) {
@@ -216,7 +218,12 @@ class block_panopto extends block_base {
             $permstr = get_string('access_status_none', 'block_panopto');
         }
 
-        $this->content = new stdClass;
+        // Sync role mapping. In case this is the first time block is running we need to load old settings from db.
+        // They will be the default values if this is the first time running.
+        $mapping = panopto_data::get_course_role_mappings($COURSE->id);
+        self::set_course_role_permissions($COURSE->id, $mapping['publisher'], $mapping['creator']);
+
+        $this->content = new \stdClass();
         $this->content->text = "";
         $this->content->footer = "";
 
@@ -387,6 +394,8 @@ class block_panopto extends block_base {
             $this->content->footer = \html_writer::link($url, get_string('reprovision', 'block_panopto'), array(
                 'class' => 'reprovision'
             ));
+        } else {
+            $cache->set($cachekey);
         }
 
         return $this->content;

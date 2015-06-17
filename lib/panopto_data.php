@@ -90,7 +90,15 @@ class panopto_data {
         $courseinfo = $this->soapclient->provision_course($provisioninginfo);
 
         // Kent Change.
-        $instructors = array_merge($provisioninginfo->Publishers, $provisioninginfo->Instructors);
+        $instructors = array();
+        if (isset($provisioninginfo->Publishers)) {
+            $instructors = array_merge($instructors, $provisioninginfo->Publishers);
+        }
+
+        if (isset($provisioninginfo->Instructors)) {
+            $instructors = array_merge($instructors, $provisioninginfo->Instructors);
+        }
+
         foreach ($instructors as $instructor) {
             $this->provision_user_folder($instructor->UserKey);
         }
