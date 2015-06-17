@@ -26,7 +26,7 @@ require_once(dirname(__FILE__) . '/../../lib/accesslib.php');
 
 /**
  * Base class for the Panopto block for Moodle.
- * 
+ *
  * @package block_panopto
  * @copyright  Panopto 2009 - 2015
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +34,7 @@ require_once(dirname(__FILE__) . '/../../lib/accesslib.php');
 class block_panopto extends block_base {
 
     /**
-     *Name of the panopto block. Should match the block's directory name on the server.
+     * Name of the panopto block. Should match the block's directory name on the server.
      */
     public $blockname = "panopto";
 
@@ -46,8 +46,8 @@ class block_panopto extends block_base {
     }
 
     /**
-    * Block has global config (display "Settings" link on blocks admin page).
-    */
+     * Block has global config (display "Settings" link on blocks admin page).
+     */
     public function has_config() {
         return true;
     }
@@ -97,33 +97,29 @@ class block_panopto extends block_base {
         global $DB, $USER;
 
         $ar = \block_panopto\util::get_role('panopto_academic');
-        $ar_check = !empty($ar) ? user_has_role_assignment($USER->id, $ar->id, context_system::instance()->id) : false;
+        $archeck = !empty($ar) ? user_has_role_assignment($USER->id, $ar->id, context_system::instance()->id) : false;
 
         $nar = \block_panopto\util::get_role('panopto_non_academic');
-        $nar_check = !empty($nar) ? user_has_role_assignment($USER->id, $nar->id, context_system::instance()->id) : false;
+        $narcheck = !empty($nar) ? user_has_role_assignment($USER->id, $nar->id, context_system::instance()->id) : false;
 
-        return $ar_check || $nar_check;
+        return $archeck || $narcheck;
     }
 
     /**
      * Required JS
      */
     public function get_required_javascript() {
-        parent::get_required_javascript();
-
         global $COURSE, $CFG;
 
-        $perm_str = '';
-        $role_assign_bool = false;
+        parent::get_required_javascript();
 
         $this->page->requires->string_for_js('show_all', 'block_panopto');
         $this->page->requires->string_for_js('show_less', 'block_panopto');
-
         $this->page->requires->string_for_js('ajax_json_error', 'block_panopto');
         $this->page->requires->string_for_js('ajax_data_error', 'block_panopto');
         $this->page->requires->string_for_js('ajax_failure', 'block_panopto');
         $this->page->requires->string_for_js('ajax_busy', 'block_panopto');
-        
+
         $this->page->requires->string_for_js('error', 'block_panopto');
 
         if ($CFG->kent->distribution !== "2012") {
@@ -178,17 +174,6 @@ class block_panopto extends block_base {
         $this->content->text = "";
         $this->content->footer = "";
 
-        $context = \context_course::instance($COURSE->id, \MUST_EXIST);
-        if (!has_capability('block/panopto:panoptoviewer', $context)) {
-            return $this->content;
-        }
-
-        $cache = \cache::make('block_panopto', 'blockdata');
-        if (($cachecontent = $cache->get("data_{$COURSE->id}"))) {
-            $this->content = $cachecontent;
-            return $this->content;
-        }
-
         // Just return a status message if there is one.
         if (!empty($CFG->block_panopto_status_message)) {
             $this->content->text .= "<div id=\"panopto-status\">$CFG->block_panopto_status_message</div>";
@@ -217,9 +202,6 @@ class block_panopto extends block_base {
 
         $cache = \cache::make('block_panopto', 'blockdata');
         $cachekey = "data_{$COURSE->id}_{$hasedit}_{$hascreator}_{$hasviewer}";
-        if (!$hascreator && !$hasedit && $hasviewer) {
-            $cachekey = "data_{$COURSE->id}";
-        }
         $this->content = $cache->get($cachekey);
         if ($this->content) {
             return $this->content;
