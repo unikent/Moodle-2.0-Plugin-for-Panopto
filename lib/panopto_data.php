@@ -84,7 +84,6 @@ class panopto_data {
     public function provision_course($provisioninginfo) {
         // If no soap client for this instance, instantiate one.
         if (!isset($this->soapclient)) {
-
             $this->soapclient = self::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
         }
         $courseinfo = $this->soapclient->provision_course($provisioninginfo);
@@ -578,7 +577,7 @@ class panopto_data {
      */
     public function instantiate_soap_client($username, $servername, $applicationkey) {
         global $USER;
-        if (!empty($this->servername)) {
+        if (empty($username)) {
             if (isset($USER->username)) {
                 $username = $USER->username;
             } else {

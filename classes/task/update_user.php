@@ -39,6 +39,11 @@ class update_user extends \core\task\adhoc_task {
         $eventdata = (array) $this->get_custom_data();
 
         $panopto = new \panopto_data($eventdata['courseid']);
+        if (empty($panopto->servername)) {
+            // Course not provisioned yet!
+            return;
+        }
+
         $enrolmentinfo = $this->get_info_for_enrolment_change($panopto, $eventdata['relateduserid'], $eventdata['contextid']);
 
         switch ($eventdata['eventtype']) {
