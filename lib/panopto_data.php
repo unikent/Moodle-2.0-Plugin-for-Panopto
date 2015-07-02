@@ -58,7 +58,7 @@ class panopto_data {
             $this->applicationkey = self::get_panopto_app_key($moodlecourseid);
         }
 
-        // Fetch current CC course mapping if we have a Moodle course ID.
+        // Fetch current Panopto course mapping if we have a Moodle course ID.
         // Course will be null initially for batch-provisioning case.
         if (!empty($moodlecourseid)) {
             $this->moodlecourseid = $moodlecourseid;
@@ -70,6 +70,7 @@ class panopto_data {
      * Returns SystemInfo.
      */
     public function get_system_info() {
+        
         // If no soap client for this instance, instantiate one.
         if (!isset($this->soapclient)) {
             $this->soapclient = self::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
@@ -82,10 +83,13 @@ class panopto_data {
      * Create the Panopto course and populate its ACLs.
      */
     public function provision_course($provisioninginfo) {
+        global $DB;
+
         // If no soap client for this instance, instantiate one.
         if (!isset($this->soapclient)) {
             $this->soapclient = self::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
         }
+
         $courseinfo = $this->soapclient->provision_course($provisioninginfo);
 
         // Kent Change.
@@ -107,6 +111,12 @@ class panopto_data {
             self::set_panopto_course_id($this->moodlecourseid, $courseinfo->PublicID);
             self::set_panopto_server_name($this->moodlecourseid, $this->servername);
             self::set_panopto_app_key($this->moodlecourseid, $this->applicationkey);
+            
+            //If old role mappings exists, do not remap. Otherwise, set role mappings to defaults
+            $mappings = self::get_course_role_mappings($this->moodlecourseid);
+            if (empty($mappings['creator']) && empty($mappings['publisher'])) {
+                self::set_course_role_mappings($this->moodlecourseid, array('1'), array('3','4'));
+            }
         }
 
         return $courseinfo;
@@ -289,6 +299,7 @@ class panopto_data {
         $livesessions = array();
         if (!empty($livesessionsresult->SessionInfo)) {
             $livesessions = $livesessionsresult->SessionInfo;
+            
             // Single-element return set comes back as scalar, not array (?).
             if (!is_array($livesessions)) {
                 $livesessions = array($livesessions);
@@ -307,6 +318,8 @@ class panopto_data {
         $completeddeliveries = array();
         if (!empty($completeddeliveriesresult->DeliveryInfo)) {
             $completeddeliveries = $completeddeliveriesresult->DeliveryInfo;
+            
+            
             // Single-element return set comes back as scalar, not array (?)
             if (!is_array($completeddeliveries)) {
                 $completeddeliveries = array($completeddeliveries);
@@ -352,6 +365,7 @@ class panopto_data {
      */
     public static function get_course_role_mappings($moodlecourseid) {
         global $DB;
+        
         // Get publisher roles as string and explode to array.
         $pubrolesraw = $DB->get_field('block_panopto_foldermap', 'publisher_mapping', array('moodleid' => $moodlecourseid));
         $pubroles = explode(",", $pubrolesraw);
@@ -359,6 +373,7 @@ class panopto_data {
         // Get creator roles as string, then explode to array.
         $createrolesraw = $DB->get_field('block_panopto_foldermap', 'creator_mapping', array('moodleid' => $moodlecourseid));
         $creatorroles = explode(",", $createrolesraw);
+        
         return array("publisher" => $pubroles, "creator" => $creatorroles);
     }
 
@@ -585,6 +600,7 @@ class panopto_data {
             }
             $this->uname = $username;
         }
+       
         // Compute web service credentials for current user.
         $apiuseruserkey = panopto_decorate_username($username);
         $apiuserauthcode = panopto_generate_auth_code($apiuseruserkey . "@" . $this->servername, $this->applicationkey);
