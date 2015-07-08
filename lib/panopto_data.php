@@ -196,7 +196,7 @@ class panopto_data {
         $publisherhash = array();
         $instructorhash = array();
 
-        $publishers = get_users_by_capability($coursecontext, 'block/panopto:provision_aspublisher');
+        $publishers = get_enrolled_users($coursecontext, 'block/panopto:provision_aspublisher');
 
         if (!empty($publishers)) {
             $provisioninginfo->Publishers = array();
@@ -223,7 +223,7 @@ class panopto_data {
         // Could also use moodle/legacy:teacher, moodle/legacy:editingteacher, etc. if those turn out to be more appropriate.
         // File edited - new capability added to access.php to identify instructors without including all site admins etc.
         // New capability used to identify instructors for provisioning.
-        $instructors = get_users_by_capability($coursecontext, 'block/panopto:provision_asteacher');
+        $instructors = get_enrolled_users($coursecontext, 'block/panopto:provision_asteacher');
 
         if (!empty($instructors)) {
             $provisioninginfo->Instructors = array();
@@ -251,7 +251,7 @@ class panopto_data {
          * Use get_enrolled_users because, as of Moodle 2.0, capability moodle/course:view no longer corresponds to a participant list.
          */
         // Kent Change
-        $students = get_users_by_capability($coursecontext, 'block/panopto:panoptoviewer');
+        $students = get_enrolled_users($coursecontext, 'block/panopto:panoptoviewer');
         // End Change
 
         if (!empty($students)) {
