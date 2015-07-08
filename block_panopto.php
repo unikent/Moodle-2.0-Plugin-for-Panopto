@@ -231,15 +231,17 @@ class block_panopto extends block_base {
         $panoptodata = new panopto_data($COURSE->id);
 
         if (empty($panoptodata->servername) || empty($panoptodata->instancename) || empty($panoptodata->applicationkey)) {
-            $url = new \moodle_url('/blocks/panopto/provision_course_internal.php', array(
-                'id' => $COURSE->id,
-                'sesskey' => sesskey()
-            ));
+            if ($hasedit && $hascreator) {
+                $url = new \moodle_url('/blocks/panopto/provision_course_internal.php', array(
+                    'id' => $COURSE->id,
+                    'sesskey' => sesskey()
+                ));
 
-            $this->content->text = get_string('unprovisioned', 'block_panopto') . "
-            <br/><br/>
-            <a href='$url'>Provision Course</a>";
-            $this->content->footer = "";
+                $this->content->text = get_string('unprovisioned', 'block_panopto') . "
+                <br/><br/>
+                <a href='$url'>Provision Course</a>";
+                $this->content->footer = "";
+            }
 
             return $this->content;
         }

@@ -13,7 +13,7 @@ $editing = optional_param('editing', 0, PARAM_BOOL);
 require_login($courseid);
 require_sesskey();
 
-$PAGE->set_context(context_course::instance($COURSE->id, MUST_EXIST));
+$PAGE->set_context(context_course::instance($courseid, MUST_EXIST));
 
 $block = new block_panopto();
 $content = $block->get_ajax_content($editing);
