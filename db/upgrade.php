@@ -90,5 +90,27 @@ function xmldb_block_panopto_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2015012901, 'panopto');
     }
 
+    if ($oldversion < 2015070800) {
+        // Grab all courses with a Panopto block.
+        $courses = $DB->get_records_sql("
+            SELECT DISTINCT moodleid as id
+            FROM {block_panopto_foldermap}
+            WHERE panopto_id IS NULL
+            OR panopto_server IS NULL
+            OR panopto_app_key IS NULL
+            OR panopto_id = ''
+            OR panopto_server = ''
+            OR panopto_app_key = ''
+        ");
+
+        foreach ($courses as $course) {
+            $panoptodata = new \panopto_data($course->id);
+            $panoptodata->default_provision();
+        }
+
+        // Panopto savepoint reached.
+        upgrade_block_savepoint(true, 2015070800, 'panopto');
+    }
+
     return true;
 }

@@ -67,6 +67,26 @@ class panopto_data {
     }
 
     /**
+     * Kent addition.
+     */
+    public function default_provision() {
+        global $CFG;
+
+        for ($x = 0; $x < 10; $x++) {
+            $cfgservername = 'block_panopto_server_name' . ($x + 1);
+            $cfgappkey = 'block_panopto_application_key' . ($x + 1);
+
+            if (!empty($CFG->$cfgservername) && !empty($CFG->$cfgappkey)) {
+                $this->servername = $CFG->$cfgservername;
+                $this->applicationkey = $CFG->$cfgappkey;
+
+                $provisioningdata = $this->get_provisioning_info();
+                return $this->provision_course($provisioningdata);
+            }
+        }
+    }
+
+    /**
      * Returns SystemInfo.
      */
     public function get_system_info() {
