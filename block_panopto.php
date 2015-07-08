@@ -229,19 +229,8 @@ class block_panopto extends block_base {
 
         // Construct the Panopto data proxy object.
         $panoptodata = new panopto_data($COURSE->id);
-
         if (empty($panoptodata->servername) || empty($panoptodata->instancename) || empty($panoptodata->applicationkey)) {
-            $url = new \moodle_url('/blocks/panopto/provision_course_internal.php', array(
-                'id' => $COURSE->id,
-                'sesskey' => sesskey()
-            ));
-
-            $this->content->text = get_string('unprovisioned', 'block_panopto') . "
-            <br/><br/>
-            <a href='$url'>Provision Course</a>";
-            $this->content->footer = "";
-
-            return $this->content;
+            $panoptodata->default_provision();
         }
 
         try {
@@ -385,18 +374,8 @@ class block_panopto extends block_base {
         // END KENT
 
         $this->content->footer = '';
-        if ($editing) {
-            $url = new \moodle_url('/blocks/panopto/provision_course.php', array(
-                'course_id' => $COURSE->id,
-                'return_url' => '/course/view.php?id=' . $COURSE->id,
-                'sesskey' => sesskey()
-            ));
-            $this->content->footer = \html_writer::link($url, get_string('reprovision', 'block_panopto'), array(
-                'class' => 'reprovision'
-            ));
-        } else {
-            $cache->set($cachekey);
-        }
+
+        $cache->set($cachekey);
 
         return $this->content;
     }
@@ -421,10 +400,15 @@ class block_panopto extends block_base {
         self::clear_capabilities_for_course($courseid);
 
         foreach ($publisherroles as $role) {
-            assign_capability('block/panopto:provision_aspublisher', CAP_ALLOW, $role, $coursecontext, $overwrite = false);
+            if (isset($role) && trim($role)!=='' ){
+                assign_capability('block/panopto:provision_aspublisher', CAP_ALLOW, $role, $coursecontext, $overwrite = false);
+            }
+
         }
         foreach ($creatorroles as $role) {
-            assign_capability('block/panopto:provision_asteacher', CAP_ALLOW, $role, $coursecontext, $overwrite = false);
+            if (isset($role) && trim($role)!=='' ){
+                assign_capability('block/panopto:provision_asteacher', CAP_ALLOW, $role, $coursecontext, $overwrite = false);
+                }
         }
         // Mark dirty (moodle standard for capability changes at context level).
         $coursecontext->mark_dirty();
