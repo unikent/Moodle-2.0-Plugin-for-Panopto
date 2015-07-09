@@ -37,7 +37,7 @@ class panopto_soap_client extends SoapClient {
     // Store the current action so we can insert it in __doRequest.
     public $currentaction;
 
-    public function panopto_soap_client($servername, $apiuseruserkey, $apiuserauthcode) {
+    public function __construct($servername, $apiuseruserkey, $apiuserauthcode) {
         // Instantiate SoapClient in non-WSDL mode.
         parent::__construct(null, array('location' => "http://$servername/Panopto/Services/ClientData.svc",
             'uri' => "http://services.panopto.com"));
