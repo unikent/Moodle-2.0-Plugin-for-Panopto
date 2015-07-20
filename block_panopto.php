@@ -230,7 +230,13 @@ class block_panopto extends block_base {
         // Construct the Panopto data proxy object.
         $panoptodata = new panopto_data($COURSE->id);
         if (empty($panoptodata->servername) || empty($panoptodata->instancename) || empty($panoptodata->applicationkey)) {
-            $panoptodata->default_provision();
+            if (!$panoptodata->default_provision()) {
+                $this->content->text = 'Could not auto-provision course.';
+                return $this->content;
+            }
+
+            // Start again.
+            $panoptodata = new panopto_data($COURSE->id);
         }
 
         try {
