@@ -84,6 +84,8 @@ class panopto_data {
                 return $this->provision_course($provisioningdata);
             }
         }
+
+        return false;
     }
 
     /**
