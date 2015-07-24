@@ -381,7 +381,7 @@ class block_panopto extends block_base {
 
         $this->content->footer = '';
 
-        $cache->set($cachekey);
+        $cache->set($cachekey, $this->content);
 
         return $this->content;
     }
