@@ -197,20 +197,9 @@
     }
 
     #panopto_ts_button {
-        display: block;
         padding: 10px;
         margin-top: 10px;
-        color: white;
-        background-color: #2752a0;
     }
-    .content > #panopto_ts_button {
-        margin: 10px;
-    }
-
-        #page-content #panopto_ts_button:hover {
-            text-decoration: none;
-            background-color: #1e407d;
-        }
 
     #panoptotac_dialog_overlay {
         display: none;

@@ -211,7 +211,7 @@ class block_panopto extends block_base {
         if ($hasedit && $hascreator) {
             $permstr = get_string('access_status_creator', 'block_panopto');
         } else if ($hascreator && $editing) {
-            $permstr = get_string('access_status_tcs', 'block_panopto') . ' <div id="panopto_ts_button">'.get_string('access_status_tcs_btn', 'block_panopto').'</div>';
+            $permstr = get_string('access_status_tcs', 'block_panopto') . ' <div id="panopto_ts_button" class="btn btn-block btn-primary">'.get_string('access_status_tcs_btn', 'block_panopto').'</div>';
         } else if ($hasviewer) {
             $permstr = get_string('access_status_viewer', 'block_panopto');
         } else {
