@@ -32,8 +32,10 @@ M.local_panopto = {
                         panopto.setHTML(data.text);
                         panoptofooter.setHTML(data.footer);
                         if (editing) {
-                            // call local tac js
-                            Y.use('local_panopto_tac', function(Y) { M.local_panopto_tac.init(Y, courseid); });
+                            // Call local tac js.
+                            $('#panopto_ts_button').panoptoTac({
+                                "courseid": courseid
+                            });
                         }
                     }
                 },

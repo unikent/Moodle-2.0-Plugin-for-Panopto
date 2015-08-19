@@ -149,7 +149,6 @@ class block_panopto extends block_base {
 
                 // Add in our JS
                 $this->page->requires->js('/blocks/panopto/js/underscore-min.js');
-                $this->page->requires->js('/blocks/panopto/js/panopto_init.js');
                 $this->page->requires->js('/blocks/panopto/js/panopto_tac.js');
             }
         }
@@ -203,7 +202,7 @@ class block_panopto extends block_base {
         $cache = \cache::make('block_panopto', 'blockdata');
         $cachekey = "data_{$COURSE->id}_{$hasedit}_{$hascreator}_{$hasviewer}";
         $this->content = $cache->get($cachekey);
-        if ($this->content) {
+        if (!$editing && $this->content) {
             return $this->content;
         }
 
@@ -381,7 +380,9 @@ class block_panopto extends block_base {
 
         $this->content->footer = '';
 
-        $cache->set($cachekey, $this->content);
+        if (!$editing) {
+            $cache->set($cachekey, $this->content);
+        }
 
         return $this->content;
     }
