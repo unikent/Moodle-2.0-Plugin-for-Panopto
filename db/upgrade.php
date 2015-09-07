@@ -103,5 +103,27 @@ function xmldb_block_panopto_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2015070800, 'panopto');
     }
 
+    if ($oldversion < 2015090700) {
+        // Define table block_panopto_eula to be created.
+        $table = new xmldb_table('block_panopto_eula');
+
+        // Adding fields to table block_panopto_eula.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('version', XMLDB_TYPE_INTEGER, '3', null, null, null, '1');
+
+        // Adding keys to table block_panopto_eula.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('k_userid', XMLDB_KEY_UNIQUE, array('userid'));
+
+        // Conditionally launch create table for block_panopto_eula.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Panopto savepoint reached.
+        upgrade_block_savepoint(true, 2015090700, 'panopto');
+    }
+
     return true;
 }
