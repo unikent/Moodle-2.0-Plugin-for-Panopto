@@ -94,23 +94,9 @@ $string['access_status_none'] = 'Access: None';
 $string['access_status_tcs'] = 'For editing access please see terms and conditions.';
 $string['access_status_tcs_btn'] = 'Terms &amp; Conditions';
 
-//Choose your role page
-$string['role_choice_head'] = 'Please pick your role';
-$string['role_choice_ac_btn'] = 'Academic Staff';
-$string['role_choice_nac_btn'] = 'Non Academic Staff';
-$string['role_choice_cancel'] = 'Cancel';
 
-//Terms page
-$string['terms_head'] = 'Terms and Conditions';
-$string['terms_back_btn'] = 'Back';
-$string['terms_agree_btn'] = 'Agree';
-$string['terms_decline_btn'] = 'Decline';
 
 //Ajax completion messages
-$string['success_roleassign'] = 'Your submission has been submitted successfully ';
-$string['success_sync_succ'] = 'and you have been synced with this panopto module.';
-$string['success_sync_fail'] = 'but we were unable to sync you with this panopto module. Try reprovisioning later.';
-$string['success_extras'] = ' A copy of the terms and conditions will be emailed to you shortly. ';
 $string['error'] = "There was a problem sending your request, please refresh this page and try again. If this problem persists then please contact <a href='mailto:elearning@kent.ac.uk'>elearning@kent.ac.uk</a>.";
 
 //Email stuff

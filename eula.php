@@ -54,8 +54,7 @@ if (optional_param('sign', false, PARAM_BOOL)) {
     \block_panopto\eula::sign($USER->id, $version);
 
     // Redirect back?
-    $url = isset($SESSION->panopto_redirect) ? new \moodle_url($SESSION->panopto_redirect) : new \moodle_url($PAGE->context->get_url());
-    redirect($url, 'Agreement signed successfully!', 2);
+    redirect(new \moodle_url($PAGE->context->get_url()), 'Agreement signed successfully!', 2);
 }
 
 $PAGE->set_title("Kent Player Terms and Conditions");

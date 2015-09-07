@@ -32,12 +32,6 @@ require_once(dirname(__FILE__) . '/../../lib/accesslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_panopto extends block_base {
-
-    /**
-     * Name of the panopto block. Should match the block's directory name on the server.
-     */
-    public $blockname = "panopto";
-
     /**
      * Set system properties of plugin.
      */
@@ -49,16 +43,6 @@ class block_panopto extends block_base {
      * Block has global config (display "Settings" link on blocks admin page).
      */
     public function has_config() {
-        return true;
-    }
-
-    /**
-     * Save global block data in mdl_config_plugins table instead of global CFG variable.
-     */
-    public function config_save($data) {
-        foreach ($data as $name => $value) {
-            set_config($name, trim($value), $this->blockname);
-        }
         return true;
     }
 
@@ -91,21 +75,6 @@ class block_panopto extends block_base {
     }
 
     /**
-     * Do we have the right grants?
-     */
-    private function has_access() {
-        global $DB, $USER;
-
-        $ar = \block_panopto\util::get_role('panopto_academic');
-        $archeck = !empty($ar) ? user_has_role_assignment($USER->id, $ar->id, context_system::instance()->id) : false;
-
-        $nar = \block_panopto\util::get_role('panopto_non_academic');
-        $narcheck = !empty($nar) ? user_has_role_assignment($USER->id, $nar->id, context_system::instance()->id) : false;
-
-        return $archeck || $narcheck;
-    }
-
-    /**
      * Required JS
      */
     public function get_required_javascript() {
@@ -123,39 +92,8 @@ class block_panopto extends block_base {
             'ajax_busy'
         ), 'block_panopto');
 
-        if ($CFG->kent->distribution !== "2012") {
-            if ($this->page->user_is_editing()) {
-                // We need jQuery!
-                $this->page->requires->jquery();
-                $this->page->requires->jquery_plugin('migrate');
-                $this->page->requires->jquery_plugin('ui');
-
-                // Need some langs..
-                $this->page->requires->strings_for_js(array(
-                    'role_choice_head',
-                    'role_choice_ac_btn',
-                    'role_choice_nac_btn',
-                    'role_choice_cancel',
-                    'terms_head',
-                    'terms_back_btn',
-                    'terms_agree_btn',
-                    'terms_decline_btn',
-                    'accademic_terms',
-                    'non_accademic_terms',
-                    'success_roleassign',
-                    'success_sync_succ',
-                    'success_sync_fail',
-                    'success_extras'
-                ), 'block_panopto');
-
-                // Add in our JS
-                $this->page->requires->js('/blocks/panopto/js/underscore-min.js');
-                $this->page->requires->js('/blocks/panopto/js/panopto_tac.js');
-            }
-        }
-
         // Finally, the init call
-        $this->page->requires->js_init_call('M.local_panopto.init', array($COURSE->id,  $this->page->user_is_editing()), false, array(
+        $this->page->requires->js_init_call('M.local_panopto.init', array($COURSE->id), false, array(
             'name' => 'local_panopto',
             'fullpath' => '/blocks/panopto/js/ajax.js',
             'requires' => array("node", "io", "dump", "json-parse")
@@ -164,7 +102,7 @@ class block_panopto extends block_base {
 
     // Generate HTML for block contents
     public function get_content() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $USER;
 
         if ($this->content) {
             return $this->content;
@@ -172,15 +110,27 @@ class block_panopto extends block_base {
 
         $this->content = new \stdClass();
         $this->content->text = "";
-        $this->content->footer = "";
+        $this->content->footer = '<div id="panopto-footer"></div>';
+
+        // If we have not signed the agreement, but we are an editor, show the TAC.
+        if (has_capability('moodle/course:update', \context_course::instance($COURSE->id)) && !\block_panopto\eula::has_signed($USER->id)) {
+            $url = new \moodle_url('/blocks/panopto/eula.php', array(
+                'course' => $COURSE->id
+            ));
+            $link = \html_writer::link($url, 'sign the terms and conditions');
+            $this->content->text .= "You must {$link}.";
+
+            return $this->content;
+        }
 
         // Just return a status message if there is one.
         if (!empty($CFG->block_panopto_status_message)) {
-            $this->content->text .= "<div id=\"panopto-status\">$CFG->block_panopto_status_message</div>";
+            $this->content->text .= \html_writer::div($CFG->block_panopto_status_message, '', array(
+                'id' => 'panopto-status'
+            ));
         }
 
         $this->content->text .= '<div id="panopto-text">Please Wait</div>';
-        $this->content->footer .= '<div id="panopto-footer"></div>';
 
         return $this->content;
     }
@@ -188,7 +138,7 @@ class block_panopto extends block_base {
     /**
      * Generate HTML for block contents.
      */
-    public function get_ajax_content($editing) {
+    public function get_ajax_content() {
         global $CFG, $COURSE, $PAGE, $USER, $OUTPUT;
 
         if ($this->content !== null) {
@@ -196,22 +146,19 @@ class block_panopto extends block_base {
         }
 
         $context = \context_course::instance($COURSE->id, \MUST_EXIST);
-        $hasedit = $this->has_access();
         $hascreator = has_capability('block/panopto:panoptocreator', $context);
         $hasviewer = has_capability('block/panopto:panoptoviewer', $context);
 
         $cache = \cache::make('block_panopto', 'blockdata');
-        $cachekey = "data_{$COURSE->id}_{$hasedit}_{$hascreator}_{$hasviewer}";
+        $cachekey = "data_{$COURSE->id}_{$hascreator}_{$hasviewer}";
         $this->content = $cache->get($cachekey);
-        if (!$editing && $this->content) {
+        if ($this->content) {
             return $this->content;
         }
 
         $permstr = '';
-        if ($hasedit && $hascreator) {
+        if ($hascreator) {
             $permstr = get_string('access_status_creator', 'block_panopto');
-        } else if ($hascreator && $editing) {
-            $permstr = get_string('access_status_tcs', 'block_panopto') . ' <div id="panopto_ts_button" class="btn btn-block btn-primary">'.get_string('access_status_tcs_btn', 'block_panopto').'</div>';
         } else if ($hasviewer) {
             $permstr = get_string('access_status_viewer', 'block_panopto');
         } else {
@@ -250,13 +197,9 @@ class block_panopto extends block_base {
                 if ($courseinfo->Access == "Error") {
                     $this->content->text .= "<span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
                 } else {
-                    // Kent Change
-                    if ($CFG->kent->distribution !== "2012") {
-                        $this->content->text .= "<div id='panopto_perm_state'>$permstr</div>";
-                    } else {
-                        $hasedit = true;
-                    }
-                    // End Kent Change
+                    // Kent Change.
+                    $this->content->text .= "<div id='panopto_perm_state'>$permstr</div>";
+                    // End Kent Change.
 
                     // SSO form passes instance name in POST to keep URLs portable.
                     $this->content->text .= "
@@ -348,7 +291,7 @@ class block_panopto extends block_base {
                         }
                     }
 
-                    if (has_capability('moodle/course:update', $context) && $hasedit) {
+                    if (has_capability('moodle/course:update', $context)) {
                         $this->content->text .= "<div class='sectionHeader'><b>" . get_string('links', 'block_panopto') . "</b></div>
                                                  <div class='listItem'>
                                                     <a href='$courseinfo->CourseSettingsURL' onclick='return M.local_panopto.startSSO(this)'
@@ -381,9 +324,7 @@ class block_panopto extends block_base {
 
         $this->content->footer = '';
 
-        if (!$editing) {
-            $cache->set($cachekey, $this->content);
-        }
+        $cache->set($cachekey, $this->content);
 
         return $this->content;
     }
