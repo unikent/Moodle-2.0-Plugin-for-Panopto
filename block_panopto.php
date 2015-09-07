@@ -113,14 +113,15 @@ class block_panopto extends block_base {
 
         parent::get_required_javascript();
 
-        $this->page->requires->string_for_js('show_all', 'block_panopto');
-        $this->page->requires->string_for_js('show_less', 'block_panopto');
-        $this->page->requires->string_for_js('ajax_json_error', 'block_panopto');
-        $this->page->requires->string_for_js('ajax_data_error', 'block_panopto');
-        $this->page->requires->string_for_js('ajax_failure', 'block_panopto');
-        $this->page->requires->string_for_js('ajax_busy', 'block_panopto');
-
-        $this->page->requires->string_for_js('error', 'block_panopto');
+        $this->page->requires->strings_for_js(array(
+            'error',
+            'show_all',
+            'show_less',
+            'ajax_json_error',
+            'ajax_data_error',
+            'ajax_failure',
+            'ajax_busy'
+        ), 'block_panopto');
 
         if ($CFG->kent->distribution !== "2012") {
             if ($this->page->user_is_editing()) {

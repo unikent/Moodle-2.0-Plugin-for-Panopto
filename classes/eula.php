@@ -34,8 +34,11 @@ namespace block_panopto;
  * @copyright  University of Kent
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user
+class eula
 {
+    const VERSION_ACADEMIC = 1;
+    const VERSION_NON_ACADEMIC = 2;
+
     /**
      * Has the given user signed the EULA?
      */
