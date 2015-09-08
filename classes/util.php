@@ -42,18 +42,6 @@ class util {
         global $DB, $CFG;
 
         static $map = array(
-            "panopto_academic" => array(
-                "Academic (Panopto)",
-                "panopto_academic",
-                "Panopto Academic User",
-                "user"
-            ),
-            "panopto_non_academic" => array(
-                "Non-Academic (Panopto)",
-                "panopto_non_academic",
-                "Panopto Non-Academic User",
-                "user"
-            ),
             "panopto_creator" => array(
                 "Course Creator (Panopto)",
                 "panopto_creator",
