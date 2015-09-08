@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . "/../../config.php");
+require_once(dirname(__FILE__) . '/../../config.php');
 
 $version = optional_param('version', null, PARAM_INT);
 
@@ -57,8 +57,8 @@ if (optional_param('sign', false, PARAM_BOOL)) {
     redirect(new \moodle_url($PAGE->context->get_url()), 'Agreement signed successfully!', 2);
 }
 
-$PAGE->set_title("Kent Player Terms and Conditions");
-$PAGE->set_heading("Kent Player Terms and Conditions");
+$PAGE->set_title('Kent Player Terms and Conditions');
+$PAGE->set_heading('Kent Player Terms and Conditions');
 $PAGE->requires->css('/blocks/panopto/styles.css');
 
 echo $OUTPUT->header();

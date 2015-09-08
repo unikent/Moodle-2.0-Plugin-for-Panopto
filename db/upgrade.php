@@ -125,5 +125,35 @@ function xmldb_block_panopto_upgrade($oldversion = 0) {
         upgrade_block_savepoint(true, 2015090700, 'panopto');
     }
 
+    if ($oldversion < 2015090800) {
+        $ar = $DB->get_field('role', 'id', array(
+            'shortname' => 'panopto_academic'
+        ));
+
+        $nar = $DB->get_field('role', 'id', array(
+            'shortname' => 'panopto_non_academic'
+        ));
+
+        // Upgrade roles.
+        $upgradeset = array();
+        list($sql, $params) = $DB->get_in_or_equal(array($ar, $nar));
+        $ras = $DB->get_records_select('role_assignments', 'roleid ' . $sql, $params);
+        foreach ($ras as $ra) {
+            $upgradeset[] = array(
+                'userid' => $ra->userid,
+                'version' => $ra->roleid == $ar ? \block_panopto\eula::VERSION_ACADEMIC : \block_panopto\eula::VERSION_NON_ACADEMIC
+            );
+        }
+
+        $DB->insert_records('block_panopto_eula', $upgradeset);
+
+        // Delete the old roles.
+        delete_role($ar);
+        delete_role($nar);
+
+        // Panopto savepoint reached.
+        upgrade_block_savepoint(true, 2015090800, 'panopto');
+    }
+
     return true;
 }

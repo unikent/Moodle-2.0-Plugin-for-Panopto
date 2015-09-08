@@ -22,12 +22,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2015090700;
-$plugin->requires = 2015051100;  // Version 2.9.
+$plugin->version = 2015090800;
+$plugin->requires = 2015051100;
 $plugin->component = 'block_panopto';
 $plugin->maturity = MATURITY_STABLE;
 
 $plugin->dependencies = array(
     'mod_forum' => ANY_VERSION
 );
-/* End of file version.php */
