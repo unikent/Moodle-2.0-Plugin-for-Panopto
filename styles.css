@@ -205,4 +205,8 @@
     margin-top: 0;
 }
 
+.block_panopto.block div.content div.panopto-pad {
+    padding: 5px;
+}
+
 /* End Kent styles */

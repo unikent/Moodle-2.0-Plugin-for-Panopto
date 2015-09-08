@@ -109,7 +109,7 @@ class block_panopto extends block_base {
         }
 
         $this->content = new \stdClass();
-        $this->content->text = "";
+        $this->content->text = '';
         $this->content->footer = '<div id="panopto-footer"></div>';
 
         // If we have not signed the agreement, but we are an editor, show the TAC.
@@ -118,7 +118,8 @@ class block_panopto extends block_base {
                 'course' => $COURSE->id
             ));
             $link = \html_writer::link($url, 'sign the terms and conditions');
-            $this->content->text .= "You must {$link}.";
+            $this->content->text .= \html_writer::div("You must {$link} before using this block.", 'panopto-pad');
+            $this->content->footer = '';
 
             return $this->content;
         }
