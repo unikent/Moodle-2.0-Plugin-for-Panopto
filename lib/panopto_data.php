@@ -184,8 +184,6 @@ class panopto_data {
 
         // Kent Change
         $provisioninginfo = new \stdClass();
-        $parole = \block_panopto\util::get_role('panopto_academic');
-        $panrole = \block_panopto\util::get_role('panopto_non_academic');
         // End Change
 
         $provisioninginfo->ShortName = $DB->get_field('course', 'shortname', array('id' => $this->moodlecourseid));
@@ -204,7 +202,7 @@ class panopto_data {
             $provisioninginfo->Publishers = array();
             foreach ($publishers as $publisher) {
                 // Kent change.
-                if (!user_has_role_assignment($publisher->id, $parole->id) && !user_has_role_assignment($publisher->id, $panrole->id)) {
+                if (!\block_panopto\eula::has_signed($publisher->id)) {
                     continue;
                 }
                 // End Kent change.
@@ -231,7 +229,7 @@ class panopto_data {
             $provisioninginfo->Instructors = array();
             foreach ($instructors as $instructor) {
                 // Kent change.
-                if (!user_has_role_assignment($instructor->id, $parole->id) && !user_has_role_assignment($instructor->id, $panrole->id)) {
+                if (!\block_panopto\eula::has_signed($instructor->id)) {
                     continue;
                 }
                 // End Kent change.

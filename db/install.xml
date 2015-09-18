@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/panopto/db" VERSION="20150204" COMMENT="XMLDB file for Panopto Focus block"
+<XMLDB PATH="blocks/panopto/db" VERSION="20150907" COMMENT="XMLDB file for Panopto Focus block"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -20,6 +20,17 @@
       <INDEXES>
         <INDEX NAME="mpfm_pid" UNIQUE="false" FIELDS="panopto_id" COMMENT="Index Panopto ID"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_panopto_eula" COMMENT="EULA signatures">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="version" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Agreement version"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="k_userid" TYPE="unique" FIELDS="userid"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>

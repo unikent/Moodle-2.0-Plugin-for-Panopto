@@ -1,8 +1,12 @@
 M.local_panopto = {
     Y : null,
     transaction : [],
-    init : function(Y, courseid, editing) {
+    init : function(Y, courseid) {
         var panopto = Y.one("#panopto-text");
+        if (!panopto) {
+            return;
+        }
+
         var panoptofooter = Y.one("#panopto-footer");
         panopto.setHTML("Requesting data...");
         
@@ -12,8 +16,7 @@ M.local_panopto = {
             method: "GET",
             data: {
                 sesskey: M.cfg.sesskey,
-                courseid: courseid,
-                editing: editing
+                courseid: courseid
             },
             on: {
                 success : function (x,o) {
@@ -31,12 +34,6 @@ M.local_panopto = {
                     } else {
                         panopto.setHTML(data.text);
                         panoptofooter.setHTML(data.footer);
-                        if (editing) {
-                            // Call local tac js.
-                            $('#panopto_ts_button').panoptoTac({
-                                "courseid": courseid
-                            });
-                        }
                     }
                 },
 

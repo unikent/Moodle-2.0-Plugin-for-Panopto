@@ -49,13 +49,8 @@ class update_user extends \core\task\adhoc_task {
         switch ($eventdata['eventtype']) {
             case 'enrol_add':
                 // Kent change.
-                if ($enrolmentinfo['role'] != 'Viewer') {
-                    $parole = \block_panopto\util::get_role('panopto_academic');
-                    $panrole = \block_panopto\util::get_role('panopto_non_academic');
-
-                    if (!user_has_role_assignment($eventdata['relateduserid'], $parole->id) && !user_has_role_assignment($eventdata['relateduserid'], $panrole->id)) {
-                        return;
-                    }
+                if ($enrolmentinfo['role'] != 'Viewer' && !\block_panopto\eula::has_signed($eventdata['relateduserid'])) {
+                    return;
                 }
                 // End Kent change.
 
