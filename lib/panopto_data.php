@@ -132,21 +132,15 @@ class panopto_data {
      * Provision one user folder.
      * Kent change.
      */
-    public function provision_user_folder($fullkey) {
+    public function provision_user_folder($user) {
         global $DB;
 
-        $userkey = explode("\\", $fullkey);
-        $user = $DB->get_record('user', array(
-            'username' => $userkey[1]
-        ));
-
-        if (!$user) {
-            debugging("Couldn't find user: $userkey! ($fullkey)");
-            return;
+        if (!isset($this->soapclient)) {
+            $this->soapclient = $this->instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
         }
 
         $instructor = new \stdClass();
-        $instructor->UserKey = $fullkey;
+        $instructor->UserKey = $this->panopto_decorate_username($user->username);
         $instructor->FirstName = $user->firstname;
         $instructor->LastName = $user->lastname;
         $instructor->Email = $user->email;
@@ -488,17 +482,14 @@ class panopto_data {
             case "Creator/Publisher":
                 $this->add_course_user_soap_call("Publisher", $userkey);
                 $this->add_course_user_soap_call("Creator", $userkey);
-                $this->provision_user_folder($userkey);
             break;
 
             case "Publisher":
                 $this->add_course_user_soap_call("Publisher", $userkey);
-                $this->provision_user_folder($userkey);
             break;
 
             case "Creator":
                 $this->add_course_user_soap_call("Creator", $userkey);
-                $this->provision_user_folder($userkey);
             break;
 
             default:

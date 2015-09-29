@@ -58,7 +58,7 @@ class eula
     /**
      * Sign the agreement.
      */
-    public static function sign($userid, $version = null) {
+    public static function sign($courseid, $userid, $version = null) {
         global $DB;
 
         $params = array("userid" => $userid);
@@ -78,9 +78,8 @@ class eula
             $user = $DB->get_record('user', ['id' => $userid]);
 
             // Create the unlisted folder.
-            $panoptodata = new \panopto_data(null);
-            $userkey = $panoptodata->panopto_decorate_username($user->username);
-            $panoptodata->provision_user_folder($userkey);
+            $panoptodata = new \panopto_data($courseid);
+            $panoptodata->provision_user_folder($user);
 
             return true;
         }
