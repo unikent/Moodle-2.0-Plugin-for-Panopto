@@ -3,45 +3,31 @@
  * Panopto course provisioning script
  */
 
-global $CFG, $USER, $DB;
-
 define('CLI_SCRIPT', true);
 
-require_once (dirname(__FILE__) . '/../../../config.php');
-require_once ($CFG->libdir . '/accesslib.php');
-require_once (dirname(__FILE__) . '/../lib/panopto_data.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
+require_once($CFG->libdir . '/accesslib.php');
+require_once(dirname(__FILE__) . '/../lib/panopto_data.php');
 
 $USER->username = 'moodlesync';
 
 $result = array();
-$panopto_data = new panopto_data(null);
 
 // Go through all courses that need updating and provision them
-$courses = $DB->get_records_select("block_panopto_updates", "courseid");
+$courses = $DB->get_records_select("course");
 foreach ($courses as $course) {
-  $panopto_data->moodle_course_id = $course->courseid;
-  try {
-    $provisioning_data = $panopto_data->get_provisioning_info();
-    
-    // Provision the course
-    $panopto_data->provision_course($provisioning_data);
+    $panoptodata = new panopto_data($course->id);
 
-    $result []= array(
-      'result' => 'ok',
-      'course' => $course->courseid
-    );
-  } catch( Exception $e ) {
-    $result []= array(
-      'result' => 'error',
-      'course' => $course->courseid,
-      'exception' => $e->getMessage()
-    );
-  }
+    try {
+        // Provision the course.
+        $provisioningdata = $panoptodata->get_provisioning_info();
+        $panoptodata->provision_course($provisioningdata);
+
+        echo "Provisioned {$course->id}\n";
+    } catch (Exception $e) {
+        echo "Error provisioning {$course->id}...\n";
+        echo $e->getMessage();
+        echo "\n";
+    }
 }
 
-// Clear out the DB
-$DB->delete_records_list("block_panopto_updates", "courseid", array_map(function($course) {
-  return $course->courseid;
-}, $courses));
-
-echo json_encode($result);
