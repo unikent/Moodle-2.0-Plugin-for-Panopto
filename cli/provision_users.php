@@ -13,7 +13,7 @@ require_once($CFG->libdir . '/enrollib.php');
 $result = array();
 
 // Go through all users that need updating and provision them.
-$users = $DB->get_records('user');
+$users = $DB->get_records_sql('SELECT u.* FROM {user} u INNER JOIN {block_panopto_eula} eula ON eula.userid = u.id');
 foreach ($users as $user) {
     \core\session\manager::set_user($user);
     $courses = enrol_get_my_courses();
