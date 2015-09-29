@@ -25,6 +25,8 @@
 
 namespace block_panopto;
 
+require_once(dirname(__FILE__) . '/../lib/panopto_data.php');
+
 /**
  * User interface for Panopto.
  * Performs EULA checks.
@@ -72,6 +74,17 @@ class eula
             $params['version'] = $version;
         }
 
-        return $DB->insert_record('block_panopto_eula', $params, false);
+        if ($DB->insert_record('block_panopto_eula', $params, false)) {
+            $user = $DB->get_record('user', ['id' => $userid]);
+
+            // Create the unlisted folder.
+            $panoptodata = new \panopto_data(null);
+            $userkey = $panoptodata->panopto_decorate_username($user->username);
+            $panoptodata->provision_user_folder($userkey);
+
+            return true;
+        }
+
+        return false;
     }
 }
