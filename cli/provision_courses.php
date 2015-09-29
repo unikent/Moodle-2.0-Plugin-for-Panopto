@@ -14,7 +14,7 @@ $USER->username = 'moodlesync';
 $result = array();
 
 // Go through all courses that need updating and provision them
-$courses = $DB->get_records_select("course");
+$courses = $DB->get_records("course");
 foreach ($courses as $course) {
     $panoptodata = new panopto_data($course->id);
 
@@ -30,4 +30,3 @@ foreach ($courses as $course) {
         echo "\n";
     }
 }
-
