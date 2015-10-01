@@ -25,6 +25,8 @@
 
 namespace block_panopto;
 
+require_once(dirname(__FILE__) . '/../lib/panopto_data.php');
+
 /**
  * User interface for Panopto.
  * Performs EULA checks.
@@ -56,7 +58,7 @@ class eula
     /**
      * Sign the agreement.
      */
-    public static function sign($userid, $version = null) {
+    public static function sign($courseid, $userid, $version = null) {
         global $DB;
 
         $params = array("userid" => $userid);
@@ -72,6 +74,16 @@ class eula
             $params['version'] = $version;
         }
 
-        return $DB->insert_record('block_panopto_eula', $params, false);
+        if ($DB->insert_record('block_panopto_eula', $params, false)) {
+            $user = $DB->get_record('user', ['id' => $userid]);
+
+            // Create the unlisted folder.
+            $panoptodata = new \panopto_data($courseid);
+            $panoptodata->provision_user_folder($user);
+
+            return true;
+        }
+
+        return false;
     }
 }

@@ -51,7 +51,7 @@ if (optional_param('sign', false, PARAM_BOOL)) {
     $version = required_param('version', PARAM_INT);
 
     // Sign.
-    \block_panopto\eula::sign($USER->id, $version);
+    \block_panopto\eula::sign($course, $USER->id, $version);
 
     // Redirect back?
     redirect(new \moodle_url($PAGE->context->get_url()), 'Agreement signed successfully!', 2);
