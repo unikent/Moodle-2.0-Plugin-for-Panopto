@@ -72,7 +72,7 @@ $string['panopto:panoptocreator'] = 'Role is a creator in panopto';
 $string['panopto:panoptoviewer'] = 'Role is a viewer in panopto';
 $string['reprovision'] = 'Reprovison course';
 $string['help_student'] = 'Lecture recording help';
-$string['help_student_help'] = 'For help viewing lecture recordings please view our <a href="http://www.kent.ac.uk/elearning/lecture_recording/LR_Student.pdf" target="_blank">help documentation</a>';
+$string['help_student_help'] = 'For help viewing lecture recordings please view our <a href="http://www.kent.ac.uk/elearning/files/kentplayer/kentplayer-student.pdf" target="_blank">help documentation</a>';
 $string['help_staff'] = 'Lecture recording help';
 $string['help_staff_help'] = 'For help using lecture recordings please view our <a href="http://www.kent.ac.uk/elearning/documentationStaff.html#lr" target="_blank">help documentation</a>';
 $string['terms_link_title'] = 'Terms of Use';
@@ -123,7 +123,7 @@ $string['eula_1_html'] = "
 </ol>
 <h3> References</h3>
 <ol>
-  <li><a name='ref1' id='ref1'></a>Further  guidance on notifying contributors and  managing use of third party intellectual property can be found in the  <a href='http://www.kent.ac.uk/elearning/lecture_recording/LR_Copyright.pdf' target='_blank'>accompanying guide</a>.</li>
+  <li><a name='ref1' id='ref1'></a>Further  guidance on notifying contributors and  managing use of third party intellectual property can be found in the  <a href='http://www.kent.ac.uk/elearning/files/kentplayer/kentplayer-copyright.pdf' target='_blank'>accompanying guide</a>.</li>
   <li><a name='ref2' id='ref2'></a>As per the <a href='http://www.legislation.gov.uk/ukpga/1988/48/contents' target='_blank'>Copyright, Designs and Patents Act 1988 (CDPA)</a></li>
   <li><a name='ref3' id='ref3'></a>This document can be found on the University’s <a href='https://www.kent.ac.uk/enterprise/university-staff/policy-and-procedure.html' target='_blank'>Innovation &amp; Enterprise  website</a>  (login required)</li>
   <li><a name='ref4' id='ref4'></a>See <a href='http://www.legislation.gov.uk/ukpga/1988/48/section/182' target='_blank'>s.182  CDPA</a></li>
@@ -172,7 +172,7 @@ $string['eula_2_html'] = "
 </ol>
 <h3> References</h3>
 <ol>
-  <li><a name='ref1' id='ref1'></a>Further  guidance on notifying contributors and  managing use of third party intellectual property can be found in the  <a href='http://www.kent.ac.uk/elearning/lecture_recording/LR_Copyright.pdf' target='_blank'>accompanying guide</a>.</li>
+  <li><a name='ref1' id='ref1'></a>Further  guidance on notifying contributors and  managing use of third party intellectual property can be found in the  <a href='http://www.kent.ac.uk/elearning/files/kentplayer/kentplayer-copyright.pdf' target='_blank'>accompanying guide</a>.</li>
   <li><a name='ref2' id='ref2'></a>As per the <a href='http://www.legislation.gov.uk/ukpga/1988/48/contents' target='_blank'>Copyright, Designs and Patents Act 1988 (CDPA)</a></li>
   <li><a name='ref3' id='ref3'></a>This document can be found on the University’s <a href='https://www.kent.ac.uk/enterprise/university-staff/policy-and-procedure.html' target='_blank'>Innovation &amp; Enterprise  website</a>  (login required)</li>
   <li><a name='ref4' id='ref4'></a>See <a href='http://www.legislation.gov.uk/ukpga/1988/48/section/182' target='_blank'>s.182  CDPA</a></li>
