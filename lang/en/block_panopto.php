@@ -105,102 +105,114 @@ $string['admin_email_subject'] = "User agreement to panopto terms and conditions
 
 // Actual terms and conditions
 $string['eula_1_title'] = "Academic Terms and Conditions";
-$string['eula_1_html'] = "
-<h3>Lecture Recording Consent </h3>
-<p><em>Each&nbsp;person who has agreed to&nbsp;be recorded and filmed as the  principal party to, or as part of, a teaching event carried out within the  University of Kent must agree to these terms.&nbsp;The purpose of this agreement is to seek consent for the  films and/or recordings to be taken&nbsp;and subsequently to be used in a  number of media, including the intranet/web by the University of Kent.&nbsp;The  University of Kent in turn offers a commitment to only allow said recordings to  be used appropriately and sensitively for the purposes of teaching and learning.</em></p>
+$string['eula_1_html'] = <<<HTML5
+<h3>Lecture Recording Consent</h3>
+<p><em>Each person who has agreed to be recorded and filmed as the principal party to, or as part of, a teaching event carried out within the University of Kent must agree to these terms. The purpose of this agreement is to seek consent for the films and/or recordings to be taken and subsequently to be used in a number of media, including the intranet/web by the University of Kent. The University of Kent in turn offers a commitment to only allow said recordings to be used appropriately and sensitively for the purposes of teaching and learning.</em></p>
 <h3>Lecturer</h3>
-<p>I agree to my lecture being recorded in audio/video  format by the University of Kent. Where  a recording is being made, I will notify everyone present of this fact.</p>
-<p>  I confirm  that where material is included in the recording which is the intellectual  property, including copyright, of another party, I have permission to include  the materials in my lecture for educational purposes, including permission to  record such material <a href='#ref1'>[1]</a>. I understand that any copyright or other intellectual  property <a href='#ref2'>[2]</a> which arises in the recording belongs to the University of Kent  and that the recording may be used by the University of Kent as per the  University’s Policy Statement on Intellectual Property <a href='#ref3'>[3]</a>. This includes  conversion to digital format and storing and publication on the University’s  virtual learning environment. <br />
-  I agree to license  all performance rights <a href='#ref4'>[4]</a> in the film and/or recordings of lectures to the  University of Kent for teaching and learning purposes on a worldwide basis for  the duration of my employment, or until the end of the academic year following  the recording, whichever is later (see <a href='#note1'>guidance note 1</a>). </p>
-<p>  I agree to  waive all moral rights in my performance in the film and/or recordings of  lectures to the University of Kent (see <a href='#note2'>guidance note 2</a>). </p>
-<p>  I agree  that, where students or other third parties actively participate in recorded  events, I will obtain a signed consent form for the third party prior to the  recording being made available for viewing. Active participation includes  delivery of a presentation or performance of a student work and is not intended  to encompass ad hoc questions or commentary.</p>
+<p>I agree to my lecture being recorded in audio/video format by the University of Kent. Where a recording is being made, I will notify everyone present of this fact.</p>
+<p>I confirm that where material is included in the recording which is the intellectual property, including copyright, of another party, I have either: (a) secured permission to include the materials in my presentation, including permission to record such material <a href="#ref1">[1]</a>, or (b) determined that statutory exceptions (e.g. fair dealing) apply to my use of the third party material (for more information please visit <a href="http://www.kent.ac.uk/copyright">www.kent.ac.uk/copyright</a>).</p>
+<p>I understand that any copyright or other intellectual property <a href="#ref2">[2]</a> which arises in the recording belongs to the University of Kent and that the recording may be used by the University of Kent as per the University’s Policy Statement on Intellectual Property<a href="#ref3">[3]</a>. This includes conversion to digital format and storing and publication on the University’s virtual learning environment.</p>
+<p>I agree to license all performance rights <a href="#ref4">[4]</a> in the film and/or recordings of lectures to the University of Kent for teaching and learning purposes on a worldwide basis for the duration of my employment, or until the end of the academic year following the recording, whichever is later (see <a href="#note1">guidance note 1</a>).</p>
+<p>I agree that, where students or other third parties actively participate in recorded events, I will obtain a signed consent form for the third party prior to the recording being made available for viewing. Active participation includes delivery of a presentation or performance of a student work and is not intended to encompass ad hoc questions or commentary.</p>
 <h3>General</h3>
-<p>The  University will continue to comply with the data Protection Act 1998.  I understand  that my image and/or recordings will be used for teaching and learning purposes  only and that copyright in the recordings will be retained by The University of  Kent.  </p>
+<p>The University will continue to comply with the data Protection Act 1998. I understand that my image and/or recordings will be used for teaching and learning purposes only and that copyright in the recordings will be retained by The University of Kent. </p>
 <h3>Guidance notes</h3>
-<ol>
-  <li><a name='note1' id='note1'></a>It is necessary to license your performance  rights to the University in order for the recorded lecture content to be made  legally available for teaching and learning purposes. Continued use outside  this duration by either party can be negotiated separately but must be  confirmed in writing, signed and retained by both parties</li>
-  <li><a name='note2' id='note2'></a>Your moral right is your right to be named as  the author of a work. This waiver simply allows the University to publish the  recording without being legally obliged to add your name to it. As you have  full control over the details of the recording, you may do this yourself if  required, and the University will not actively remove your name where it  appears within a recording.</li>
+<p><span id="note1" class="anchor"></span>It is necessary to license your performance rights to the University in order for the recorded lecture content to be made legally available for teaching and learning purposes. Continued use outside this duration by either party can be negotiated separately but must be confirmed in writing, signed and retained by both parties</p>
+<h3><span id="note2" class="anchor"></span>References</h3>
+<ol style="list-style-type: decimal">
+<li>
+<p><span id="ref1" class="anchor"></span>Further guidance on notifying contributors and managing use of third party intellectual property can be found in the <a href="http://www.kent.ac.uk/elearning/files/kentplayer/kentplayer-copyright.pdf">accompanying guide</a>.</p>
+</li>
+<li>
+<p><span id="ref2" class="anchor"></span>As per the <a href="http://www.legislation.gov.uk/ukpga/1988/48/contents">Copyright, Designs and Patents Act 1988 (CDPA)</a></p>
+</li>
+<li>
+<p><span id="ref3" class="anchor"></span>This document can be found on the University’s <a href="https://www.kent.ac.uk/enterprise/university-staff/policy-and-procedure.html">Innovation &amp; Enterprise website</a> (login required)</p>
+</li>
+<li>
+<p><span id="ref4" class="anchor"></span>See <a href="http://www.legislation.gov.uk/ukpga/1988/48/section/182">s.182 CDPA</a></p>
+</li>
 </ol>
-<h3> References</h3>
-<ol>
-  <li><a name='ref1' id='ref1'></a>Further  guidance on notifying contributors and  managing use of third party intellectual property can be found in the  <a href='http://www.kent.ac.uk/elearning/files/kentplayer/kentplayer-copyright.pdf' target='_blank'>accompanying guide</a>.</li>
-  <li><a name='ref2' id='ref2'></a>As per the <a href='http://www.legislation.gov.uk/ukpga/1988/48/contents' target='_blank'>Copyright, Designs and Patents Act 1988 (CDPA)</a></li>
-  <li><a name='ref3' id='ref3'></a>This document can be found on the University’s <a href='https://www.kent.ac.uk/enterprise/university-staff/policy-and-procedure.html' target='_blank'>Innovation &amp; Enterprise  website</a>  (login required)</li>
-  <li><a name='ref4' id='ref4'></a>See <a href='http://www.legislation.gov.uk/ukpga/1988/48/section/182' target='_blank'>s.182  CDPA</a></li>
-</ol>";
+HTML5;
 
 $string['eula_1_text'] = "
 Lecture Recording Consent
-Each person who has agreed to be recorded and filmed as the  principal party to, or as part of, a teaching event carried out within the  University of Kent must agree to these terms. The purpose of this agreement is to seek consent for the  films and/or recordings to be taken and subsequently to be used in a  number of media, including the intranet/web by the University of Kent. The University of Kent in turn offers a commitment to only allow said recordings to  be used appropriately and sensitively for the purposes of teaching and learning.
+Each person who has agreed to be recorded and filmed as the principal party to, or as part of, a teaching event carried out within the University of Kent must agree to these terms. The purpose of this agreement is to seek consent for the films and/or recordings to be taken and subsequently to be used in a number of media, including the intranet/web by the University of Kent. The University of Kent in turn offers a commitment to only allow said recordings to be used appropriately and sensitively for the purposes of teaching and learning.
+
 Lecturer
-I agree to my lecture being recorded in audio/video  format by the University of Kent. Where  a recording is being made, I will notify everyone present of this fact.
-I confirm  that where material is included in the recording which is the intellectual  property, including copyright, of another party, I have permission to include  the materials in my lecture for educational purposes, including permission to  record such material [1]. I understand that any copyright or other intellectual  property [2] which arises in the recording belongs to the University of Kent  and that the recording may be used by the University of Kent as per the  University’s Policy Statement on Intellectual Property [3]. This includes  conversion to digital format and storing and publication on the University’s  virtual learning environment. 
-I agree to license  all performance rights [4] in the film and/or recordings of lectures to the  University of Kent for teaching and learning purposes on a worldwide basis for  the duration of my employment, or until the end of the academic year following  the recording, whichever is later (see guidance note 1). 
-I agree to  waive all moral rights in my performance in the film and/or recordings of  lectures to the University of Kent (see guidance note 2). 
-I agree  that, where students or other third parties actively participate in recorded  events, I will obtain a signed consent form for the third party prior to the  recording being made available for viewing. Active participation includes  delivery of a presentation or performance of a student work and is not intended  to encompass ad hoc questions or commentary.
+I agree to my lecture being recorded in audio/video format by the University of Kent. Where a recording is being made, I will notify everyone present of this fact.
+I confirm that where material is included in the recording which is the intellectual property, including copyright, of another party, I have either: (a) secured permission to include the materials in my presentation, including permission to record such material [1], or (b) determined that statutory exceptions (e.g. fair dealing) apply to my use of the third party material (for more information please visit www.kent.ac.uk/copyright).
+I understand that any copyright or other intellectual property [2] which arises in the recording belongs to the University of Kent and that the recording may be used by the University of Kent as per the University’s Policy Statement on Intellectual Property[3]. This includes conversion to digital format and storing and publication on the University’s virtual learning environment.
+I agree to license all performance rights [4] in the film and/or recordings of lectures to the University of Kent for teaching and learning purposes on a worldwide basis for the duration of my employment, or until the end of the academic year following the recording, whichever is later (see guidance note 1).
+I agree that, where students or other third parties actively participate in recorded events, I will obtain a signed consent form for the third party prior to the recording being made available for viewing. Active participation includes delivery of a presentation or performance of a student work and is not intended to encompass ad hoc questions or commentary.
 
 General
-The  University will continue to comply with the data Protection Act 1998.  I understand  that my image and/or recordings will be used for teaching and learning purposes  only and that copyright in the recordings will be retained by The University of  Kent.  
+The University will continue to comply with the data Protection Act 1998. I understand that my image and/or recordings will be used for teaching and learning purposes only and that copyright in the recordings will be retained by The University of Kent. 
+
 Guidance notes
 
-- It is necessary to license your performance  rights to the University in order for the recorded lecture content to be made  legally available for teaching and learning purposes. Continued use outside  this duration by either party can be negotiated separately but must be  confirmed in writing, signed and retained by both parties
-- Your moral right is your right to be named as  the author of a work. This waiver simply allows the University to publish the  recording without being legally obliged to add your name to it. As you have  full control over the details of the recording, you may do this yourself if  required, and the University will not actively remove your name where it  appears within a recording.
+It is necessary to license your performance rights to the University in order for the recorded lecture content to be made legally available for teaching and learning purposes. Continued use outside this duration by either party can be negotiated separately but must be confirmed in writing, signed and retained by both parties
 
 References
 
-- Further  guidance on notifying contributors and  managing use of third party intellectual property can be found in the  accompanying guide.
-- As per the Copyright, Designs and Patents Act 1988 (CDPA)
-- This document can be found on the University’s Innovation & Enterprise  website  (login required)
-- See s.182  CDPA";
+1. Further guidance on notifying contributors and managing use of third party intellectual property can be found in the accompanying guide.
+2. As per the Copyright, Designs and Patents Act 1988 (CDPA)
+3. This document can be found on the University’s Innovation & Enterprise website (login required)
+4. See s.182 CDPA";
 
 $string['eula_2_title'] = "Non-Academic Terms and Conditions";
-$string['eula_2_html'] = "
-<h3>Presentation Recording Consent </h3>
-<p><em>Each&nbsp;person who has agreed to&nbsp;be recorded and filmed as the  principal party to, or as part of, a teaching event carried out within the  University of Kent must agree to these terms.&nbsp;The purpose of this agreement</em><em> is to seek consent for the films and/or  recordings to be taken&nbsp;and subsequently to be used in a number of media,  including the intranet/web by the University of Kent.&nbsp; The University of Kent  in turn offers a commitment to only allow said recordings to be used  appropriately and sensitively.</em></p>
+$string['eula_2_html'] = <<<HTML5
+<h3>Presentation Recording Consent</h3>
+<p><em>Each person who has agreed to be recorded and filmed as the principal party to, or as part of, a teaching event carried out within the University of Kent must agree to these terms. The purpose of this agreement is to seek consent for the films and/or recordings to be taken and subsequently to be used in a number of media, including the intranet/web by the University of Kent. The University of Kent in turn offers a commitment to only allow said recordings to be used appropriately and sensitively.</em></p>
 <h3>Non-Academic Staff</h3>
-<p>I agree to my events being recorded in audio/video  format by the University of Kent. Where  a recording is being made, I will notify everyone present of this fact.</p>
-<p>  I confirm  that where material is included in the recording which is the intellectual  property, including copyright, of another party, I have permission to include  the materials in my lecture for educational purposes, including permission to  record such material <a href='#ref1'>[1]</a>. I understand that any copyright or other intellectual  property <a href='#ref2'>[2]</a> which arises in the recording belongs to the University of Kent  and that the recording may be used by the University of Kent as per the  University’s Policy Statement on Intellectual Property <a href='#ref3'>[3]</a>. This includes  conversion to digital format and storing and publication on the University’s  virtual learning environment and/or web site. </p>
-<p>I grant to The  University of Kent a perpetual, worldwide licence to record/film  materials created by me that are included within my presentation. I agree to license all  performance rights <a href='#ref4'>[4]</a> in the film and/or recordings to the University of Kent on a perpetual,  worldwide basis (see <a href='#note1'>guidance note 1</a>).</p>
-<p>  I agree to  waive all moral rights in my performance in the film and/or recordings and in any  works created by me that are included as part of any recording at the University of Kent (see <a href='#note2'>guidance note 2</a>). </p>
-<p>  I agree  that, where students or other third parties actively participate in recorded  events, I will obtain a signed consent form for the third party prior to the  recording being made available for viewing. Active participation includes  delivery of a presentation or performance of a student work and is not intended  to encompass ad hoc questions or commentary.</p>
+<p>I agree to my events being recorded in audio/video format by the University of Kent. Where a recording is being made, I will notify everyone present of this fact.</p>
+<p>I confirm that where material is included in the recording which is the intellectual property, including copyright, of another party, I have either: (a) secured permission to include the materials in my presentation, including permission to record such material <a href="#ref1">[1]</a>, or (b) determined that statutory exceptions (e.g. fair dealing) apply to my use of the third party material (for more information please visit <a href="http://www.kent.ac.uk/copyright">www.kent.ac.uk/copyright</a>).</p>
+<p>I understand that any copyright or other intellectual property <a href="#ref2">[2]</a> which arises in the recording belongs to the University of Kent and that the recording may be used by the University of Kent as per the University’s Policy Statement on Intellectual Property<a href="#ref3">[3]</a>. This includes conversion to digital format and storing and publication on the University’s virtual learning environment and/or web site.</p>
+<p>I grant to The University of Kent a perpetual, worldwide licence to record/film materials created by me that are included within my presentation. I agree to license all performance rights <a href="#ref4">[4]</a> in the film and/or recordings to the University of Kent on a perpetual, worldwide basis (see <a href="#note1">guidance note 1</a>).</p>
+<p>I agree that, where students or other third parties actively participate in recorded events, I will obtain a signed consent form for the third party prior to the recording being made available for viewing. Active participation includes delivery of a presentation or performance of a student work and is not intended to encompass ad hoc questions or commentary.</p>
 <h3>General</h3>
-<p>The  University will continue to comply with the data Protection Act 1998.  I understand  that my image and/or recordings will be used for teaching and learning purposes  only and that copyright in the recordings will be retained by The University of  Kent.  </p>
+<p>The University will continue to comply with the data Protection Act 1998. I understand that my image and/or recordings will be used for teaching and learning purposes only and that copyright in the recordings will be retained by The University of Kent. </p>
 <h3>Guidance notes</h3>
-<ol>
-  <li><a name='note1' id='note1'></a>It is necessary to license your performance  rights to the University in order for the recorded lecture content to be made  legally available for teaching and learning purposes. Continued use outside  this duration by either party can be negotiated separately but must be  confirmed in writing, signed and retained by both parties</li>
-  <li><a name='note2' id='note2'></a>Your moral right is your right to be named as  the author of a work. This waiver simply allows the University to publish the  recording without being legally obliged to add your name to it. As you have  full control over the details of the recording, you may do this yourself if  required, and the University will not actively remove your name where it  appears within a recording.</li>
+<p><span id="note1" class="anchor"></span>It is necessary to license your performance rights to the University in order for the recorded lecture content to be made legally available for teaching and learning purposes. Continued use outside this duration by either party can be negotiated separately but must be confirmed in writing, signed and retained by both parties</p>
+<h3><span id="note2" class="anchor"></span>References</h3>
+<ol style="list-style-type: decimal">
+<li>
+<p><span id="ref1" class="anchor"></span>Further guidance on notifying contributors and managing use of third party intellectual property can be found in the <a href="http://www.kent.ac.uk/elearning/files/kentplayer/kentplayer-copyright.pdf">accompanying guide</a>.</p>
+</li>
+<li>
+<p><span id="ref2" class="anchor"></span>As per the <a href="http://www.legislation.gov.uk/ukpga/1988/48/contents">Copyright, Designs and Patents Act 1988 (CDPA)</a></p>
+</li>
+<li>
+<p><span id="ref3" class="anchor"></span>This document can be found on the University’s <a href="https://www.kent.ac.uk/enterprise/university-staff/policy-and-procedure.html">Innovation &amp; Enterprise website</a> (login required)</p>
+</li>
+<li>
+<p><span id="ref4" class="anchor"></span>See <a href="http://www.legislation.gov.uk/ukpga/1988/48/section/182">s.182 CDPA</a></p>
+</li>
 </ol>
-<h3> References</h3>
-<ol>
-  <li><a name='ref1' id='ref1'></a>Further  guidance on notifying contributors and  managing use of third party intellectual property can be found in the  <a href='http://www.kent.ac.uk/elearning/files/kentplayer/kentplayer-copyright.pdf' target='_blank'>accompanying guide</a>.</li>
-  <li><a name='ref2' id='ref2'></a>As per the <a href='http://www.legislation.gov.uk/ukpga/1988/48/contents' target='_blank'>Copyright, Designs and Patents Act 1988 (CDPA)</a></li>
-  <li><a name='ref3' id='ref3'></a>This document can be found on the University’s <a href='https://www.kent.ac.uk/enterprise/university-staff/policy-and-procedure.html' target='_blank'>Innovation &amp; Enterprise  website</a>  (login required)</li>
-  <li><a name='ref4' id='ref4'></a>See <a href='http://www.legislation.gov.uk/ukpga/1988/48/section/182' target='_blank'>s.182  CDPA</a></li>
-</ol>";
+HTML5;
 
 $string['eula_2_text'] = "
 Presentation Recording Consent
+Each person who has agreed to be recorded and filmed as the principal party to, or as part of, a teaching event carried out within the University of Kent must agree to these terms. The purpose of this agreement is to seek consent for the films and/or recordings to be taken and subsequently to be used in a number of media, including the intranet/web by the University of Kent.  The University of Kent in turn offers a commitment to only allow said recordings to be used appropriately and sensitively.
 
-Each person who has agreed to be recorded and filmed as the  principal party to, or as part of, a teaching event carried out within the  University of Kent must agree to these terms. The purpose of this agreement is to seek consent for the films and/or  recordings to be taken and subsequently to be used in a number of media,  including the intranet/web by the University of Kent. The University of Kent  in turn offers a commitment to only allow said recordings to be used  appropriately and sensitively.
 Non-Academic Staff
-I agree to my events being recorded in audio/video  format by the University of Kent. Where  a recording is being made, I will notify everyone present of this fact.
-I confirm  that where material is included in the recording which is the intellectual  property, including copyright, of another party, I have permission to include  the materials in my lecture for educational purposes, including permission to  record such material [1]. I understand that any copyright or other intellectual  property [2] which arises in the recording belongs to the University of Kent  and that the recording may be used by the University of Kent as per the  University’s Policy Statement on Intellectual Property [3]. This includes  conversion to digital format and storing and publication on the University’s  virtual learning environment and/or web site. 
-I grant to The  University of Kent a perpetual, worldwide licence to record/film  materials created by me that are included within my presentation. I agree to license all  performance rights [4] in the film and/or recordings to the University of Kent on a perpetual,  worldwide basis (see guidance note 1).
-I agree to  waive all moral rights in my performance in the film and/or recordings and in any  works created by me that are included as part of any recording at the University of Kent (see guidance note 2). 
-I agree  that, where students or other third parties actively participate in recorded  events, I will obtain a signed consent form for the third party prior to the  recording being made available for viewing. Active participation includes  delivery of a presentation or performance of a student work and is not intended  to encompass ad hoc questions or commentary.
+I agree to my events being recorded in audio/video format by the University of Kent. Where a recording is being made, I will notify everyone present of this fact.
+I confirm that where material is included in the recording which is the intellectual property, including copyright, of another party, I have either: (a) secured permission to include the materials in my presentation, including permission to record such material [1], or (b) determined that statutory exceptions (e.g. fair dealing) apply to my use of the third party material (for more information please visit www.kent.ac.uk/copyright).
+I understand that any copyright or other intellectual property [2] which arises in the recording belongs to the University of Kent and that the recording may be used by the University of Kent as per the University’s Policy Statement on Intellectual Property[3]. This includes conversion to digital format and storing and publication on the University’s virtual learning environment and/or web site.
+I grant to The University of Kent a perpetual, worldwide licence to record/film materials created by me that are included within my presentation. I agree to license all performance rights [4] in the film and/or recordings to the University of Kent on a perpetual, worldwide basis (see guidance note 1).
+I agree that, where students or other third parties actively participate in recorded events, I will obtain a signed consent form for the third party prior to the recording being made available for viewing. Active participation includes delivery of a presentation or performance of a student work and is not intended to encompass ad hoc questions or commentary.
 
 General
-The  University will continue to comply with the data Protection Act 1998.  I understand  that my image and/or recordings will be used for teaching and learning purposes  only and that copyright in the recordings will be retained by The University of  Kent.  
-Guidance notes
+The University will continue to comply with the data Protection Act 1998. I understand that my image and/or recordings will be used for teaching and learning purposes only and that copyright in the recordings will be retained by The University of Kent.
 
-- It is necessary to license your performance  rights to the University in order for the recorded lecture content to be made  legally available for teaching and learning purposes. Continued use outside  this duration by either party can be negotiated separately but must be  confirmed in writing, signed and retained by both parties
-- Your moral right is your right to be named as  the author of a work. This waiver simply allows the University to publish the  recording without being legally obliged to add your name to it. As you have  full control over the details of the recording, you may do this yourself if  required, and the University will not actively remove your name where it  appears within a recording.
+Guidance notes
+It is necessary to license your performance rights to the University in order for the recorded lecture content to be made legally available for teaching and learning purposes. Continued use outside this duration by either party can be negotiated separately but must be confirmed in writing, signed and retained by both parties
 
 References
 
-- Further  guidance on notifying contributors and  managing use of third party intellectual property can be found in the  accompanying guide.
-- As per the Copyright, Designs and Patents Act 1988 (CDPA)
-- This document can be found on the University’s Innovation & Enterprise  website (login required)
-- See s.182  CDPA";
+1. Further  guidance on notifying contributors and managing use of third party intellectual property can be found in the accompanying guide.
+2. As per the Copyright, Designs and Patents Act 1988 (CDPA)
+3. This document can be found on the University’s Innovation & Enterprise website (login required)
+4. See s.182 CDPA";
 
 /* End of file block_panopto.php */
