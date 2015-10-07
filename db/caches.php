@@ -20,7 +20,7 @@
 $definitions = array(
     'blockdata' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'ttl' => 14400,
+        'ttl' => 1800,
         'simplekeys' => true
     )
 );
