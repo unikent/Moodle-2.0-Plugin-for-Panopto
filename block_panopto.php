@@ -112,18 +112,6 @@ class block_panopto extends block_base {
         $this->content->text = '';
         $this->content->footer = '<div id="panopto-footer"></div>';
 
-        // If we have not signed the agreement, but we are an editor, show the TAC.
-        if (has_capability('moodle/course:update', \context_course::instance($COURSE->id)) && !\block_panopto\eula::has_signed($USER->id)) {
-            $url = new \moodle_url('/blocks/panopto/eula.php', array(
-                'course' => $COURSE->id
-            ));
-            $link = \html_writer::link($url, 'sign the terms and conditions');
-            $this->content->text .= \html_writer::div("You must {$link} before using this block.", 'panopto-pad');
-            $this->content->footer = '';
-
-            return $this->content;
-        }
-
         // Just return a status message if there is one.
         if (!empty($CFG->block_panopto_status_message)) {
             $this->content->text .= \html_writer::div($CFG->block_panopto_status_message, '', array(
@@ -149,16 +137,18 @@ class block_panopto extends block_base {
         $context = \context_course::instance($COURSE->id, \MUST_EXIST);
         $hascreator = has_capability('block/panopto:panoptocreator', $context);
         $hasviewer = has_capability('block/panopto:panoptoviewer', $context);
+        $hasedit = has_capability('moodle/course:update', $context);
+        $hassigned = \block_panopto\eula::has_signed();
 
         $cache = \cache::make('block_panopto', 'blockdata');
-        $cachekey = "data_{$COURSE->id}_{$hascreator}_{$hasviewer}";
+        $cachekey = "data_{$COURSE->id}_{$hascreator}_{$hasviewer}_{$hassigned}";
         $this->content = $cache->get($cachekey);
         if ($this->content) {
             return $this->content;
         }
 
         $permstr = '';
-        if ($hascreator) {
+        if ($hascreator && $hassigned) {
             $permstr = get_string('access_status_creator', 'block_panopto');
         } else if ($hasviewer) {
             $permstr = get_string('access_status_viewer', 'block_panopto');
@@ -292,7 +282,7 @@ class block_panopto extends block_base {
                         }
                     }
 
-                    if (has_capability('moodle/course:update', $context)) {
+                    if ($hasedit) {
                         $this->content->text .= "<div class='sectionHeader'><b>" . get_string('links', 'block_panopto') . "</b></div>
                                                  <div class='listItem'>
                                                     <a href='$courseinfo->CourseSettingsURL' onclick='return M.local_panopto.startSSO(this)'
@@ -312,18 +302,25 @@ class block_panopto extends block_base {
             $this->content->text .= "<br><br><span class='error'>" . get_string('error_retrieving', 'block_panopto') . "</span>";
         }
 
-        // KENT
+        // Kent.
         $this->content->text .= "<span class='panoptoextras'>";
-        if (has_capability('moodle/course:update', $context)) {
+        if ($hasedit) {
             $this->content->text .= "<span class='panoptohelp'>" . $OUTPUT->help_icon('help_staff', 'block_panopto') . "</span>";
         } else {
             $this->content->text .= "<span class='panoptohelp'>" .$OUTPUT->help_icon('help_student', 'block_panopto') . "</span>";
         }
         $this->content->text .= "<span class='panoptoterms'>" . $OUTPUT->help_icon('help_terms', 'block_panopto', get_string('terms_link_title', 'block_panopto')) . "</span>"; 
         $this->content->text .= "</span>";
-        // END KENT
 
-        $this->content->footer = '';
+        // If we have not signed the agreement, but we are an editor, show the TAC.
+        if ($hasedit && !$hassigned) {
+            $url = new \moodle_url('/blocks/panopto/eula.php', array(
+                'course' => $COURSE->id
+            ));
+            $link = \html_writer::link($url, 'terms and conditions');
+            $this->content->footer = \html_writer::div("To gain creator access please sign the {$link}.", 'panopto-pad');
+        }
+        // End Kent.
 
         $cache->set($cachekey, $this->content);
 
