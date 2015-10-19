@@ -175,7 +175,6 @@ class panopto_data {
         $instructorhash = array();
 
         $publishers = get_enrolled_users($coursecontext, 'block/panopto:provision_aspublisher');
-
         if (!empty($publishers)) {
             $provisioninginfo->Publishers = array();
             foreach ($publishers as $publisher) {
@@ -202,7 +201,6 @@ class panopto_data {
         // File edited - new capability added to access.php to identify instructors without including all site admins etc.
         // New capability used to identify instructors for provisioning.
         $instructors = get_enrolled_users($coursecontext, 'block/panopto:provision_asteacher');
-
         if (!empty($instructors)) {
             $provisioninginfo->Instructors = array();
             foreach ($instructors as $instructor) {

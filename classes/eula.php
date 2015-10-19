@@ -45,7 +45,11 @@ class eula
      * Has the given user signed the EULA?
      */
     public static function has_signed($userid = null, $version = null) {
-        global $DB;
+        global $DB, $USER;
+
+        if ($userid == null) {
+            $userid = $USER->id;
+        }
 
         $params = array("userid" => $userid);
         if ($version != null) {
