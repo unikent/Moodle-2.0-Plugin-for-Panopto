@@ -290,6 +290,11 @@ class panopto_data {
      * Get ongoing Panopto sessions for the currently mapped course.
      */
     public function get_live_sessions() {
+        // If no soap client for this instance, instantiate one.
+        if (!isset($this->soapclient)) {
+            $this->soapclient = self::instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
+        }
+
         $livesessionsresult = $this->soapclient->get_live_sessions($this->sessiongroupid);
 
         $livesessions = array();
