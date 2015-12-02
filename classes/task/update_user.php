@@ -46,23 +46,29 @@ class update_user extends \core\task\adhoc_task {
 
         $enrolmentinfo = $this->get_info_for_enrolment_change($panopto, $eventdata['relateduserid'], $eventdata['contextid']);
 
+        // Kent change.
+        if ($enrolmentinfo['role'] != 'Viewer' && $eventdata['eventtype'] != 'enrol_remove' && !\block_panopto\eula::has_signed($eventdata['relateduserid'])) {
+            return;
+        }
+        // End Kent change.
+
         switch ($eventdata['eventtype']) {
             case 'enrol_add':
-                // Kent change.
-                if ($enrolmentinfo['role'] != 'Viewer' && !\block_panopto\eula::has_signed($eventdata['relateduserid'])) {
-                    return;
-                }
-                // End Kent change.
-
                 $panopto->add_course_user($enrolmentinfo['role'], $enrolmentinfo['userkey']);
                 break;
 
             case 'enrol_remove':
-                $panopto->remove_course_user($enrolmentinfo['role'], $enrolmentinfo['userkey']);
+                // Better be sure..
+                if (!$enrolmentinfo['role']) {
+                    $panopto->remove_course_user("Creator/Publisher", $enrolmentinfo['userkey']);
+                    $panopto->remove_course_user("Viewer", $enrolmentinfo['userkey']);
+                } else {
+                    $panopto->change_user_role($enrolmentinfo['role'], $enrolmentinfo['userkey']);
+                }
                 break;
 
             case 'role':
-                //$panopto->change_user_role($enrolmentinfo['role'], $enrolmentinfo['userkey']);
+                $panopto->change_user_role($enrolmentinfo['role'], $enrolmentinfo['userkey']);
                 break;
         }
     }
@@ -72,17 +78,20 @@ class update_user extends \core\task\adhoc_task {
      */
     private function get_role_from_context($contextid, $userid) {
         $context = \context::instance_by_id($contextid);
-        $role = "Viewer";
+
         if (has_capability('block/panopto:provision_aspublisher', $context, $userid)) {
             if (has_capability('block/panopto:provision_asteacher', $context, $userid)) {
-                $role = "Creator/Publisher";
+                return "Creator/Publisher";
             } else {
-                $role = "Publisher";
+                return "Publisher";
             }
         } else if (has_capability('block/panopto:provision_asteacher', $context, $userid)) {
-            $role = "Creator";
+            return "Creator";
+        } else if (is_enrolled($context, $userid)) {
+            return "Viewer";
         }
-        return $role;
+
+        return null;
     }
 
     /**
