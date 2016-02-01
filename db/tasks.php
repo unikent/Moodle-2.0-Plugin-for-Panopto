@@ -15,18 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package block_panopto
- * @copyright  Panopto 2009 - 2015 with contributions from Spenser Jones (sjones@ambrose.edu)
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Panopto block.
+ *
+ * @package    block_panopto
+ * @copyright  2016 Skylar Kelty <S.Kelty@kent.ac.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version = 2016020100;
-$plugin->requires = 2015051100;
-$plugin->component = 'block_panopto';
-$plugin->maturity = MATURITY_STABLE;
-
-$plugin->dependencies = array(
-    'mod_forum' => ANY_VERSION
+$tasks = array(
+    array(
+        'classname' => 'block_panopto\task\global_sync',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '1',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    )
 );

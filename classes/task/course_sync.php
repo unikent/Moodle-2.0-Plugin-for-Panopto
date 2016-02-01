@@ -16,17 +16,39 @@
 
 /**
  * @package block_panopto
- * @copyright  Panopto 2009 - 2015 with contributions from Spenser Jones (sjones@ambrose.edu)
+ * @copyright Skylar Kelty
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace block_panopto\task;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2016020100;
-$plugin->requires = 2015051100;
-$plugin->component = 'block_panopto';
-$plugin->maturity = MATURITY_STABLE;
+require_once(dirname(__FILE__) . '/../../lib/panopto_data.php');
 
-$plugin->dependencies = array(
-    'mod_forum' => ANY_VERSION
-);
+/**
+ * Panopto "course sync" task.
+ */
+class course_sync extends \core\task\adhoc_task {
+
+    public function get_component() {
+        return 'block_panopto';
+    }
+
+    public function execute() {
+        $eventdata = (array)$this->get_custom_data();
+
+        $panoptodata = new \panopto_data($eventdata['courseid']);
+
+        // Check the course is provisioned.
+        if (empty($panopto->servername)) {
+            return true;
+        }
+
+        // Provision the course.
+        $provisioningdata = $panoptodata->get_provisioning_info();
+        $panoptodata->provision_course($provisioningdata);
+
+        return true;
+    }
+}
