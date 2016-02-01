@@ -14,19 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace block_panopto\task;
+
 /**
- * @package block_panopto
- * @copyright  Panopto 2009 - 2015 with contributions from Spenser Jones (sjones@ambrose.edu)
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Global panopto re-sync.
  */
+class global_sync extends \core\task\scheduled_task
+{
+    public function get_name() {
+        return "Panopto Global Sync";
+    }
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * Sync all courses.
+     */
+    public function execute() {
+        global $DB;
 
-$plugin->version = 2016020100;
-$plugin->requires = 2015051100;
-$plugin->component = 'block_panopto';
-$plugin->maturity = MATURITY_STABLE;
+        $records = $DB->get_records_sql('SELECT moodleid as id FROM {block_panopto_foldermap} GROUP BY moodleid');
+        foreach ($records as $course) {
+            $task = new \block_panopto\task\course_sync();
+            $task->set_custom_data(array(
+                'courseid' => $course->id
+            ));
 
-$plugin->dependencies = array(
-    'mod_forum' => ANY_VERSION
-);
+            \core\task\manager::queue_adhoc_task($task);
+        }
+
+        return true;
+    }
+}
