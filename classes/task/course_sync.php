@@ -41,7 +41,7 @@ class course_sync extends \core\task\adhoc_task {
         $panoptodata = new \panopto_data($eventdata['courseid']);
 
         // Check the course is provisioned.
-        if (empty($panopto->servername)) {
+        if (empty($panoptodata->servername)) {
             return true;
         }
 
