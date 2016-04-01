@@ -21,6 +21,7 @@ $definitions = array(
     'blockdata' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'ttl' => 1800,
-        'simplekeys' => true
+        'simplekeys' => true,
+        'canuselocalstore' => true
     )
 );
