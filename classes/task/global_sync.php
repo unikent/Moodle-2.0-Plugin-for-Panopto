@@ -32,13 +32,14 @@ class global_sync extends \core\task\scheduled_task
         global $DB;
 
         $records = $DB->get_records_sql('SELECT moodleid as id FROM {block_panopto_foldermap} GROUP BY moodleid');
+        $count = count($records);
         foreach ($records as $course) {
             $task = new \block_panopto\task\course_sync();
             $task->set_custom_data(array(
                 'courseid' => $course->id
             ));
 
-            \core\task\manager::queue_adhoc_task($task);
+            \tool_adhoc\manager::queue_adhoc_task($task, 1024, 600, rand(1, $count * 5));
         }
 
         return true;
