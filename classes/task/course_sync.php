@@ -24,8 +24,6 @@ namespace block_panopto\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../../lib/panopto_data.php');
-
 /**
  * Panopto "course sync" task.
  */
@@ -36,6 +34,8 @@ class course_sync extends \core\task\adhoc_task {
     }
 
     public function execute() {
+        require_once(dirname(__FILE__) . '/../../lib/panopto_data.php');
+
         $eventdata = (array)$this->get_custom_data();
 
         $panoptodata = new \panopto_data($eventdata['courseid']);

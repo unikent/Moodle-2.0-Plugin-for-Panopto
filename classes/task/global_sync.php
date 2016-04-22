@@ -31,15 +31,19 @@ class global_sync extends \core\task\scheduled_task
     public function execute() {
         global $DB;
 
-        $records = $DB->get_records_sql('SELECT moodleid as id FROM {block_panopto_foldermap} GROUP BY moodleid');
+        require_once(dirname(__FILE__) . '/../../lib/panopto_data.php');
+
+        $records = $DB->get_records_sql('SELECT DISTINCT moodleid as id FROM {block_panopto_foldermap}');
         $count = count($records);
         foreach ($records as $course) {
-            $task = new \block_panopto\task\course_sync();
-            $task->set_custom_data(array(
-                'courseid' => $course->id
-            ));
+            $panoptodata = new \panopto_data($course->id);
+            if (empty($panoptodata->servername)) {
+                continue;
+            }
 
-            \tool_adhoc\manager::queue_adhoc_task($task, 1024, 600, rand(1, $count * 5));
+            // Provision the course.
+            $provisioningdata = $panoptodata->get_provisioning_info();
+            $panoptodata->provision_course($provisioningdata);
         }
 
         return true;
