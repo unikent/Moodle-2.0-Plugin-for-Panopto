@@ -34,11 +34,11 @@ class global_sync extends \core\task\scheduled_task
         require_once(dirname(__FILE__) . '/../../lib/panopto_data.php');
 
         $records = $DB->get_records_sql('
-            SELECT DISTINCT ctx.instanceid
+            SELECT DISTINCT ctx.instanceid AS id
             FROM {block_instances} bi
             INNER JOIN {context} ctx
                 ON ctx.id=bi.parentcontextid
-            WHERE bi.name = :panopto AND ctx.contextlevel = :ctxlevel
+            WHERE bi.blockname = :panopto AND ctx.contextlevel = :ctxlevel
         ', array(
             'panopto' => 'panopto',
             'ctxlevel' => \CONTEXT_COURSE
