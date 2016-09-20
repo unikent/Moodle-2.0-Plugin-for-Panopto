@@ -242,7 +242,7 @@ class panopto_data {
 
         $provisioninginfo->ShortName = $DB->get_field('course', 'shortname', array('id' => $this->moodlecourseid));
         $provisioninginfo->LongName = $DB->get_field('course', 'fullname', array('id' => $this->moodlecourseid));
-        $provisioninginfo->ExternalCourseID = $this->instancename . ":" . $this->moodlecourseid;
+        $provisioninginfo->ExternalCourseID = panopto_decorate_course_id($this->moodlecourseid);
         $provisioninginfo->Server = $this->servername;
         $coursecontext = context_course::instance($this->moodlecourseid, MUST_EXIST);
 

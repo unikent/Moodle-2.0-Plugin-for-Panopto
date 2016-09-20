@@ -43,11 +43,12 @@ class global_sync extends \core\task\scheduled_task
             'panopto' => 'panopto',
             'ctxlevel' => \CONTEXT_COURSE
         ));
-        $count = count($records);
+
         foreach ($records as $course) {
             $panoptodata = new \panopto_data($course->id);
             if (empty($panoptodata->servername)) {
-                continue;
+                $panoptodata->servername = $CFG->block_panopto_server_name1;
+                $panoptodata->applicationkey = $CFG->block_panopto_application_key1;
             }
 
             // Provision the course.
