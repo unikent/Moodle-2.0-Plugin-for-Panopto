@@ -190,6 +190,9 @@ class panopto_data {
     public function provision_user_folder($user) {
         global $DB;
 
+        // For now.
+        return;
+
         if (!isset($this->soapclient)) {
             $this->soapclient = $this->instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
         }
