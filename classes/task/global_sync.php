@@ -45,14 +45,21 @@ class global_sync extends \core\task\scheduled_task
         ));
         $count = count($records);
         foreach ($records as $course) {
+            \panopto_data::set_panopto_server_name($course->id, $CFG->block_panopto_server_name1);
+            \panopto_data::set_panopto_app_key($course->id, $CFG->block_panopto_application_key1);
+
             $panoptodata = new \panopto_data($course->id);
             if (empty($panoptodata->servername)) {
                 continue;
             }
 
             // Provision the course.
-            $provisioningdata = $panoptodata->get_provisioning_info();
-            $panoptodata->provision_course($provisioningdata);
+            try {
+                $provisioningdata = $panoptodata->get_provisioning_info();
+                $panoptodata->provision_course($provisioningdata);
+            } catch (\Exception $e) {
+                cli_writeln("{$course->id} failed to sync.");
+            }
         }
 
         return true;
