@@ -34,23 +34,24 @@ class global_sync extends \core\task\scheduled_task
         require_once(dirname(__FILE__) . '/../../lib/panopto_data.php');
 
         $records = $DB->get_records_sql('
-            SELECT DISTINCT ctx.instanceid
+            SELECT DISTINCT ctx.instanceid AS id
             FROM {block_instances} bi
             INNER JOIN {context} ctx
                 ON ctx.id=bi.parentcontextid
-            WHERE bi.name = :panopto AND ctx.contextlevel = :ctxlevel
+            WHERE bi.blockname = :panopto AND ctx.contextlevel = :ctxlevel
         ', array(
             'panopto' => 'panopto',
             'ctxlevel' => \CONTEXT_COURSE
         ));
-        $count = count($records);
+
         foreach ($records as $course) {
             \panopto_data::set_panopto_server_name($course->id, $CFG->block_panopto_server_name1);
             \panopto_data::set_panopto_app_key($course->id, $CFG->block_panopto_application_key1);
 
             $panoptodata = new \panopto_data($course->id);
             if (empty($panoptodata->servername)) {
-                continue;
+                $panoptodata->servername = $CFG->block_panopto_server_name1;
+                $panoptodata->applicationkey = $CFG->block_panopto_application_key1;
             }
 
             // Provision the course.

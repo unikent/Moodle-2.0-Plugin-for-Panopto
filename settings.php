@@ -65,6 +65,12 @@ if ($ADMIN->fulltree) {
                     get_string('block_panopto_async_tasks', 'block_panopto'), '', 0
             )
     );
+    $settings->add(
+            new admin_setting_configcheckbox(
+                    'block_panopto_auto_provision_new_courses',
+                    get_string('block_panopto_auto_provision', 'block_panopto'), '', 0
+            )
+    );
 
     $url = new \moodle_url('/blocks/panopto/provision_course.php', array(
         'sesskey' => sesskey()

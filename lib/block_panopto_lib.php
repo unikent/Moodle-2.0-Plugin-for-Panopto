@@ -26,6 +26,11 @@
  */
 function panopto_decorate_course_id($moodlecourseid) {
     global $CFG;
+
+    if ((int)$CFG->kent->distribution > 2015) {
+	$moodlecourseid = (int)$moodlecourseid + (10000 * ((int)$CFG->kent->distribution - 2015));
+    }
+
     return ($CFG->block_panopto_instance_name . ":" . $moodlecourseid);
 }
 

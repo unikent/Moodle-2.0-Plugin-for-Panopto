@@ -190,6 +190,9 @@ class panopto_data {
     public function provision_user_folder($user) {
         global $DB;
 
+        // For now.
+        return;
+
         if (!isset($this->soapclient)) {
             $this->soapclient = $this->instantiate_soap_client($this->uname, $this->servername, $this->applicationkey);
         }
@@ -242,7 +245,7 @@ class panopto_data {
 
         $provisioninginfo->ShortName = $DB->get_field('course', 'shortname', array('id' => $this->moodlecourseid));
         $provisioninginfo->LongName = $DB->get_field('course', 'fullname', array('id' => $this->moodlecourseid));
-        $provisioninginfo->ExternalCourseID = $this->instancename . ":" . $this->moodlecourseid;
+        $provisioninginfo->ExternalCourseID = panopto_decorate_course_id($this->moodlecourseid);
         $provisioninginfo->Server = $this->servername;
         $coursecontext = context_course::instance($this->moodlecourseid, MUST_EXIST);
 
